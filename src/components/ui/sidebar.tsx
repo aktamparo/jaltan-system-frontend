@@ -57,7 +57,7 @@ export default function Sidebar() {
             pathname === "/reports" ? "text-[#D22929]" : "hover:text-[#D22929]"
           }`}
         >
-          <IconSettings size={20} className={pathname === "/reports" ? "text-[#D22929]" : ""} /> 
+          <IconSettings size={20} className={pathname === "/settings" ? "text-[#D22929]" : ""} /> 
           Settings
         </a>
 
@@ -141,10 +141,10 @@ export default function Sidebar() {
             <a 
             href="/settings" 
             className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-                pathname === "/reports" ? "text-[#D22929]" : "hover:text-[#D22929]"
+                pathname === "/settings" ? "text-[#D22929]" : "hover:text-[#D22929]"
             }`}
             >
-            <IconSettings size={20} className={pathname === "/reports" ? "text-[#D22929]" : ""} /> 
+            <IconSettings size={20} className={pathname === "/settings" ? "text-[#D22929]" : ""} /> 
             Settings
             </a>
 
