@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 
-export default function UserSettingsPage() {
+export default function SettingsPage() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showPersonalDetails, setShowPersonalDetails] = useState(false);
   
