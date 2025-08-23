@@ -77,7 +77,7 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-            <CardFooter className="flex-col">
+            <CardFooter className="flex-col p-0 mt-6">
               <Button type="submit" className="w-full">
                 Login
               </Button>
