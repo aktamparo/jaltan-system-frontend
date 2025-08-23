@@ -4,10 +4,14 @@ import ChangePassword from "@/components/ui/ChangePassword";
 import UpdateDetails from "@/components/ui/UpdateDetails";
 import ViewLogin from "@/components/ui/ViewLogin"
 import BranchInfo from "@/components/ui/BranchInfo";
-import ViewUser from "@/components/ui/ViewUsers";
+import ViewAllUsers from "@/components/ui/viewAllUsers";
 import AddUser from "@/components/ui/AddUser";
 import EditRole from "@/components/ui/EditRole";
 
+
+import { columns as ViewColumns, type User } from "../../../components/ui/userViewComponents/columns";
+
+import React from "react";
 interface SettingsPageProps {
   user?: {
     id: "string"
@@ -41,6 +45,31 @@ export default function SettingsPage({user}: SettingsPageProps) {
     return <div></div>;
   }
   
+ const [selectedId, setSelectedId] = React.useState<string | null>(null);
+
+  const data: User[] = [
+    {
+      id: "728ed52f",
+      email: "m@example.com",
+      firstName: "Mark",
+      lastName: "Iglesias",
+      contactNumber: "09123456789",
+      branch: "Main Branch",
+      role: "STAFF",
+      status: "ACTIVE",
+    },
+    {
+      id: "728ed52g",
+      email: "jane@example.com",
+      firstName: "Jane",
+      lastName: "Smith",
+      contactNumber: "09998887777",
+      branch: "Branch 2",
+      role: "ADMIN",
+      status: "INACTIVE",
+    },
+  ]
+
 
   return (
     <div>
@@ -84,7 +113,7 @@ export default function SettingsPage({user}: SettingsPageProps) {
               User Management Settings
             </div>
             <div className="w-full h-full justify-start p-6 space-y-2">
-              <ViewUser/>
+              <ViewAllUsers data={data} />
               <AddUser/>
               <EditRole/>
             </div>
