@@ -77,16 +77,13 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
+            <CardFooter className="flex-col">
+              <Button type="submit" className="w-full">
+                Login
+              </Button>
+            </CardFooter>
           </form>
         </CardContent>
-        <CardFooter className="flex-col gap-2">
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
