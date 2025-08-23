@@ -1,63 +1,105 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react"
-import { IconLayoutDashboard, IconPackage, IconTruck, IconReportAnalytics, IconMenu2, IconX, IconLogout, IconSettings } from "@tabler/icons-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { usePathname } from "next/navigation"; 
+import { useState } from "react";
+import {
+  IconLayoutDashboard,
+  IconPackage,
+  IconTruck,
+  IconReportAnalytics,
+  IconMenu2,
+  IconX,
+  IconLogout,
+  IconSettings,
+} from "@tabler/icons-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { usePathname } from "next/navigation";
 
-export default function Sidebar() {
+interface SidebarProps {
+  account: {
+    id: string;
+    email: string;
+    firstname: string;
+    lastname: string;
+    contactnumber: string;
+    role: string;
+    status: string;
+  };
+}
+export default function Sidebar({ account }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [username] = useState("User");
-  const pathname = usePathname(); 
+  const pathname = usePathname();
+
+  const username = `${account.firstname} ${account.lastname}`;
 
   return (
     <>
       <div className="hidden sm:flex sm:flex-col sm:w-64 h-full bg-white border">
-        <a 
-          href="/dashboard" 
+        <a
+          href="/dashboard"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-            pathname === "/dashboard" ? "text-[#D22929]" : "hover:text-[#D22929]"
+            pathname === "/dashboard"
+              ? "text-[#D22929]"
+              : "hover:text-[#D22929]"
           }`}
         >
-          <IconLayoutDashboard size={20} className={pathname === "/dashboard" ? "text-[#D22929]" : ""} /> 
+          <IconLayoutDashboard
+            size={20}
+            className={pathname === "/dashboard" ? "text-[#D22929]" : ""}
+          />
           Dashboard
         </a>
-        <a 
-          href="/inventory" 
+        <a
+          href="/inventory"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-            pathname === "/inventory" ? "text-[#D22929]" : "hover:text-[#D22929]"
+            pathname === "/inventory"
+              ? "text-[#D22929]"
+              : "hover:text-[#D22929]"
           }`}
         >
-          <IconPackage size={20} className={pathname === "/inventory" ? "text-[#D22929]" : ""} /> 
+          <IconPackage
+            size={20}
+            className={pathname === "/inventory" ? "text-[#D22929]" : ""}
+          />
           Inventory
         </a>
-        <a 
-          href="/logistics" 
+        <a
+          href="/logistics"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-            pathname === "/logistics" ? "text-[#D22929]" : "hover:text-[#D22929]"
+            pathname === "/logistics"
+              ? "text-[#D22929]"
+              : "hover:text-[#D22929]"
           }`}
         >
-          <IconTruck size={20} className={pathname === "/logistics" ? "text-[#D22929]" : ""} /> 
+          <IconTruck
+            size={20}
+            className={pathname === "/logistics" ? "text-[#D22929]" : ""}
+          />
           Logistics
         </a>
-        <a 
-          href="/reports" 
+        <a
+          href="/reports"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
             pathname === "/reports" ? "text-[#D22929]" : "hover:text-[#D22929]"
           }`}
         >
-          <IconReportAnalytics size={20} className={pathname === "/reports" ? "text-[#D22929]" : ""} /> 
+          <IconReportAnalytics
+            size={20}
+            className={pathname === "/reports" ? "text-[#D22929]" : ""}
+          />
           Reports
         </a>
 
-        <a 
-          href="/settings" 
+        <a
+          href="/settings"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
             pathname === "/settings" ? "text-[#D22929]" : "hover:text-[#D22929]"
           }`}
         >
-          <IconSettings size={20} className={pathname === "/settings" ? "text-[#D22929]" : ""} /> 
+          <IconSettings
+            size={20}
+            className={pathname === "/settings" ? "text-[#D22929]" : ""}
+          />
           Settings
         </a>
 
@@ -102,50 +144,75 @@ export default function Sidebar() {
               </Button>
             </div>
 
-            <a 
-              href="/dashboard" 
+            <a
+              href="/dashboard"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-                pathname === "/dashboard" ? "text-[#D22929]" : "hover:text-[#D22929]"
+                pathname === "/dashboard"
+                  ? "text-[#D22929]"
+                  : "hover:text-[#D22929]"
               }`}
             >
-              <IconLayoutDashboard size={20} className={pathname === "/dashboard" ? "text-[#D22929]" : ""} /> 
+              <IconLayoutDashboard
+                size={20}
+                className={pathname === "/dashboard" ? "text-[#D22929]" : ""}
+              />
               Dashboard
             </a>
-            <a 
-              href="/inventory" 
+            <a
+              href="/inventory"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-                pathname === "/inventory" ? "text-[#D22929]" : "hover:text-[#D22929]"
+                pathname === "/inventory"
+                  ? "text-[#D22929]"
+                  : "hover:text-[#D22929]"
               }`}
             >
-              <IconPackage size={20} className={pathname === "/inventory" ? "text-[#D22929]" : ""} /> 
+              <IconPackage
+                size={20}
+                className={pathname === "/inventory" ? "text-[#D22929]" : ""}
+              />
               Inventory
             </a>
-            <a 
-              href="/logistics" 
+            <a
+              href="/logistics"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-                pathname === "/logistics" ? "text-[#D22929]" : "hover:text-[#D22929]"
+                pathname === "/logistics"
+                  ? "text-[#D22929]"
+                  : "hover:text-[#D22929]"
               }`}
             >
-              <IconTruck size={20} className={pathname === "/logistics" ? "text-[#D22929]" : ""} /> 
+              <IconTruck
+                size={20}
+                className={pathname === "/logistics" ? "text-[#D22929]" : ""}
+              />
               Logistics
             </a>
-            <a 
-              href="/reports" 
+            <a
+              href="/reports"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-                pathname === "/reports" ? "text-[#D22929]" : "hover:text-[#D22929]"
+                pathname === "/reports"
+                  ? "text-[#D22929]"
+                  : "hover:text-[#D22929]"
               }`}
             >
-              <IconReportAnalytics size={20} className={pathname === "/reports" ? "text-[#D22929]" : ""} /> 
+              <IconReportAnalytics
+                size={20}
+                className={pathname === "/reports" ? "text-[#D22929]" : ""}
+              />
               Reports
             </a>
-            <a 
-            href="/settings" 
-            className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-                pathname === "/settings" ? "text-[#D22929]" : "hover:text-[#D22929]"
-            }`}
+            <a
+              href="/settings"
+              className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
+                pathname === "/settings"
+                  ? "text-[#D22929]"
+                  : "hover:text-[#D22929]"
+              }`}
             >
-            <IconSettings size={20} className={pathname === "/settings" ? "text-[#D22929]" : ""} /> 
-            Settings
+              <IconSettings
+                size={20}
+                className={pathname === "/settings" ? "text-[#D22929]" : ""}
+              />
+              Settings
             </a>
 
             <div className="mt-auto">
