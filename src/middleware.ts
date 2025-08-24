@@ -5,7 +5,6 @@ import { jwtVerify } from "jose";
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 
 export async function middleware(req: NextRequest) {
-  return NextResponse.next();//temporarily added for testing
   const token = req.cookies.get("access_token")?.value;
   const isLoginPage = req.nextUrl.pathname.startsWith("/login");
 
@@ -26,6 +25,7 @@ export async function middleware(req: NextRequest) {
   } catch (err) {
     const response = NextResponse.redirect(new URL("/login", req.url));
     response.cookies.delete("access_token");
+    console.error("JWT verification failed:", err);
     return response;
   }
 }
