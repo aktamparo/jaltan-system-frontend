@@ -4,63 +4,77 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Modal,
-  ModalContent,
-  ModalDescription,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-} from "@/components/ui/modal";
-import { getColumns as EditColumns, type User } from "@/components/ui/userEditComponents/columns";
-import { DataTable as EditTable } from "@/components/ui/userEditComponents/user-view-table";
-import React from "react";
+import { type User } from "@/components/ui/userEditComponents/columns";
 
-
-
-
-interface ViewAllUsersProps {
-  data: User[];
+interface EditUserProps {
+  user: User;
+  onClose: () => void;
 }
 
+export default function EditUser({ user, onClose }: EditUserProps) {
+  const [email, setEmail] = useState(user.email);
+  const [firstName, setFirstName] = useState(user.firstName);
+  const [lastName, setLastName] = useState(user.lastName);
+  const [contactNumber, setContactNumber] = useState(user.contactNumber);
+  const [branch, setBranch] = useState(user.branch);
+  const [role, setRole] = useState(user.role);
+  const [status, setStatus] = useState(user.status);
 
-export default function ViewAllUsers({ data }: ViewAllUsersProps) {
-   const [selectedId, setSelectedId] = React.useState<string | null>(null);
-   const [showViewTable, setShowViewTable] = useState(false);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onClose();
+  };
 
   return (
-    <>
-      <Button
-        onClick={() => setShowViewTable(true)}
-        className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
-      >
-        <span className="text-s text-black">Show all users</span>
-        <span className="text-s text-gray-500">
-          View and manage all users in the system
-        </span>
-      </Button>
-      
-      <Modal
-        isVisible={showViewTable}
-        onClose={() => setShowViewTable(false)}
-      >
-        <ModalHeader>
-          <ModalTitle>Edit User</ModalTitle>
-          <ModalDescription>
-            i will die soon
-          </ModalDescription>
-        </ModalHeader>
-        
-        <ModalContent>
-            <div className="w-full py-10">
-                    <EditTable columns={EditColumns(selectedId, setSelectedId)} data={data} />
-                  </div>
-        </ModalContent>
-        
-        <ModalFooter>
-            <Button onClick={() => setShowViewTable(false)}>Close</Button>
-        </ModalFooter>
-      </Modal>
-    </>
+    <form onSubmit={handleSubmit} className="space-y-4 p-4">
+      <div>
+        <Label htmlFor="email">Email</Label>
+        <Input id="email" value={email} onChange={e => setEmail(e.target.value)} />
+      </div>
+      <div>
+        <Label htmlFor="firstName">First Name</Label>
+        <Input id="firstName" value={firstName} onChange={e => setFirstName(e.target.value)} />
+      </div>
+      <div>
+        <Label htmlFor="lastName">Last Name</Label>
+        <Input id="lastName" value={lastName} onChange={e => setLastName(e.target.value)} />
+      </div>
+      <div>
+        <Label htmlFor="contactNumber">Contact Number</Label>
+        <Input id="contactNumber" value={contactNumber} onChange={e => setContactNumber(e.target.value)} />
+      </div>
+      <div>
+        <Label htmlFor="branch">Branch</Label>
+        <Input id="branch" value={branch} onChange={e => setBranch(e.target.value)} />
+      </div>
+      <div>
+        <Label htmlFor="role">Role</Label>
+        <select
+          id="role"
+          value={role}
+          onChange={e => setRole(e.target.value as "STAFF" | "ADMIN")}
+          className="w-full border rounded px-2 py-1"
+        >
+          <option value="ADMIN">ADMIN</option>
+          <option value="STAFF">STAFF</option>
+        </select>
+      </div>
+      <div>
+        <Label htmlFor="status">Status</Label>
+        <select
+          id="status"
+          value={status}
+          onChange={e => setStatus(e.target.value as "ACTIVE" | "INACTIVE")}
+          className="w-full border rounded px-2 py-1"
+        >
+          <option value="ACTIVE">ACTIVE</option>
+          <option value="INACTIVE">INACTIVE</option>
+        </select>
+      </div>
+      <div className="flex gap-2">
+        <Button type="submit">Save</Button>
+        <Button type="button" onClick={onClose} variant="secondary">Cancel</Button>
+      </div>
+    </form>
   );
 }
