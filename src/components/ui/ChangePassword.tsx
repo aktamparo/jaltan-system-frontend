@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/modal";
 import { z, ZodError } from "zod";
 
+
 const passwordSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
   newPassword: z.string()
@@ -21,7 +22,9 @@ const passwordSchema = z.object({
     .max(8, "Password cannot exceed 8 characters"),
 });
 
+
 type PasswordFormData = z.infer<typeof passwordSchema>;
+
 
 export default function ChangePassword() {
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -31,14 +34,16 @@ export default function ChangePassword() {
   });
   const [errors, setErrors] = useState<Partial<PasswordFormData>>({});
 
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
+   
     if (errors[name as keyof PasswordFormData]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
+
 
   const validateForm = () => {
     try {
@@ -60,9 +65,10 @@ export default function ChangePassword() {
     }
   };
 
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+   
     if (validateForm()) {
       console.log("Password change submitted:", formData);
       setShowChangePassword(false);
@@ -70,11 +76,13 @@ export default function ChangePassword() {
     }
   };
 
+
   const handleClose = () => {
     setShowChangePassword(false);
     setFormData({ currentPassword: "", newPassword: "" });
     setErrors({});
   };
+
 
   return (
     <>
@@ -87,7 +95,7 @@ export default function ChangePassword() {
           Update your password to keep your account secure
         </span>
       </Button>
-      
+     
       <Modal
         isVisible={showChangePassword}
         onClose={handleClose}
@@ -98,16 +106,16 @@ export default function ChangePassword() {
             Update your password to keep your account secure
           </ModalDescription>
         </ModalHeader>
-        
+       
         <form onSubmit={handleSubmit}>
           <ModalContent>
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="currentPassword">Current Password</Label>
-                <Input 
+                <Input
                   id="currentPassword"
                   name="currentPassword"
-                  type="password" 
+                  type="password"
                   value={formData.currentPassword}
                   onChange={handleInputChange}
                 />
@@ -115,13 +123,13 @@ export default function ChangePassword() {
                   <p className="text-sm text-red-500">{errors.currentPassword}</p>
                 )}
               </div>
-              
+             
               <div className="space-y-2">
                 <Label htmlFor="newPassword">New Password</Label>
-                <Input 
+                <Input
                   id="newPassword"
-                  name="newPassword" 
-                  type="password" 
+                  name="newPassword"
+                  type="password"
                   value={formData.newPassword}
                   onChange={handleInputChange}
                 />
@@ -132,7 +140,7 @@ export default function ChangePassword() {
               </div>
             </div>
           </ModalContent>
-          
+         
           <ModalFooter>
             <Button className="mt-4"
             type="submit">
