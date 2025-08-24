@@ -29,7 +29,7 @@ export default function LoginPage() {
           console.log("Login success:", data);
           window.location.href = "/dashboard";
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
           console.error("Login failed:", err);
           alert("Invalid email or password");
         },

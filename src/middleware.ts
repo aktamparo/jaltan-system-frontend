@@ -25,6 +25,7 @@ export async function middleware(req: NextRequest) {
   } catch (err) {
     const response = NextResponse.redirect(new URL("/login", req.url));
     response.cookies.delete("access_token");
+    console.error("JWT verification failed:", err);
     return response;
   }
 }
