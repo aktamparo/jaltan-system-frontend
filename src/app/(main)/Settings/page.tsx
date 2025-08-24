@@ -4,12 +4,10 @@ import ChangePassword from "@/components/ui/ChangePassword";
 import UpdateDetails from "@/components/ui/UpdateDetails";
 import ViewLogin from "@/components/ui/ViewLogin"
 import BranchInfo from "@/components/ui/BranchInfo";
-import ViewAllUsers from "@/components/ui/viewAllUsers";
+import ViewUsers from "@/components/ui/ViewUsers";
 import AddUser from "@/components/ui/AddUser";
-import EditUser from "@/components/ui/editUserTable";
-import EditUserTable from "@/components/ui/editUserTable";
+import EditRole from "@/components/ui/EditRole";
 import { columns as ViewColumns, type User } from "../../../components/ui/userViewComponents/columns";
-import CreateUser from "@/components/ui/CreateNewUser";
 import React from "react";
 interface SettingsPageProps {
   user?: {
@@ -112,9 +110,10 @@ export default function SettingsPage({user}: SettingsPageProps) {
               User Management Settings
             </div>
             <div className="w-full h-full justify-start p-6 space-y-2">
-              <ViewAllUsers data={data} />
-              <EditUserTable data={data} />
-              <CreateUser />
+              <ViewUsers data={data} />
+              <AddUser />
+              <EditRole data={data} />
+              
             </div>
           </div>
         </div>

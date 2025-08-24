@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Modal,
   ModalContent,
@@ -37,7 +35,7 @@ export default function ViewAllUsers({ data }: ViewAllUsersProps) {
         onClick={() => setShowViewTable(true)}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
-        <span className="text-s text-black">Edit User</span>
+        <span className="text-s text-black">Edit a User</span>
         <span className="text-s text-gray-500">
           Change a user's information
         </span>
