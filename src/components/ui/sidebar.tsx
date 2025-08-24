@@ -14,6 +14,7 @@ import {
 } from "@tabler/icons-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
+import { useLogout } from "@/lib/mutations/authMutation";
 
 interface SidebarProps {
   account: {
@@ -31,6 +32,14 @@ export default function Sidebar({ account }: SidebarProps) {
   const pathname = usePathname();
 
   const username = `${account.firstname} ${account.lastname}`;
+  const logoutMutation = useLogout();
+  const handleLogout = () => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        window.location.href = "/login"; // redirect back to login
+      },
+    });
+  };
 
   return (
     <>
@@ -223,7 +232,10 @@ export default function Sidebar({ account }: SidebarProps) {
                 </Avatar>
                 <span className="font-medium">{username}</span>
               </div>
-              <a href="/login" className="flex items-center gap-2 p-4 text-s">
+              <a
+                onClick={handleLogout}
+                className="flex items-center gap-2 p-4 text-s"
+              >
                 <IconLogout size={16} /> Logout
               </a>
             </div>
