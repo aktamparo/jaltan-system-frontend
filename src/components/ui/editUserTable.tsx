@@ -37,7 +37,7 @@ export default function ViewAllUsers({ data }: ViewAllUsersProps) {
       >
         <span className="text-s text-black">Edit a User</span>
         <span className="text-s text-gray-500">
-          Change a user's information
+          Change a user information
         </span>
       </Button>
 

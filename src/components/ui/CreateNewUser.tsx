@@ -12,7 +12,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from "@/components/ui/modal";
-import {type User} from "@/components/ui/userEditComponents/columns";
+//import {type User} from "@/components/ui/userEditComponents/columns";
 export default function CreateUser() {
   const [showCreateUser, setShowCreateUser] = useState(false);
 

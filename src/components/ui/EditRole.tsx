@@ -33,7 +33,7 @@ export default function ViewAllUsers({ data }: ViewAllUsersProps) {
       >
         <span className="text-s text-black">Edit User Role</span>
         <span className="text-s text-gray-500">
-          Update a user's system role or branch assignment
+          Update user role or branch assignment
         </span>
       </Button>
 
