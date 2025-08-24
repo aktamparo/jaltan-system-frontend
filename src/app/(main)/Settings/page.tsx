@@ -11,13 +11,13 @@ import { type User } from "../../../components/ui/userViewComponents/columns";
 import React from "react";
 interface SettingsPageProps {
   user?: {
-    id: "string"
-    email: "string",
-    firstName: "string",
-    lastName: "string",
-    contactNumber: "string",
-    role: "ADMIN | STAFF",
-    status: "ACTIVE | INACTIVE"
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    contactNumber: string;
+    role: "ADMIN" | "STAFF";
+    status: "ACTIVE" | "INACTIVE";
   };
 }
 
