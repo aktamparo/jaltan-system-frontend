@@ -9,7 +9,7 @@ import AddUser from "@/components/ui/AddUser";
 import EditUser from "@/components/ui/editUserTable";
 import EditUserTable from "@/components/ui/editUserTable";
 import { columns as ViewColumns, type User } from "../../../components/ui/userViewComponents/columns";
-
+import CreateUser from "@/components/ui/CreateNewUser";
 import React from "react";
 interface SettingsPageProps {
   user?: {
@@ -114,7 +114,7 @@ export default function SettingsPage({user}: SettingsPageProps) {
             <div className="w-full h-full justify-start p-6 space-y-2">
               <ViewAllUsers data={data} />
               <EditUserTable data={data} />
-
+              <CreateUser />
             </div>
           </div>
         </div>
