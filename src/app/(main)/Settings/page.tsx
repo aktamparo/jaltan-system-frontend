@@ -9,20 +9,21 @@ import AddUser from "@/components/ui/AddUser";
 import EditRole from "@/components/ui/EditRole";
 import { type User } from "../../../components/ui/userViewComponents/columns";
 import React from "react";
-interface SettingsPageProps {
-  user?: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    contactNumber: string;
-    role: "ADMIN" | "STAFF";
-    status: "ACTIVE" | "INACTIVE";
-  };
-}
+// interface SettingsPageProps {
+//   user?: {
+//     id: string;
+//     email: string;
+//     firstName: string;
+//     lastName: string;
+//     contactNumber: string;
+//     role: "ADMIN" | "STAFF";
+//     status: "ACTIVE" | "INACTIVE";
+//   };
+// }
+//export default function SettingsPage({user}: SettingsPageProps)
 
-
-export default function SettingsPage({user}: SettingsPageProps) {
+//const currentUser = user || (isDevelopment ? User : null);
+export default function SettingsPage() {
 
   const isDevelopment = process.env.NODE_ENV === 'development';
   const User = {
@@ -36,8 +37,7 @@ export default function SettingsPage({user}: SettingsPageProps) {
 
     };
 
-    const currentUser = user || (isDevelopment ? User : null);
-
+    const currentUser = isDevelopment ? User : null;
   if (!currentUser) {
     return <div></div>;
   }
