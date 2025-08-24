@@ -27,27 +27,27 @@ export default function EditUser({ user, onClose }: EditUserProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4">
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input id="email" value={email} onChange={e => setEmail(e.target.value)} />
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="firstName">First Name</Label>
         <Input id="firstName" value={firstName} onChange={e => setFirstName(e.target.value)} />
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="lastName">Last Name</Label>
         <Input id="lastName" value={lastName} onChange={e => setLastName(e.target.value)} />
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="contactNumber">Contact Number</Label>
         <Input id="contactNumber" value={contactNumber} onChange={e => setContactNumber(e.target.value)} />
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="branch">Branch</Label>
         <Input id="branch" value={branch} onChange={e => setBranch(e.target.value)} />
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="role">Role</Label>
         <select
           id="role"
@@ -59,7 +59,7 @@ export default function EditUser({ user, onClose }: EditUserProps) {
           <option value="STAFF">STAFF</option>
         </select>
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="status">Status</Label>
         <select
           id="status"
