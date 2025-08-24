@@ -7,7 +7,7 @@ import BranchInfo from "@/components/ui/BranchInfo";
 import ViewUsers from "@/components/ui/ViewUsers";
 import AddUser from "@/components/ui/AddUser";
 import EditRole from "@/components/ui/EditRole";
-import { columns as ViewColumns, type User } from "../../../components/ui/userViewComponents/columns";
+import { type User } from "../../../components/ui/userViewComponents/columns";
 import React from "react";
 interface SettingsPageProps {
   user?: {
@@ -42,8 +42,6 @@ export default function SettingsPage({user}: SettingsPageProps) {
     return <div></div>;
   }
   
- const [selectedId, setSelectedId] = React.useState<string | null>(null);
-
   const data: User[] = [
     {
       id: "728ed52f",
