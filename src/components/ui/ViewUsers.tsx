@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,14 +9,11 @@ import {
   ModalTitle,
   ModalFooter,
 } from "@/components/ui/modal";
-import { columns as ViewColumns, type User } from "@/components/ui/userViewComponents/columns";
+import { columns as ViewColumns } from "@/components/ui/userViewComponents/columns";
 import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
+import { AllUsers } from "@/lib/types/account";
 
-interface ViewAllUsersProps {
-  data: User[];
-}
-
-export default function ViewUser({ data }: ViewAllUsersProps) {
+export default function ViewUser({ data }: AllUsers) {
   const [showViewTable, setShowViewTable] = useState(false);
 
   return (
@@ -31,25 +28,21 @@ export default function ViewUser({ data }: ViewAllUsersProps) {
         </span>
       </Button>
 
-      <Modal
-        isVisible={showViewTable}
-        onClose={() => setShowViewTable(false)}
-      >
+      <Modal isVisible={showViewTable} onClose={() => setShowViewTable(false)}>
         <ModalHeader>
           <ModalTitle>View All Users</ModalTitle>
           <ModalDescription>
             All registered users in the system
           </ModalDescription>
         </ModalHeader>
-        
+
         <ModalContent>
-          <div className="w-full py-10">
+          <div className="w-full">
             <ViewTable columns={ViewColumns} data={data} />
           </div>
         </ModalContent>
-        
-        <ModalFooter>
-        </ModalFooter>
+
+        <ModalFooter></ModalFooter>
       </Modal>
     </div>
   );
