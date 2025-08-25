@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -10,20 +10,17 @@ import {
   ModalHeader,
   ModalTitle,
 } from "@/components/ui/modal";
-import { getColumns as EditColumns, type User } from "@/components/ui/userEditComponents/columns";
+import { getColumns as EditColumns } from "@/components/ui/userEditComponents/columns";
 import { DataTable as EditTable } from "@/components/ui/userEditComponents/user-view-table";
 import EditUser from "@/components/ui/editUser";
 import React from "react";
+import { AllUsers } from "@/lib/types/account";
 
-interface ViewAllUsersProps {
-  data: User[];
-}
-
-export default function ViewAllUsers({ data }: ViewAllUsersProps) {
+export default function ViewAllUsers({ data }: AllUsers) {
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [showViewTable, setShowViewTable] = useState(false);
   const [showEditUser, setShowEditUser] = useState(false);
-  const selectedUser = data.find(user => user.id === selectedId);
+  const selectedUser = data.find((user) => user.id === selectedId);
 
   return (
     <>
@@ -37,10 +34,7 @@ export default function ViewAllUsers({ data }: ViewAllUsersProps) {
         </span>
       </Button>
 
-      <Modal
-        isVisible={showViewTable}
-        onClose={() => setShowViewTable(false)}
-      >
+      <Modal isVisible={showViewTable} onClose={() => setShowViewTable(false)}>
         <ModalHeader>
           <ModalTitle>Edit a User</ModalTitle>
           <ModalDescription>
@@ -49,29 +43,35 @@ export default function ViewAllUsers({ data }: ViewAllUsersProps) {
         </ModalHeader>
 
         <ModalContent>
-          <div className="w-full py-10">
-            <EditTable columns={EditColumns(selectedId, setSelectedId)} data={data} />
+          <div className="w-full">
+            <EditTable
+              columns={EditColumns(selectedId, setSelectedId)}
+              data={data}
+            />
           </div>
         </ModalContent>
 
         <ModalFooter>
-          <Button onClick={() => setShowEditUser(true)} disabled={!selectedUser}>
+          <Button
+            onClick={() => setShowEditUser(true)}
+            disabled={!selectedUser}
+          >
             Edit Selected User
           </Button>
         </ModalFooter>
       </Modal>
 
       {/* Render EditUser inside a modal if showEditUser is true and a user is selected */}
-      <Modal
-        isVisible={showEditUser}
-        onClose={() => setShowEditUser(false)}
-      >
+      <Modal isVisible={showEditUser} onClose={() => setShowEditUser(false)}>
         <ModalHeader>
           <ModalTitle>Edit User</ModalTitle>
         </ModalHeader>
         <ModalContent>
           {selectedUser ? (
-            <EditUser user={selectedUser} onClose={() => setShowEditUser(false)} />
+            <EditUser
+              user={selectedUser}
+              onClose={() => setShowEditUser(false)}
+            />
           ) : (
             <div className="p-4">No user selected.</div>
           )}

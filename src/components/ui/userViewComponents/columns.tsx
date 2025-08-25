@@ -1,28 +1,19 @@
-"use client"
- 
-import { ColumnDef } from "@tanstack/react-table"
+"use client";
+
+import { User } from "@/lib/types/account";
+import { ColumnDef } from "@tanstack/react-table";
 //import { ReferrerEnum } from "next/dist/lib/metadata/types/metadata-types"
- 
+
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type User = {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  contactNumber: string
-  branch: string
-  role: "STAFF" | "ADMIN"
-  status: "ACTIVE" | "INACTIVE"
-}
- 
+
 export const columns: ColumnDef<User>[] = [
   {
-    accessorKey: "firstName",
+    accessorKey: "employee.firstName",
     header: "First Name",
   },
   {
-    accessorKey: "lastName",
+    accessorKey: "employee.lastName",
     header: "Last Name",
   },
   {
@@ -30,11 +21,11 @@ export const columns: ColumnDef<User>[] = [
     header: "Email",
   },
   {
-    accessorKey: "contactNumber",
+    accessorKey: "employee.contactNumber",
     header: "Contact Number",
   },
   {
-    accessorKey: "branch",
+    accessorKey: "employee.branch.name",
     header: "Branch",
   },
   {
@@ -45,7 +36,4 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "status",
     header: "Status",
   },
- 
-
-
-]
+];

@@ -2,13 +2,13 @@
 
 import ChangePassword from "@/components/ui/ChangePassword";
 import UpdateDetails from "@/components/ui/UpdateDetails";
-import ViewLogin from "@/components/ui/ViewLogin"
+import ViewLogin from "@/components/ui/ViewLogin";
 import BranchInfo from "@/components/ui/BranchInfo";
 import ViewUsers from "@/components/ui/ViewUsers";
 import AddUser from "@/components/ui/AddUser";
 import EditRole from "@/components/ui/EditRole";
-import { type User } from "../../../components/ui/userViewComponents/columns";
 import React from "react";
+import { useGetAllAccounts } from "@/lib/queries/accountQueries";
 // interface SettingsPageProps {
 //   user?: {
 //     id: string;
@@ -24,47 +24,26 @@ import React from "react";
 
 //const currentUser = user || (isDevelopment ? User : null);
 export default function SettingsPage() {
-
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isDevelopment = process.env.NODE_ENV === "development";
   const User = {
-      id: "234567789",
-      email: "m@example.com",
-      firstname: "Mark",
-      lastname: "Iglesias",
-      contactNumber: "23456789",
-      role: "ADMIN",
-      status: "ACTIVE"
+    id: "234567789",
+    email: "m@example.com",
+    firstname: "Mark",
+    lastname: "Iglesias",
+    contactNumber: "23456789",
+    role: "ADMIN",
+    status: "ACTIVE",
+  };
 
-    };
+  const { data: AllUsers, isLoading } = useGetAllAccounts();
+  if (isLoading) return <p>Loading...</p>;
 
-    const currentUser = isDevelopment ? User : null;
+  const currentUser = isDevelopment ? User : null;
   if (!currentUser) {
     return <div></div>;
   }
-  
-  const data: User[] = [
-    {
-      id: "728ed52f",
-      email: "m@example.com",
-      firstName: "Mark",
-      lastName: "Iglesias",
-      contactNumber: "09123456789",
-      branch: "Main Branch",
-      role: "STAFF",
-      status: "ACTIVE",
-    },
-    {
-      id: "728ed52g",
-      email: "jane@example.com",
-      firstName: "Jane",
-      lastName: "Smith",
-      contactNumber: "09998887777",
-      branch: "Branch 2",
-      role: "ADMIN",
-      status: "INACTIVE",
-    },
-  ]
 
+  console.log(AllUsers);
 
   return (
     <div>
@@ -77,14 +56,16 @@ export default function SettingsPage() {
               Account Settings
             </div>
             <div className="w-full h-full justify-start p-6 space-y-2">
-              <ChangePassword/>
-              <UpdateDetails/>
-              <ViewLogin/>
+              <ChangePassword />
+              <UpdateDetails />
+              <ViewLogin />
             </div>
 
-            <div className="text-lg font-medium justify-start">Jaltan Branch</div>
+            <div className="text-lg font-medium justify-start">
+              Jaltan Branch
+            </div>
             <div className="w-full h-full justify-start p-6">
-              <BranchInfo/>
+              <BranchInfo />
             </div>
           </div>
         </div>
@@ -99,24 +80,22 @@ export default function SettingsPage() {
               Account Settings
             </div>
             <div className="w-full h-full justify-start p-6 space-y-2">
-              <ChangePassword/>
-              <UpdateDetails/>
-              <ViewLogin/>
+              <ChangePassword />
+              <UpdateDetails />
+              <ViewLogin />
             </div>
 
             <div className="text-lg font-medium justify-start">
               User Management Settings
             </div>
             <div className="w-full h-full justify-start p-6 space-y-2">
-              <ViewUsers data={data} />
+              <ViewUsers data={AllUsers} />
               <AddUser />
-              <EditRole data={data} />
-              
+              <EditRole data={AllUsers} />
             </div>
           </div>
         </div>
       )}
-</div>
-    
+    </div>
   );
 }
