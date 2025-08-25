@@ -20,9 +20,9 @@ interface SidebarProps {
   account: {
     id: string;
     email: string;
-    firstname: string;
-    lastname: string;
-    contactnumber: string;
+    firstName: string;
+    lastName: string;
+    contactNumber: string;
     role: string;
     status: string;
   };
@@ -31,7 +31,7 @@ export default function Sidebar({ account }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  const username = `${account.firstname} ${account.lastname}`;
+  const username = `${account.firstName} ${account.lastName}`;
   const logoutMutation = useLogout();
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {

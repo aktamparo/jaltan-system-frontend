@@ -5,16 +5,16 @@ interface HeaderProps {
   account: {
     id: string;
     email: string;
-    firstname: string;
-    lastname: string;
-    contactnumber: string;
+    firstName: string;
+    lastName: string;
+    contactNumber: string;
     role: string;
     status: string;
   };
 }
 
 export default function Header({ account }: HeaderProps) {
-  const username = `${account.firstname} ${account.lastname}`;
+  const username = `${account.firstName} ${account.lastName}`;
 
   const today = new Date().toLocaleDateString("en-US", {
     weekday: "long",
