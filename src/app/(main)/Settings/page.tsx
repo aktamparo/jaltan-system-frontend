@@ -34,7 +34,9 @@ export default function SettingsPage() {
     role: "ADMIN",
     status: "ACTIVE",
   };
-  const { data: AllUsers } = useGetAllAccounts();
+
+  const { data: AllUsers, isLoading } = useGetAllAccounts();
+  if (isLoading) return <p>Loading...</p>;
 
   const currentUser = isDevelopment ? User : null;
   if (!currentUser) {
@@ -89,7 +91,7 @@ export default function SettingsPage() {
             <div className="w-full h-full justify-start p-6 space-y-2">
               <ViewUsers data={AllUsers} />
               <AddUser />
-              {/* <EditRole data={data} /> */}
+              <EditRole data={AllUsers} />
             </div>
           </div>
         </div>

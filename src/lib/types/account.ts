@@ -1,4 +1,4 @@
-export interface User {
+export interface CurrentUser {
   account: {
     id: string;
     email: string;
@@ -11,19 +11,17 @@ export interface User {
   };
 } // both current user
 
-export interface Users {
-  data: {
-    id: string;
-    email: string;
-    role: "ADMIN" | "STAFF";
-    status: "ACTIVE" | "INACTIVE";
-    employee: {
-      firstName: string;
-      lastName: string;
-      contactNumber: string;
-      branch: {
-        name: string;
-      };
+export interface User {
+  id: string;
+  email: string;
+  role: "ADMIN" | "STAFF";
+  status: "ACTIVE" | "INACTIVE";
+  employee: {
+    firstName: string;
+    lastName: string;
+    contactNumber: string;
+    branch: {
+      name: string;
     };
   };
 }
