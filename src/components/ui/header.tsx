@@ -1,19 +1,8 @@
 "use client";
+import { User } from "@/lib/types/account";
 import Image from "next/image";
 
-interface HeaderProps {
-  account: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    contactNumber: string;
-    role: string;
-    status: string;
-  };
-}
-
-export default function Header({ account }: HeaderProps) {
+export default function Header({ account }: User) {
   const username = `${account.firstName} ${account.lastName}`;
 
   const today = new Date().toLocaleDateString("en-US", {

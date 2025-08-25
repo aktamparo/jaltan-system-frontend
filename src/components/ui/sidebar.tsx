@@ -15,19 +15,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
 import { useLogout } from "@/lib/mutations/authMutation";
+import { User } from "@/lib/types/account";
 
-interface SidebarProps {
-  account: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    contactNumber: string;
-    role: string;
-    status: string;
-  };
-}
-export default function Sidebar({ account }: SidebarProps) {
+export default function Sidebar({ account }: User) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
