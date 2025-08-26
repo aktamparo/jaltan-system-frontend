@@ -1,5 +1,5 @@
 "use client";
-
+import CreateBranch from "@/components/ui/branchMangementModals/createBranch";
 import ChangePassword from "@/components/ui/ChangePassword";
 import UpdateDetails from "@/components/ui/UpdateDetails";
 import ViewLogin from "@/components/ui/ViewLogin";
@@ -92,6 +92,12 @@ export default function SettingsPage() {
               <ViewUsers data={AllUsers} />
               <AddUser />
               <EditRole data={AllUsers} />
+            </div>
+            <div className="text-lg font-medium justify-start">
+              Branch Management Settings
+            </div>
+            <div className="w-full h-full justify-start p-6 space-y-2">
+              <CreateBranch />
             </div>
           </div>
         </div>
