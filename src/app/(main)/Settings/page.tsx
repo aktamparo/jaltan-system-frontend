@@ -1,4 +1,6 @@
 "use client";
+import ViewBranch from "@/components/ui/branchMangementModals/viewBranch";
+import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
 import CreateBranch from "@/components/ui/branchMangementModals/createBranch";
 import ChangePassword from "@/components/ui/ChangePassword";
 import UpdateDetails from "@/components/ui/UpdateDetails";
@@ -9,6 +11,7 @@ import AddUser from "@/components/ui/AddUser";
 import EditRole from "@/components/ui/EditRole";
 import React from "react";
 import { useGetAllAccounts } from "@/lib/queries/accountQueries";
+import { Edit } from "lucide-react";
 // interface SettingsPageProps {
 //   user?: {
 //     id: string;
@@ -34,6 +37,36 @@ export default function SettingsPage() {
     role: "ADMIN",
     status: "ACTIVE",
   };
+
+
+  const Branch: Branch[] = [
+  {
+    "id": "1",
+    "name": "Main Branch",
+    "street": "123 Main St",
+    "city": "Metro City",
+    "province": "Metro Province",
+    "zipCode": "1000"
+  },
+  {
+    "id": "2",
+    "name": "North Branch",
+    "street": "456 North Ave",
+    "city": "Northville",
+    "province": "North Province",
+    "zipCode": "2000"
+  },
+  {
+    "id": "3",
+    "name": "South Branch",
+    "street": "789 South Rd",
+    "city": "Southtown",
+    "province": "South Province",
+    "zipCode": "3000"
+  }
+]
+
+
 
   const { data: AllUsers, isLoading } = useGetAllAccounts();
   if (isLoading) return <p>Loading...</p>;
@@ -98,6 +131,7 @@ export default function SettingsPage() {
             </div>
             <div className="w-full h-full justify-start p-6 space-y-2">
               <CreateBranch />
+              <ViewBranch data={Branch} />
             </div>
           </div>
         </div>
