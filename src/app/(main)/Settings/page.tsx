@@ -1,6 +1,7 @@
 "use client";
 import ViewBranch from "@/components/ui/branchMangementModals/viewBranch";
 import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
+import EditBranch from "@/components/ui/branchMangementModals/editBranch";
 import CreateBranch from "@/components/ui/branchMangementModals/createBranch";
 import ChangePassword from "@/components/ui/ChangePassword";
 import UpdateDetails from "@/components/ui/UpdateDetails";
@@ -132,6 +133,7 @@ export default function SettingsPage() {
             <div className="w-full h-full justify-start p-6 space-y-2">
               <CreateBranch />
               <ViewBranch data={Branch} />
+              <EditBranch data={Branch} />
             </div>
           </div>
         </div>
