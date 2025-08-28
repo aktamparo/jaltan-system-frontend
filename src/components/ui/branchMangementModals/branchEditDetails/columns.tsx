@@ -4,8 +4,7 @@ import type { Branch } from "@/components/ui/branchMangementModals/branchViewDet
 export function getColumns(
   selectedId: string | null,
   setSelectedId: (id: string) => void
-): ColumnDef<Branch>[] 
-{
+): ColumnDef<Branch>[] {
   return [
     {
       id: "select",
@@ -20,28 +19,28 @@ export function getColumns(
       ),
     },
     {
-    accessorKey: "id",
-    header: "ID",
-  },
-  {
-    accessorKey: "name",
-    header: "Branch Name",
-  },
-  {
-    accessorKey: "street",
-    header: "Street",
-  },
-  {
-    accessorKey: "city",
-    header: "City",
-  },
-  {
-    accessorKey: "province",
-    header: "Province",
-  },
-  {
-    accessorKey: "zipCode",
-    header: "Zip Code",
-  },
+      accessorKey: "id",
+      header: "ID",
+    },
+    {
+      accessorKey: "name",
+      header: "Branch Name",
+    },
+    {
+      accessorKey: "street",
+      header: "Street",
+    },
+    {
+      accessorKey: "city",
+      header: "City",
+    },
+    {
+      accessorKey: "province",
+      header: "Province",
+    },
+    {
+      accessorKey: "zipCode",
+      header: "Zip Code",
+    },
   ];
 }

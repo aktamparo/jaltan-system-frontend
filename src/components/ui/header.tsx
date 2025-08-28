@@ -20,6 +20,7 @@ export default function Header({ account }: CurrentUser) {
           alt="Jaltan Logo"
           width={100}
           height={100}
+          priority
         />
         <p className="text-sm font-medium">Hello, {username}!</p>
       </div>

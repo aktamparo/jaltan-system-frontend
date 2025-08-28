@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader } from "@/components/ui/card";
+// import { Card, CardHeader } from "@/components/ui/card";
 import RequestCard from "@/components/ui/requestcard";
 
 export default function DashboardPage() {
@@ -20,7 +20,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="w-full py-4 flex flex-col gap-10">
+      {/* <div className="w-full py-4 flex flex-col gap-10">
         <div className="text-xl font-medium text-center">Stocks</div>
         <div className="grid gap-10 grid-cols-1 sm:grid-cols-1 lg:grid-cols-3">
           <Card className="h-32 shadow-md rounded-2xl bg-[#f5e9e8] w-full mx-auto">
@@ -41,7 +41,7 @@ export default function DashboardPage() {
             </CardHeader>
           </Card>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }
