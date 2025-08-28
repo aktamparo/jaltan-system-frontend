@@ -13,20 +13,21 @@ import {
   IconSettings,
 } from "@tabler/icons-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useLogout } from "@/lib/mutations/authMutation";
 import { CurrentUser } from "@/lib/types/account";
 
 export default function Sidebar({ account }: CurrentUser) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const username = `${account.firstName} ${account.lastName}`;
   const logoutMutation = useLogout();
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
-        window.location.href = "/login"; // redirect back to login
+        router.push("/login"); // redirect back to login
       },
     });
   };
