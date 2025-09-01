@@ -16,6 +16,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname, useRouter } from "next/navigation";
 import { useLogout } from "@/lib/mutations/authMutation";
 import { CurrentUser } from "@/lib/types/account";
+import Link from "next/link";
+import { queryClient } from "@/lib/react-query";
 
 export default function Sidebar({ account }: CurrentUser) {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,10 +26,15 @@ export default function Sidebar({ account }: CurrentUser) {
 
   const username = `${account.firstName} ${account.lastName}`;
   const logoutMutation = useLogout();
+
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
-        router.push("/login"); // redirect back to login
+        queryClient.clear();
+        router.push("/login");
+      },
+      onError: (err) => {
+        console.error("Logout failed", err);
       },
     });
   };
@@ -35,7 +42,7 @@ export default function Sidebar({ account }: CurrentUser) {
   return (
     <>
       <div className="hidden sm:flex sm:flex-col sm:w-64 h-full bg-white border">
-        <a
+        <Link
           href="/dashboard"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
             pathname === "/dashboard"
@@ -48,8 +55,9 @@ export default function Sidebar({ account }: CurrentUser) {
             className={pathname === "/dashboard" ? "text-[#D22929]" : ""}
           />
           Dashboard
-        </a>
-        <a
+        </Link>
+
+        <Link
           href="/inventory"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
             pathname === "/inventory"
@@ -62,8 +70,9 @@ export default function Sidebar({ account }: CurrentUser) {
             className={pathname === "/inventory" ? "text-[#D22929]" : ""}
           />
           Inventory
-        </a>
-        <a
+        </Link>
+
+        <Link
           href="/logistics"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
             pathname === "/logistics"
@@ -76,8 +85,9 @@ export default function Sidebar({ account }: CurrentUser) {
             className={pathname === "/logistics" ? "text-[#D22929]" : ""}
           />
           Logistics
-        </a>
-        <a
+        </Link>
+
+        <Link
           href="/reports"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
             pathname === "/reports" ? "text-[#D22929]" : "hover:text-[#D22929]"
@@ -88,12 +98,13 @@ export default function Sidebar({ account }: CurrentUser) {
             className={pathname === "/reports" ? "text-[#D22929]" : ""}
           />
           Reports
-        </a>
+        </Link>
 
-        <a
+        <Link
           href="/settings"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
             pathname === "/settings" ? "text-[#D22929]" : "hover:text-[#D22929]"
+          }
           }`}
         >
           <IconSettings
@@ -101,19 +112,22 @@ export default function Sidebar({ account }: CurrentUser) {
             className={pathname === "/settings" ? "text-[#D22929]" : ""}
           />
           Settings
-        </a>
+        </Link>
 
         <div className="mt-auto">
           <div className="flex items-center gap-2 p-4">
             <Avatar className="h-8 w-8">
               <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback></AvatarFallback>
+              <AvatarFallback />
             </Avatar>
             <span className="font-medium">{username}</span>
           </div>
-          <a href="/login" className="flex items-center gap-2 p-4 text-s">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 p-4 text-s w-full text-left hover:bg-gray-50"
+          >
             <IconLogout size={16} /> Logout
-          </a>
+          </button>
         </div>
       </div>
 
@@ -144,7 +158,7 @@ export default function Sidebar({ account }: CurrentUser) {
               </Button>
             </div>
 
-            <a
+            <Link
               href="/dashboard"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
                 pathname === "/dashboard"
@@ -157,8 +171,9 @@ export default function Sidebar({ account }: CurrentUser) {
                 className={pathname === "/dashboard" ? "text-[#D22929]" : ""}
               />
               Dashboard
-            </a>
-            <a
+            </Link>
+
+            <Link
               href="/inventory"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
                 pathname === "/inventory"
@@ -171,8 +186,9 @@ export default function Sidebar({ account }: CurrentUser) {
                 className={pathname === "/inventory" ? "text-[#D22929]" : ""}
               />
               Inventory
-            </a>
-            <a
+            </Link>
+
+            <Link
               href="/logistics"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
                 pathname === "/logistics"
@@ -185,8 +201,9 @@ export default function Sidebar({ account }: CurrentUser) {
                 className={pathname === "/logistics" ? "text-[#D22929]" : ""}
               />
               Logistics
-            </a>
-            <a
+            </Link>
+
+            <Link
               href="/reports"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
                 pathname === "/reports"
@@ -199,8 +216,9 @@ export default function Sidebar({ account }: CurrentUser) {
                 className={pathname === "/reports" ? "text-[#D22929]" : ""}
               />
               Reports
-            </a>
-            <a
+            </Link>
+
+            <Link
               href="/settings"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
                 pathname === "/settings"
@@ -213,22 +231,22 @@ export default function Sidebar({ account }: CurrentUser) {
                 className={pathname === "/settings" ? "text-[#D22929]" : ""}
               />
               Settings
-            </a>
+            </Link>
 
             <div className="mt-auto">
               <div className="flex items-center gap-2 p-4">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback></AvatarFallback>
+                  <AvatarFallback />
                 </Avatar>
                 <span className="font-medium">{username}</span>
               </div>
-              <a
+              <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 p-4 text-s"
+                className="flex items-center gap-2 p-4 text-s w-full text-left hover:bg-gray-50"
               >
                 <IconLogout size={16} /> Logout
-              </a>
+              </button>
             </div>
           </div>
         )}
