@@ -46,6 +46,7 @@ export default function LoginPage() {
             width={250}
             height={250}
             className="mt-5"
+            priority
           />
           <CardTitle className="text-center w-full">
             Management System

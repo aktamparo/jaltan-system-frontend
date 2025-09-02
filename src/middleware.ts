@@ -14,6 +14,7 @@ export async function middleware(req: NextRequest) {
     }
     return NextResponse.next();
   }
+  console.log("Token found:", token);
 
   try {
     await jwtVerify(token, SECRET);
@@ -31,5 +32,6 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|login).*)"],
+  matcher:
+    "/((?!_next/static|_next/image|favicon.ico|login|.*\\.(?:png|jpg|jpeg|svg|gif|ico)).*)",
 };
