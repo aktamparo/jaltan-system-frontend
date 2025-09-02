@@ -1,9 +1,7 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
 import { DataTable as ViewTable } from "@/components/ui/branchMangementModals/branchViewDetails/user-view-table";
 import { columns as branchColumns } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
@@ -19,9 +17,7 @@ interface ViewBranchProps {
   data: Branch[];
 }
 
-
-
-export default function viewBranch({data}: ViewBranchProps) {
+export default function ViewBranch({ data }: ViewBranchProps) {
   const [showCreateBranch, setShowCreateBranch] = useState(false);
 
   return (
@@ -35,35 +31,26 @@ export default function viewBranch({data}: ViewBranchProps) {
           View the details of all branches
         </span>
       </Button>
-      
+
       <Modal
         isVisible={showCreateBranch}
         onClose={() => setShowCreateBranch(false)}
       >
         <ModalHeader>
           <ModalTitle>View Branch</ModalTitle>
-          <ModalDescription>
-            Edit the branch details
-          </ModalDescription>
+          <ModalDescription>Edit the branch details</ModalDescription>
         </ModalHeader>
-        
+
         <ModalContent>
           <div className="space-y-4">
-
             <div className="space-y-2">
-              <ViewTable columns ={branchColumns} data={data}/>
+              <ViewTable columns={branchColumns} data={data} />
             </div>
-
-           
-          
           </div>
         </ModalContent>
-        
+
         <ModalFooter>
-          <Button 
-            type="submit"
-            onClick={() => setShowCreateBranch(false)}
-          >
+          <Button type="submit" onClick={() => setShowCreateBranch(false)}>
             Save
           </Button>
         </ModalFooter>

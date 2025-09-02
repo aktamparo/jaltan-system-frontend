@@ -1,6 +1,5 @@
 "use client";
 
-import { User } from "@/lib/types/account";
 import { ColumnDef } from "@tanstack/react-table";
 //import { ReferrerEnum } from "next/dist/lib/metadata/types/metadata-types"
 

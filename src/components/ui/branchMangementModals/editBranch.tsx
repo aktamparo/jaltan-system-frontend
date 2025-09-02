@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
 import EditBranchModal from "@/components/ui/branchMangementModals/editBranchModal";
 import { DataTable as ViewTable } from "@/components/ui/branchMangementModals/branchEditDetails/user-view-table";
