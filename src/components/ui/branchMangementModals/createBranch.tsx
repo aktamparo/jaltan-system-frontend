@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useCreateBranch } from "@/lib/mutations/branchMutations";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Modal,
   ModalContent,
@@ -13,9 +15,47 @@ import {
   ModalTitle,
 } from "@/components/ui/modal";
 
-export default function ChangePassword() {
-  const [showCreateBranch, setShowCreateBranch] = useState(false);
+export default function CreateBranch() {
+  const createBranchMutation = useCreateBranch();
+  const [name, setName] = useState("");
+const [street, setStreet] = useState("");
+const [city, setCity] = useState("");
+const [province, setProvince] = useState("");
+const [zipCode, setZipCode] = useState("");
 
+  const [showCreateBranch, setShowCreateBranch] = useState(false);
+   const queryClient = useQueryClient();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createBranchMutation.mutate(
+      {
+        name,
+        street,
+        city,
+        province,
+        zipCode,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["branches"] });
+          setName("");
+          setStreet("");
+          setCity("");
+          setProvince("");
+          setZipCode("");
+          setShowCreateBranch(false);
+        },
+        onError: (err: unknown) => {
+          let errorMsg = "Failed to create branch";
+          if (err instanceof Error && err.message) {
+            errorMsg = err.message;
+          }
+          alert(errorMsg);
+        },
+      }
+    );
+  };
   return (
     <>
       <Button
@@ -31,33 +71,33 @@ export default function ChangePassword() {
       <Modal
         isVisible={showCreateBranch}
         onClose={() => setShowCreateBranch(false)}
-      >
+      >        
+      <form onSubmit={handleSubmit}>
         <ModalHeader>
           <ModalTitle>Create Branch</ModalTitle>
           <ModalDescription>
             Create a new branch
           </ModalDescription>
         </ModalHeader>
-        
         <ModalContent>
           <div className="space-y-4">
 
             <div className="space-y-2">
-              <Label htmlFor="branchName">Branch Name</Label>
-              <Input id="branchName" type="text" required />
+              <Label htmlFor="name">Branch Name</Label>
+              <Input id="name" type="text" required value={name} onChange={e => setName(e.target.value)} />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="street">Street</Label>
-              <Input id="street" type="text" required />
+              <Input id="street" type="text" required value={street} onChange={e => setStreet(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="city">City</Label>
-              <Input id="city" type="text" required />
+              <Input id="city" type="text" required value={city} onChange={e => setCity(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="province">Province</Label>
-              <Input id="province" type="text" required />
+              <Input id="province" type="text" required value={province} onChange={e => setProvince(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="zipCode">Zip Code</Label>
@@ -67,9 +107,8 @@ export default function ChangePassword() {
                 min="0"
                 step="1"
                 required
-                onInput={e => {
-                  e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, "");
-                }}
+                value={zipCode}
+                onChange={e => setZipCode(e.target.value.replace(/[^0-9]/g, ""))}
               />
             </div>
           </div>
@@ -78,12 +117,13 @@ export default function ChangePassword() {
         <ModalFooter>
           <Button 
             type="submit"
-            onClick={() => setShowCreateBranch(false)}
           >
             Save
           </Button>
         </ModalFooter>
+        </form>
       </Modal>
+    
     </>
   );
 }

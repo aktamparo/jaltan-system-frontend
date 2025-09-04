@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { updateBranch } from "../services/branchServices";
+import { createBranch,updateBranch } from "../services/branchServices";
 
-// export const useCreateUser = () =>
-//   useMutation({
-//     mutationFn: createUser,
-//   });
+export const useCreateBranch = () =>
+  useMutation({
+    mutationFn: createBranch,
+  });
 
 export const useUpdateBranch = () =>
   useMutation({

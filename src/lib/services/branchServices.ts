@@ -1,5 +1,5 @@
 import { BASE_URL } from "../config";
-import { Branch } from "../types/branch";
+import { Branch, BranchCreatePayload } from "../types/branch";
 
 export const getAllBranches = async () => {
   const response = await fetch(`${BASE_URL}/branch`, {
@@ -44,6 +44,33 @@ export const updateBranch = async (branchData: Branch) => {
 
   if (!response.ok) {
     throw new Error("Failed to update branch");
+  }
+
+  return response.json();
+};
+
+export const createBranch = async (branchData: BranchCreatePayload) => {
+  const payload = { ...branchData };
+  const response = await fetch(`${BASE_URL}/branch`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  let errorMsg = "Failed to create branch";
+  if (!response.ok) {
+    try {
+      const errorData = await response.json();
+      if (errorData.message) {
+        errorMsg = Array.isArray(errorData.message)
+          ? errorData.message.join(", ")
+          : errorData.message;
+      }
+    } catch {
+      // fallback if response is not JSON
+    }
+    throw new Error(errorMsg);
   }
 
   return response.json();

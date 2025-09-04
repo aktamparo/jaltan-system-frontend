@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
+import { Branch } from "@/lib/types/branch";
 import { useUpdateBranch } from "@/lib/mutations/branchMutations";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -24,7 +24,7 @@ export default function EditBranchModal({
   const [city, setCity] = useState(branch.city || "");
   const [province, setProvince] = useState(branch.province || "");
   const [zipCode, setZipCode] = useState(branch.zipCode || "");
- const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

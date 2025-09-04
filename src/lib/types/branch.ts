@@ -11,3 +11,11 @@ export interface Branch {
 export interface AllBranches{
   data: Branch[];
 }
+
+export type BranchCreatePayload = {
+  name: string;
+  street: string;
+  city: string;
+  province: string;
+  zipCode: string;
+};
