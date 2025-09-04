@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
-// import { useUpdateUser } from "@/lib/mutations/accountMutations";
-// import { useQueryClient } from "@tanstack/react-query";
+import { useUpdateBranch } from "@/lib/mutations/branchMutations";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EditBranchModalProps {
   branch: Branch;
@@ -18,23 +18,37 @@ export default function EditBranchModal({
   onClose,
 }: EditBranchModalProps) {
   // For frontend testing, initialize with branch data if available
+  const updateBranchMutation = useUpdateBranch();
   const [name, setName] = useState(branch.name || "");
   const [street, setStreet] = useState(branch.street || "");
   const [city, setCity] = useState(branch.city || "");
   const [province, setProvince] = useState(branch.province || "");
   const [zipCode, setZipCode] = useState(branch.zipCode || "");
+ const queryClient = useQueryClient();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // For frontend testing, just log the values and close
-    console.log("Form submitted:", {
-      name,
-      street,
-      city,
-      province,
-      zipCode,
-    });
-    onClose();
+
+    updateBranchMutation.mutate(
+      {
+        id: branch.id,
+        name,
+        street,
+        city,
+        province,
+        zipCode,
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["branches"] });
+          onClose();
+        },
+        onError: (err: unknown) => {
+          console.error("Update failed:", err);
+          alert("Failed to update branch");
+        },
+      }
+    );
   };
 
   return (

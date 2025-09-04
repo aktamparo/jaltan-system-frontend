@@ -1,5 +1,6 @@
 import { BASE_URL } from "../config";
 import { User } from "../types/account";
+
 export const getAccount = async () => {
   const response = await fetch(`${BASE_URL}/account/me`, {
     method: "GET",
