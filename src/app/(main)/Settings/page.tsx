@@ -11,44 +11,21 @@ import AddUser from "@/components/ui/AddUser";
 import EditRole from "@/components/ui/EditRole";
 import React from "react";
 import { useGetAllAccounts, useGetAccount } from "@/lib/queries/accountQueries";
-
+import { useGetAllBranches } from "@/lib/queries/branchQueries";
 export default function SettingsPage() {
-  const Branch: Branch[] = [
-    {
-      id: "1",
-      name: "Main Branch",
-      street: "123 Main St",
-      city: "Metro City",
-      province: "Metro Province",
-      zipCode: "1000",
-    },
-    {
-      id: "2",
-      name: "North Branch",
-      street: "456 North Ave",
-      city: "Northville",
-      province: "North Province",
-      zipCode: "2000",
-    },
-    {
-      id: "3",
-      name: "South Branch",
-      street: "789 South Rd",
-      city: "Southtown",
-      province: "South Province",
-      zipCode: "3000",
-    },
-  ];
 
   const { data: AllUsers, isLoading: isLoadingAllAccounts } =
     useGetAllAccounts();
   const { data: currentUser, isLoading: isLoadingCurrentAccount } =
     useGetAccount();
+  const { data: AllBranches, isLoading: isLoadingAllBranches } = useGetAllBranches();
   if (isLoadingAllAccounts) return <p>Loading...</p>;
   if (isLoadingCurrentAccount) return <p>Loading...</p>;
+  if (isLoadingAllBranches) return <p>Loading...</p>;
 
   console.log(AllUsers);
   console.log(AllUsers);
+  console.log(AllBranches);
 
   return (
     <div>
@@ -80,8 +57,8 @@ export default function SettingsPage() {
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
                 <CreateBranch />
-                <ViewBranch data={Branch} />
-                <EditBranch data={Branch} />
+                <ViewBranch data={AllBranches} />
+                <EditBranch data={AllBranches} />
               </div>
             </>
           )}
