@@ -5,15 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User } from "@/lib/types/account";
+import { AllBranches, Branch } from "@/lib/types/branch";
 import { useUpdateUser } from "@/lib/mutations/accountMutations";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface EditUserProps {
   user: User;
   onClose: () => void;
+  data: AllBranches;
 }
 
-export default function EditUser({ user, onClose }: EditUserProps) {
+export default function EditUser({ user, onClose, data }: EditUserProps) {
   const updateUserMutation = useUpdateUser();
 
   const [email, setEmail] = useState(user.email);
@@ -89,14 +91,13 @@ export default function EditUser({ user, onClose }: EditUserProps) {
           onChange={(e) => setContactNumber(e.target.value)}
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="branch">Branch</Label>
-        <Input
-          id="branch"
-          value={branch}
-          onChange={(e) => setBranch(e.target.value)}
-        />
-      </div>
+      <select id="branch" className="w-full border rounded px-2 py-1">
+        {(data.data ?? []).map((branch: Branch) => (
+          <option key={branch.id} value={branch.id}>
+            {branch.name}
+          </option>
+        ))}
+      </select>
       <div className="space-y-2">
         <Label htmlFor="role">Role</Label>
         <select

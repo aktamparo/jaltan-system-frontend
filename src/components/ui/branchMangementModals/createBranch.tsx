@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/modal";
 
 export default function CreateBranch() {
-  const createBranchMutation = useCreateBranch();
-  const [name, setName] = useState("");
+const createBranchMutation = useCreateBranch();
+const [name, setName] = useState("");
 const [street, setStreet] = useState("");
 const [city, setCity] = useState("");
 const [province, setProvince] = useState("");

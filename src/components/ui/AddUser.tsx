@@ -4,6 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AllBranches, Branch } from "@/lib/types/branch";
+import { useCreateUser } from "@/lib/mutations/accountMutations";
+import { useQueryClient } from "@tanstack/react-query";
+import { UserCreatePayload } from "@/lib/types/account";
 import {
   Modal,
   ModalContent,
@@ -13,12 +17,55 @@ import {
   ModalTitle,
 } from "@/components/ui/modal";
 
-export default function AddUser() {
+export default function AddUser({ data }: AllBranches) {
   const [showCreateUser, setShowCreateUser] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [branchId, setBranchId] = useState("");
+  const [role, setRole] = useState<"ADMIN" | "STAFF">("STAFF");
+  const [status, setStatus] = useState<"ACTIVE" | "INACTIVE">("ACTIVE");
+  const createUser = useCreateUser();
+  const queryClient = useQueryClient();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    //logic here
+    createUser.mutate(
+      {
+        email,
+        password,
+        role,
+        status,
+        firstName,
+        lastName,
+        contactNumber,
+        branchId,
+        
+    
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["accounts"] });
+          setEmail("");
+          setPassword("");
+          setFirstName("");
+          setLastName("");
+          setContactNumber("");
+          setBranchId("");
+          setRole("STAFF");
+          setStatus("ACTIVE");
+          setShowCreateUser(false);
+        },
+        onError: (err: unknown) => {
+          let errorMsg = "Failed to create user";
+          if (err instanceof Error && err.message) {
+            errorMsg = err.message;
+          }
+          alert(errorMsg);
+        },
+      }
+    );
   };
   return (
     <>
@@ -45,34 +92,56 @@ export default function AddUser() {
         <form onSubmit={handleSubmit}>
           <ModalContent>
             <div className="space-y-4">
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" />
+                <Input id="email" value={email} onChange={e => setEmail(e.target.value)} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
-                <Input id="firstName" />
+                <Input id="firstName" value={firstName} onChange={e => setFirstName(e.target.value)} />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last Name</Label>
-                <Input id="lastName" />
+                <Input id="lastName" value={lastName} onChange={e => setLastName(e.target.value)} />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="contactNumber">Contact Number</Label>
-                <Input id="contactNumber" />
+                <Input id="contactNumber" value={contactNumber} onChange={e => setContactNumber(e.target.value)} />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="branch">Branch</Label>
-                <Input id="branch" />
-              </div>
+               <div className="space-y-2">
+          <Label htmlFor="branch">Branch</Label>
+          <select
+            id="branch"
+            className="w-full border rounded px-2 py-1"
+            value={branchId}
+            onChange={e => setBranchId(e.target.value)}
+          >
+            {(data ?? []).map((branch: Branch) => (
+              <option key={branch.id} value={branch.id}>
+                {branch.name}
+              </option>
+            ))}
+          </select>
+  </div>
 
               <div className="space-y-2">
                 <Label htmlFor="role">Role</Label>
-                <select id="role" className="w-full border rounded px-2 py-1">
+                <select
+                  id="role"
+                  className="w-full border rounded px-2 py-1"
+                  value={role}
+                  onChange={e => setRole(e.target.value as "ADMIN" | "STAFF")}
+                >
                   <option value="ADMIN">ADMIN</option>
                   <option value="STAFF">STAFF</option>
                 </select>
@@ -80,7 +149,12 @@ export default function AddUser() {
 
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
-                <select id="status" className="w-full border rounded px-2 py-1">
+                <select
+                  id="status"
+                  className="w-full border rounded px-2 py-1"
+                  value={status}
+                  onChange={e => setStatus(e.target.value as "ACTIVE" | "INACTIVE")}
+                >
                   <option value="ACTIVE">ACTIVE</option>
                   <option value="INACTIVE">INACTIVE</option>
                 </select>
@@ -89,7 +163,7 @@ export default function AddUser() {
           </ModalContent>
 
           <ModalFooter>
-            <Button type="submit" onClick={() => setShowCreateUser(false)}>
+            <Button type="submit">
               Save
             </Button>
           </ModalFooter>

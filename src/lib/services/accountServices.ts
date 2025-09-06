@@ -1,5 +1,5 @@
 import { BASE_URL } from "../config";
-import { User } from "../types/account";
+import { User,UserCreatePayload } from "../types/account";
 
 export const getAccount = async () => {
   const response = await fetch(`${BASE_URL}/account/me`, {
@@ -35,14 +35,16 @@ export const getAllAccounts = async () => {
   return data;
 };
 
-export const createUser = async (userData: User) => {
+export const createUser = async (userData: UserCreatePayload) => {
   const payload = {
     email: userData.email,
+    password: userData.password,
     role: userData.role,
     status: userData.status,
-    firstName: userData.employee.firstName,
-    lastName: userData.employee.lastName,
-    contactNumber: userData.employee.contactNumber,
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    contactNumber: userData.contactNumber,
+    branchId: userData.branchId,
   };
 
   const response = await fetch(`${BASE_URL}/account/create-account`, {

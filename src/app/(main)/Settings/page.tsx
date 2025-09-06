@@ -49,8 +49,8 @@ export default function SettingsPage() {
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
                 <ViewUsers data={AllUsers} />
-                <AddUser />
-                <EditRole data={AllUsers} />
+                <AddUser data={AllBranches}/>
+                <EditRole users={AllUsers} branches={AllBranches} />
               </div>
               <div className="text-lg font-medium justify-start">
                 Branch Management Settings

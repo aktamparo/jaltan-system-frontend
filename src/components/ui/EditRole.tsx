@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { AllBranches, Branch } from "@/lib/types/branch";
 import {
   Modal,
   ModalContent,
@@ -13,14 +14,20 @@ import {
 import { getColumns as EditColumns } from "@/components/ui/userEditComponents/columns";
 import { DataTable as EditTable } from "@/components/ui/userEditComponents/user-view-table";
 import EditUser from "@/components/ui/editUser";
+
 import React from "react";
 import { AllUsers } from "@/lib/types/account";
 
-export default function ViewAllUsers({ data }: AllUsers) {
+export default function EditRole({ users, branches }: { users: AllUsers; branches: AllBranches }) {
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [showViewTable, setShowViewTable] = useState(false);
   const [showEditUser, setShowEditUser] = useState(false);
-  const selectedUser = data.find((user) => user.id === selectedId);
+  React.useEffect(() => {
+    console.log('EditRole users:', users);
+    console.log('EditRole branches:', branches);
+  }, [users, branches]);
+  const userArray = users?.data ?? [];
+  const selectedUser = userArray.find((user) => user.id === selectedId);
 
   return (
     <>
@@ -46,7 +53,7 @@ export default function ViewAllUsers({ data }: AllUsers) {
           <div className="w-full">
             <EditTable
               columns={EditColumns(selectedId, setSelectedId)}
-              data={data}
+              data={userArray}
             />
           </div>
         </ModalContent>
@@ -69,6 +76,7 @@ export default function ViewAllUsers({ data }: AllUsers) {
         <ModalContent>
           {selectedUser ? (
             <EditUser
+              data={branches}
               user={selectedUser}
               onClose={() => setShowEditUser(false)}
             />
