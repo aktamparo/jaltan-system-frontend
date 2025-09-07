@@ -4,10 +4,12 @@ import { jwtVerify } from "jose";
 
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET!);
 
+
+
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get("access_token")?.value;
   const isLoginPage = req.nextUrl.pathname.startsWith("/login");
-
+  console.log("JWT_SECRET in frontend:", process.env.JWT_SECRET);
   if (!token) {
     if (!isLoginPage) {
       return NextResponse.redirect(new URL("/login", req.url));
