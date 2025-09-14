@@ -6,22 +6,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+interface StockDetails {
+  quantity: number;
+  uomName: string;
+  uomId: string;
+}
+
 interface EditStockInProps {
   item: StockIn;
   onClose: () => void;
-  onSave: (stockDetails: any) => void;
+  onSave: (stockDetails: StockDetails) => void;
 }
 
-export default function StockInDetailsModal({
-  onClose,
-  onSave,
-}: EditStockInProps) {
+export default function EditStockIn({ item, onClose, onSave }: EditStockInProps) {
   const [quantity, setQuantity] = useState<number>(0);
   const [uomName, setUomName] = useState<string>("kg");
 
   return (
     <div className="space-y-4">
-
       <div className="space-y-2">
         <Label htmlFor="quantity">Quantity</Label>
         <Input
@@ -32,7 +34,7 @@ export default function StockInDetailsModal({
         />
       </div>
 
-      <div className="space-y-2"> 
+      <div className="space-y-2">
         <Label htmlFor="uom">Unit of Measurement</Label>
         <Input
           id="uom"
@@ -55,3 +57,4 @@ export default function StockInDetailsModal({
     </div>
   );
 }
+

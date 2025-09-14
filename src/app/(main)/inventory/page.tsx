@@ -13,10 +13,10 @@ import Searchbar from "@/components/ui/searchbar";
 import StockInItem from "@/components/inventory/StockIn/StockInItem";
 import StockOutItem from "@/components/inventory/StockOutItems/StockOutItem";
 import { DataTable as ViewTable } from "@/components/inventory/ViewBranchItems/user-view-table";
-import { columns as ViewColumns } from "@/components/inventory/ViewBranchItems/columns";
+import { InventoryItem, columns as ViewColumns } from "@/components/inventory/ViewBranchItems/columns";
 
 export default function InventoryPage() {
-  const data: any[] = [];
+  const data: InventoryItem[] = [];
 
   return (
     <>
