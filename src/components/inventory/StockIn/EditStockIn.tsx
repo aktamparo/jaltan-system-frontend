@@ -1,21 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import type { StockIn } from "@/components/inventory/StockInItems/CreateStockIn/columns";
+import type { StockIn } from "@/components/inventory/StockIn/CreateStockIn/columns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface CreateStockInProps {
+interface EditStockInProps {
   item: StockIn;
   onClose: () => void;
-  onSave: (createStockIn: any) => void;
+  onSave: (stockDetails: any) => void;
 }
 
 export default function StockInDetailsModal({
   onClose,
   onSave,
-}: CreateStockInProps) {
+}: EditStockInProps) {
   const [quantity, setQuantity] = useState<number>(0);
   const [uomName, setUomName] = useState<string>("kg");
 
@@ -42,7 +42,7 @@ export default function StockInDetailsModal({
         />
       </div>
 
-      <div className="flex justify-start gap-2">
+      <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>

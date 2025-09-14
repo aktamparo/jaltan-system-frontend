@@ -55,9 +55,9 @@ export default function EditItem() {
     }
   };
 
-  const handleClose = () => {
-    setShowEditItem(false);
-  };
+  // const handleClose = () => {
+  //  setShowEditItem(false);
+  //};
 
   return (
     <>

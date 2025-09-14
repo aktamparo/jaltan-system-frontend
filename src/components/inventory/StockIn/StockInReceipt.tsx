@@ -29,7 +29,10 @@ export default function StockInReceipt({ receiptData }: StockInReceiptProps) {
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Created By</span>
-            <span>{receiptData.stockIn.createdById}</span>
+            <span>
+              {receiptData.stockIn.createdBy.employee.firstName}{" "}
+              {receiptData.stockIn.createdBy.employee.lastName}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Modified</span>
@@ -37,33 +40,28 @@ export default function StockInReceipt({ receiptData }: StockInReceiptProps) {
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Modified By</span>
-            <span>{receiptData.stockIn.modifiedById}</span>
+            <span>
+              {receiptData.stockIn.modifiedBy.employee.firstName}{" "}
+              {receiptData.stockIn.modifiedBy.employee.lastName}
+            </span>
           </div>
 
           <div className="pt-2 border-t">
-            <span className="block font-semibold text-gray-700 mb-2">Items</span>
-            <ul className="space-y-3">
-              {receiptData.items.map((item: any) => (
-                <li
-                  key={item.itemId}
-                  className="border rounded-lg p-3 bg-gray-50 shadow-sm"
-                >
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Item ID</span>
-                    <span>{item.itemId}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Quantity</span>
-                    <span>{item.quantity}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">UOM</span>
-                    <span>{item.uomName}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
+          <span className="block font-semibold text-gray-700 mb-2">Items</span>
+          <div className="divide-y">
+            {receiptData.items.map((item: any) => (
+              <div
+                key={item.itemId}
+                className="flex justify-between items-center py-2"
+              >
+                <span>{item.itemName}</span>
+                <span>
+                  {item.quantity} {item.uomSymbol}
+                </span>
+              </div>
+            ))}
           </div>
+        </div>
         </CardContent>
       </Card>
     </div>

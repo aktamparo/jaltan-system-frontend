@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Searchbar from "@/components/ui/searchbar";
-import StockInItem from "@/components/inventory/StockInItems/StockInItem";
+import StockInItem from "@/components/inventory/StockIn/StockInItem";
 import StockOutItem from "@/components/inventory/StockOutItems/StockOutItem";
 import { DataTable as ViewTable } from "@/components/inventory/ViewBranchItems/user-view-table";
 import { columns as ViewColumns } from "@/components/inventory/ViewBranchItems/columns";

@@ -1,5 +1,5 @@
 "use client";
-import StockInItem from "@/components/inventory/StockInItems/StockInItem";
+import StockInItem from "@/components/inventory/StockIn/StockInItem";
 import StockOutItem from "../inventory/StockOutItem";
 import ViewArchive from "../inventory/ViewArchive";
 
