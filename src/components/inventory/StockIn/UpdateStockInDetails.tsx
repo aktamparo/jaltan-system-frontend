@@ -42,14 +42,16 @@ export default function UpdateStockInDetails({
   onClose,
   onSave,
 }: UpdateStockInProps) {
-  if (!item) return null;
 
-  const [detail, setDetail] = useState({
-    itemId: item.id,
+  const [detail, setDetail] = useState(() => ({
+    itemId: item?.id ?? "",
     quantity: 0,
     uomName: UOM_OPTIONS[0].label,
     uomId: UOM_OPTIONS[0].id,
-  });
+  }));
+
+
+  if (!item) return null;
 
   const handleChange = (field: string, value: string | number) => {
     setDetail((prev) => ({ ...prev, [field]: value }));
@@ -123,5 +125,3 @@ export default function UpdateStockInDetails({
     </div>
   );
 }
-
-
