@@ -4,10 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import {getAllBranches } from "../services/branchServices";
 
 
-export const useGetAllBranches = () => {
+export const useGetAllBranches = (page = 1, limit = 10) => {
   return useQuery({
-    queryKey: ["branches"],
-    queryFn: () => getAllBranches(),
+    queryKey: ["branches",page,limit],
+    queryFn: () => getAllBranches(page, limit),
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: true,
   });

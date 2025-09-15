@@ -10,10 +10,10 @@ export const useGetAccount = () => {
   });
 };
 
-export const useGetAllAccounts = () => {
+export const useGetAllAccounts = (page =1) => {
   return useQuery({
-    queryKey: ["accounts"],
-    queryFn: () => getAllAccounts(),
+    queryKey: ["accounts",page],
+    queryFn: () => getAllAccounts(page),
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: true,
   });

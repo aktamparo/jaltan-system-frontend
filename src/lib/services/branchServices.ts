@@ -1,8 +1,8 @@
 import { BASE_URL } from "../config";
 import { Branch, BranchCreatePayload } from "../types/branch";
 
-export const getAllBranches = async () => {
-  const response = await fetch(`${BASE_URL}/branch`, {
+export const getAllBranches = async (page = 1, limit = 10) => {
+  const response = await fetch(`${BASE_URL}/branch?page=${page}&limit=${limit}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AllBranches, Branch } from "@/lib/types/branch";
+import { Branch } from "@/lib/types/branch";
 import { useCreateUser } from "@/lib/mutations/accountMutations";
 import { useQueryClient } from "@tanstack/react-query";
-import { UserCreatePayload } from "@/lib/types/account";
+import {useGetAllBranches} from "@/lib/queries/branchQueries";
 import {
   Modal,
   ModalContent,
@@ -17,7 +17,7 @@ import {
   ModalTitle,
 } from "@/components/ui/modal";
 
-export default function AddUser({ data }: AllBranches) {
+export default function AddUser() {
   const [showCreateUser, setShowCreateUser] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +27,9 @@ export default function AddUser({ data }: AllBranches) {
   const [branchId, setBranchId] = useState("");
   const [role, setRole] = useState<"ADMIN" | "STAFF">("STAFF");
   const [status, setStatus] = useState<"ACTIVE" | "INACTIVE">("ACTIVE");
+  const [showViewTable, setShowViewTable] = useState(false);
+  const [page, setPage] = useState(1);
+  const { data: AllBranches, isLoading: isLoadingAllAccounts } = useGetAllBranches(page,100);
   const createUser = useCreateUser();
   const queryClient = useQueryClient();
   const handleSubmit = (e: React.FormEvent) => {
@@ -121,17 +124,19 @@ export default function AddUser({ data }: AllBranches) {
                <div className="space-y-2">
           <Label htmlFor="branch">Branch</Label>
           <select
-            id="branch"
-            className="w-full border rounded px-2 py-1"
-            value={branchId}
-            onChange={e => setBranchId(e.target.value)}
-          >
-            {(data ?? []).map((branch: Branch) => (
-              <option key={branch.id} value={branch.id}>
-                {branch.name}
-              </option>
-            ))}
-          </select>
+  id="branch"
+  className="w-full border rounded px-2 py-1"
+  value={branchId}
+  onChange={e => setBranchId(e.target.value)}
+  required
+>
+  <option value="" disabled>Select a branch</option>
+  {(AllBranches?.data ?? []).map((branch: Branch) => (
+    <option key={branch.id} value={branch.id}>
+      {branch.name}
+    </option>
+  ))}
+</select>
   </div>
 
               <div className="space-y-2">

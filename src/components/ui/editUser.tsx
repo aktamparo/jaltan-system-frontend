@@ -8,14 +8,14 @@ import { User } from "@/lib/types/account";
 import { AllBranches, Branch } from "@/lib/types/branch";
 import { useUpdateUser } from "@/lib/mutations/accountMutations";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGetAllBranches } from "@/lib/queries/branchQueries";
 
 interface EditUserProps {
   user: User;
   onClose: () => void;
-  data: AllBranches;
 }
 
-export default function EditUser({ user, onClose, data }: EditUserProps) {
+export default function EditUser({ user, onClose}: EditUserProps) {
   const updateUserMutation = useUpdateUser();
 
   const [email, setEmail] = useState(user.email);
@@ -24,10 +24,13 @@ export default function EditUser({ user, onClose, data }: EditUserProps) {
   const [contactNumber, setContactNumber] = useState(
     user.employee.contactNumber
   );
-  const [branch, setBranch] = useState(user.employee.branch.name);
+  const [branch, setBranch] = useState(user.employee.branch.id);
   const [role, setRole] = useState(user.role);
   const [status, setStatus] = useState(user.status);
+
   const queryClient = useQueryClient();
+  const { data: AllBranches, isLoading: isLoadingAllAccounts } = useGetAllBranches(1, 100);
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -41,7 +44,7 @@ export default function EditUser({ user, onClose, data }: EditUserProps) {
           firstName,
           lastName,
           contactNumber,
-          branch: { name: branch },
+          branch: { id:branch },
         },
       },
       {
@@ -92,7 +95,7 @@ export default function EditUser({ user, onClose, data }: EditUserProps) {
         />
       </div>
       <select id="branch" className="w-full border rounded px-2 py-1">
-        {(data.data ?? []).map((branch: Branch) => (
+        {(AllBranches.data ?? []).map((branch: Branch) => (
           <option key={branch.id} value={branch.id}>
             {branch.name}
           </option>

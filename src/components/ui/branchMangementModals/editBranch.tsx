@@ -6,7 +6,8 @@ import { Branch } from "@/lib/types/branch";
 import EditBranchModal from "@/components/ui/branchMangementModals/editBranchModal";
 import { DataTable as ViewTable } from "@/components/ui/branchMangementModals/branchEditDetails/user-view-table";
 import { getColumns } from "@/components/ui/branchMangementModals/branchEditDetails/columns";
-
+import {useGetAllBranches} from "@/lib/queries/branchQueries";
+import PaginationControls from "@/components/ui/PaginationControls";
 import {
   Modal,
   ModalContent,
@@ -15,16 +16,19 @@ import {
   ModalHeader,
   ModalTitle,
 } from "@/components/ui/modal";
-interface ViewBranchProps {
-  data: Branch[];
-}
 
-export default function EditBranch({ data }: ViewBranchProps) {
+
+export default function EditBranch() {
   const [showEditBranch, setShowEditBranch] = useState(false);
   const [showEditBranchModal, setShowEditBranchModal] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const columns = getColumns(selectedId, setSelectedId);
-  const selectedBranch = data.find((user) => user.id === selectedId);
+  
+
+  const [page, setPage] = useState(1);
+  const { data: AllBranches, isLoading: isLoadingAllBranches } = useGetAllBranches(page);
+  const selectedBranch: Branch | undefined = AllBranches?.data.find((branch: Branch) => branch.id === selectedId);
+
   return (
     <>
       <Button
@@ -47,20 +51,22 @@ export default function EditBranch({ data }: ViewBranchProps) {
         <ModalContent>
           <div className="space-y-4">
             <div className="space-y-2">
-              <ViewTable columns={columns} data={data} />
+              <ViewTable columns={columns} data={AllBranches?.data ?? []} />
             </div>
           </div>
         </ModalContent>
 
         <ModalFooter>
+          <PaginationControls
+                        currentPage={page}
+                        totalPages={AllBranches?.metadata?.totalPages || 1}
+                        onPageChange={setPage}
+                      />
           <Button
             onClick={() => setShowEditBranchModal(true)}
             disabled={!selectedBranch}
           >
             Edit Selected Branch
-          </Button>
-          <Button type="submit" onClick={() => setShowEditBranch(false)}>
-            Save
           </Button>
         </ModalFooter>
       </Modal>

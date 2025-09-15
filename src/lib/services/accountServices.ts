@@ -18,8 +18,8 @@ export const getAccount = async () => {
   return data;
 };
 
-export const getAllAccounts = async () => {
-  const response = await fetch(`${BASE_URL}/account`, {
+export const getAllAccounts = async (page = 1) => {
+  const response = await fetch(`${BASE_URL}/account?page=${page}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -71,6 +71,7 @@ export const updateUser = async (userData: User) => {
     firstName?: string;
     lastName?: string;
     contactNumber?: string;
+    branchId?:string;
   } = {};
 
   if (userData.email) payload.email = userData.email;
@@ -84,6 +85,8 @@ export const updateUser = async (userData: User) => {
       payload.lastName = userData.employee.lastName;
     if (userData.employee.contactNumber)
       payload.contactNumber = userData.employee.contactNumber;
+    if (userData.employee.branch && userData.employee.branch.id)
+      payload.branchId = userData.employee.branch.id;
   }
 
   const response = await fetch(`${BASE_URL}/account/${userData.id}`, {
