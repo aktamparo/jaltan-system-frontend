@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Searchbar from "@/components/ui/searchbar";
-import StockInItem from "@/components/inventory/StockIn/StockInItem";
-import UpdateStockIn from "@/components/inventory/StockIn/UpdateStockIn";
 import { SelectableInventoryTable } from "@/components/inventory/PaginatedInventory/selectable-inventory-table";
 import { UnifiedItemRow } from "@/components/inventory/shared/UnifiedItemRow";
 import { usePaginatedInventoryItems } from "@/lib/queries/inventoryQueries";
@@ -335,13 +333,6 @@ export default function InventoryPage() {
           selectedItems={selectedItems}
           onItemSelect={handleItemSelect}
         />
-
-        {!isSelectionMode && (
-          <div className="flex flex-row items-center gap-2 mt-2 ml-auto">
-            <StockInItem />
-            <UpdateStockIn />
-          </div>
-        )}
       </div>
 
       {/* Quantity Modal */}
