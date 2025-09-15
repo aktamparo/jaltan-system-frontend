@@ -22,7 +22,7 @@ export default function Modal({ isVisible, onClose, children, className }: Modal
     >
       <div
         className={cn(
-          "relative bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm w-full max-w-4xl h-[35vh] overflow-y-auto",
+          "relative bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm w-full max-w-4xl max-h-[90vh] overflow-y-auto",
           className
         )}
         onClick={(e) => e.stopPropagation()}
