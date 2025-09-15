@@ -66,9 +66,15 @@ export default function StockInItem({}: StockInItemProps) {
     setShowReceipt(true);
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
   return (
-    <>
-      <Button onClick={() => setShowStockInItem(true)}>Stock In Items</Button>
+    <form onSubmit={handleSubmit}>
+      <Button type="button" onClick={() => setShowStockInItem(true)}>
+        Stock In Items
+      </Button>
 
       {/* Select items modal */}
       <Modal isVisible={showStockInItem} onClose={() => setShowStockInItem(false)}>
@@ -78,18 +84,23 @@ export default function StockInItem({}: StockInItemProps) {
             Select one or more items you want to stock in
           </ModalDescription>
         </ModalHeader>
+
         <ModalContent className="mb-4">
           <ViewTable columns={columns} data={dummyData} />
         </ModalContent>
+
         <ModalFooter className="flex gap-2">
           <Button
-            type="submit"
-            onClick={() => setShowStockInItems(true)}
+            type="button"
             disabled={selectedIds.length === 0}
+            onClick={() => {
+              setShowStockInItem(false);
+              setShowStockInItems(true);
+            }}
           >
             Next
           </Button>
-          <Button type="submit" onClick={() => setShowStockInItem(false)}>
+          <Button type="button" onClick={() => setShowStockInItem(false)}>
             Cancel
           </Button>
         </ModalFooter>
@@ -104,6 +115,7 @@ export default function StockInItem({}: StockInItemProps) {
               Enter quantity and unit of measurement for each item
             </ModalDescription>
           </ModalHeader>
+
           <ModalContent>
             <StockInItems
               items={selectedItems}
@@ -119,21 +131,27 @@ export default function StockInItem({}: StockInItemProps) {
         <Modal isVisible={showReceipt} onClose={() => setShowReceipt(false)}>
           <ModalHeader>
             <ModalTitle>Stock-In Receipt</ModalTitle>
-            <ModalDescription>Review your stock-in details below.</ModalDescription>
+            <ModalDescription>
+              Review your stock-in details below.
+            </ModalDescription>
           </ModalHeader>
+
           <ModalContent>
             <StockInReceipt
               receiptData={receiptData}
               onClose={() => setShowReceipt(false)}
             />
           </ModalContent>
+
           <ModalFooter className="space-y-2 gap-2">
-            <Button type="submit" onClick={() => setShowReceipt(false)}>
-              Done
-            </Button>
+            <Button type="submit" 
+            onClick={() => {
+              setShowReceipt(false); 
+              setShowStockInItem(true); 
+            }}>Done</Button>
           </ModalFooter>
         </Modal>
       )}
-    </>
+    </form>
   );
 }

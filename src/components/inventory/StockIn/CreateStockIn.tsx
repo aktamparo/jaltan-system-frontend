@@ -12,12 +12,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface CreateStockInProps {
   items: StockIn[];
   onClose: () => void;
-  onSave: (details: { itemId: string; quantity: number; uomName: string; uomId: string }[]) => void;
+  onSave: (
+    details: { itemId: string; quantity: number; uomName: string; uomId: string }[]
+  ) => void;
 }
 
 // Example UOM options for UI only
@@ -33,7 +41,7 @@ export default function CreateStockIn({
   onSave,
 }: CreateStockInProps) {
   const [details, setDetails] = useState(
-    items.map(item => ({
+    items.map((item) => ({
       itemId: item.id,
       quantity: 0,
       uomName: UOM_OPTIONS[0].label,
@@ -42,16 +50,14 @@ export default function CreateStockIn({
   );
 
   const handleChange = (idx: number, field: string, value: string | number) => {
-    setDetails(prev =>
-      prev.map((d, i) =>
-        i === idx ? { ...d, [field]: value } : d
-      )
+    setDetails((prev) =>
+      prev.map((d, i) => (i === idx ? { ...d, [field]: value } : d))
     );
   };
 
   const handleUomChange = (idx: number, uomId: string) => {
-    const uom = UOM_OPTIONS.find(u => u.id === uomId);
-    setDetails(prev =>
+    const uom = UOM_OPTIONS.find((u) => u.id === uomId);
+    setDetails((prev) =>
       prev.map((d, i) =>
         i === idx && uom ? { ...d, uomId, uomName: uom.label } : d
       )
@@ -59,7 +65,7 @@ export default function CreateStockIn({
   };
 
   return (
-    <div className="space-y-6">
+    <>
       <Table>
         <TableHeader>
           <TableRow>
@@ -77,7 +83,9 @@ export default function CreateStockIn({
                   id={`quantity-${item.id}`}
                   type="number"
                   value={details[idx].quantity}
-                  onChange={e => handleChange(idx, "quantity", Number(e.target.value))}
+                  onChange={(e) =>
+                    handleChange(idx, "quantity", Number(e.target.value))
+                  }
                   className="w-24"
                   min={0}
                 />
@@ -85,13 +93,13 @@ export default function CreateStockIn({
               <TableCell>
                 <Select
                   value={details[idx].uomId}
-                  onValueChange={val => handleUomChange(idx, val)}
+                  onValueChange={(val) => handleUomChange(idx, val)}
                 >
                   <SelectTrigger className="w-28">
                     <SelectValue placeholder="Select UOM" />
                   </SelectTrigger>
                   <SelectContent>
-                    {UOM_OPTIONS.map(uom => (
+                    {UOM_OPTIONS.map((uom) => (
                       <SelectItem key={uom.id} value={uom.id}>
                         {uom.label}
                       </SelectItem>
@@ -104,14 +112,15 @@ export default function CreateStockIn({
         </TableBody>
       </Table>
 
-      <div className="flex justify-start gap-2">
-        <Button variant="outline" onClick={onClose}>
+      <div className="flex justify-start gap-2 mt-4">
+        <Button type="button" variant="outline" onClick={onClose}>
           Back
         </Button>
-        <Button onClick={() => onSave(details)}>
+        <Button type="button" onClick={() => onSave(details)}>
           Save
         </Button>
       </div>
-    </div>
+    </>
   );
 }
+
