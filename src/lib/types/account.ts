@@ -21,11 +21,23 @@ export interface User {
     lastName: string;
     contactNumber: string;
     branch: {
-      name: string;
+      name?: string;
+      id?: string;
     };
   };
 }
 
 export interface AllUsers {
   data: User[];
+}
+
+export interface UserCreatePayload {
+  email: string;
+  password: string;
+  role: "ADMIN" | "STAFF";
+  status: "ACTIVE" | "INACTIVE";
+  firstName: string;
+  lastName: string;
+  contactNumber: string;
+  branchId: string;
 }

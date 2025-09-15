@@ -19,10 +19,6 @@ export function getColumns(
       ),
     },
     {
-      accessorKey: "id",
-      header: "ID",
-    },
-    {
       accessorKey: "name",
       header: "Branch Name",
     },

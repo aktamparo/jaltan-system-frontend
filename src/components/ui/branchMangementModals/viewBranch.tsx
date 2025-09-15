@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
+import { Branch } from "@/lib/types/branch";
 import { DataTable as ViewTable } from "@/components/ui/branchMangementModals/branchViewDetails/user-view-table";
 import { columns as branchColumns } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
 import {
@@ -13,13 +13,13 @@ import {
   ModalHeader,
   ModalTitle,
 } from "@/components/ui/modal";
-interface ViewBranchProps {
-  data: Branch[];
-}
-
-export default function ViewBranch({ data }: ViewBranchProps) {
+import {useGetAllBranches} from "@/lib/queries/branchQueries";
+import PaginationControls from "@/components/ui/PaginationControls";
+export default function ViewBranch() {
   const [showCreateBranch, setShowCreateBranch] = useState(false);
-
+  const [showViewTable, setShowViewTable] = useState(false);
+  const [page, setPage] = useState(1);
+  const { data: AllBranches, isLoading: isLoadingAllBranches } = useGetAllBranches(page);
   return (
     <>
       <Button
@@ -44,15 +44,17 @@ export default function ViewBranch({ data }: ViewBranchProps) {
         <ModalContent>
           <div className="space-y-4">
             <div className="space-y-2">
-              <ViewTable columns={branchColumns} data={data} />
+              <ViewTable columns={branchColumns} data={AllBranches?.data || []} />
             </div>
           </div>
         </ModalContent>
 
         <ModalFooter>
-          <Button type="submit" onClick={() => setShowCreateBranch(false)}>
-            Save
-          </Button>
+          <PaginationControls
+                      currentPage={page}
+                      totalPages={AllBranches?.metadata?.totalPages || 1}
+                      onPageChange={setPage}
+                    />
         </ModalFooter>
       </Modal>
     </>

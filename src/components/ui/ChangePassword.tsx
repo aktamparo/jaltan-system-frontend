@@ -5,6 +5,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useChangePassword } from "@/lib/mutations/authMutation";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Modal,
   ModalContent,
@@ -33,6 +35,8 @@ export default function ChangePassword() {
     currentPassword: "",
     newPassword: "",
   });
+  const changePasswordMutation = useChangePassword();
+  const queryClient = useQueryClient();
   const [errors, setErrors] = useState<Partial<PasswordFormData>>({});
 
 
@@ -67,6 +71,7 @@ export default function ChangePassword() {
   };
 
 
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
    
@@ -74,6 +79,22 @@ export default function ChangePassword() {
       console.log("Password change submitted:", formData);
       setShowChangePassword(false);
       setFormData({ currentPassword: "", newPassword: "" });
+     changePasswordMutation.mutate(
+      {
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
+      },
+      {
+
+        onError: (err: unknown) => {
+          let errorMsg = "Failed to change password";
+          if (err instanceof Error && err.message) {
+            errorMsg = err.message;
+          }
+          alert(errorMsg);
+        },
+      }
+    );
     }
   };
 

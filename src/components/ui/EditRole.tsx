@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { AllBranches, Branch } from "@/lib/types/branch";
 import {
   Modal,
   ModalContent,
@@ -13,14 +14,19 @@ import {
 import { getColumns as EditColumns } from "@/components/ui/userEditComponents/columns";
 import { DataTable as EditTable } from "@/components/ui/userEditComponents/user-view-table";
 import EditUser from "@/components/ui/editUser";
+import {useGetAllAccounts} from "@/lib/queries/accountQueries";
 import React from "react";
-import { AllUsers } from "@/lib/types/account";
-
-export default function ViewAllUsers({ data }: AllUsers) {
+import { AllUsers, User } from "@/lib/types/account";
+import PaginationControls from "@/components/ui/PaginationControls";
+export default function EditRole() {
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const [showViewTable, setShowViewTable] = useState(false);
   const [showEditUser, setShowEditUser] = useState(false);
-  const selectedUser = data.find((user) => user.id === selectedId);
+  const [page, setPage] = useState(1);
+  const { data: AllUsers, isLoading: isLoadingAllAccounts } = useGetAllAccounts(page);
+  const userArray: User[] = AllUsers?.data ?? [];
+  const selectedUser: User | undefined = userArray.find((user: User) => user.id === selectedId);
+
 
   return (
     <>
@@ -46,18 +52,26 @@ export default function ViewAllUsers({ data }: AllUsers) {
           <div className="w-full">
             <EditTable
               columns={EditColumns(selectedId, setSelectedId)}
-              data={data}
+              data={userArray}
             />
           </div>
         </ModalContent>
 
         <ModalFooter>
-          <Button
-            onClick={() => setShowEditUser(true)}
-            disabled={!selectedUser}
-          >
-            Edit Selected User
-          </Button>
+          <div className="flex flex-col w-full gap-4">
+            <PaginationControls
+              currentPage={page}
+              totalPages={AllUsers?.metadata?.totalPages || 1}
+              onPageChange={setPage}
+            />
+            <Button
+              onClick={() => setShowEditUser(true)}
+              disabled={!selectedUser}
+              className="self-end"
+            >
+              Edit Selected User
+            </Button>
+          </div>
         </ModalFooter>
       </Modal>
 

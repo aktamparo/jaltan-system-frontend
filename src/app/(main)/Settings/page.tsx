@@ -1,7 +1,6 @@
 "use client";
 import ViewBranch from "@/components/ui/branchMangementModals/viewBranch";
-import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
-import EditBranch from "@/components/ui/branchMangementModals/editBranch";
+
 import CreateBranch from "@/components/ui/branchMangementModals/createBranch";
 import ChangePassword from "@/components/ui/ChangePassword";
 import UpdateDetails from "@/components/ui/UpdateDetails";
@@ -9,46 +8,28 @@ import ViewLogin from "@/components/ui/ViewLogin";
 import ViewUsers from "@/components/ui/ViewUsers";
 import AddUser from "@/components/ui/AddUser";
 import EditRole from "@/components/ui/EditRole";
+import EditBranch from "@/components/ui/branchMangementModals/editBranch";
+import AddUOMType from "@/components/ui/uomManagementSettings/AddUOMType";
+import AddUOM from "@/components/ui/uomManagementSettings/AddUOM";
 import React from "react";
-import { useGetAllAccounts, useGetAccount } from "@/lib/queries/accountQueries";
-
+import {useGetAccount} from "@/lib/queries/accountQueries";
+import {useGetAllBranches} from "@/lib/queries/branchQueries";
+// // import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
+// import EditBranch from "@/components/ui/branchMangementModals/editBranch";
 export default function SettingsPage() {
-  const Branch: Branch[] = [
-    {
-      id: "1",
-      name: "Main Branch",
-      street: "123 Main St",
-      city: "Metro City",
-      province: "Metro Province",
-      zipCode: "1000",
-    },
-    {
-      id: "2",
-      name: "North Branch",
-      street: "456 North Ave",
-      city: "Northville",
-      province: "North Province",
-      zipCode: "2000",
-    },
-    {
-      id: "3",
-      name: "South Branch",
-      street: "789 South Rd",
-      city: "Southtown",
-      province: "South Province",
-      zipCode: "3000",
-    },
-  ];
 
-  const { data: AllUsers, isLoading: isLoadingAllAccounts } =
-    useGetAllAccounts();
+ 
   const { data: currentUser, isLoading: isLoadingCurrentAccount } =
     useGetAccount();
-  if (isLoadingAllAccounts) return <p>Loading...</p>;
   if (isLoadingCurrentAccount) return <p>Loading...</p>;
+  // const { data: AllBranches, isLoading: isLoadingAllBranches } = useGetAllBranches();
+   // const { data: AllUsers, isLoading: isLoadingAllAccounts } =
+    // useGetAllAccounts();
+  // if (isLoadingAllAccounts) return <p>Loading...</p>;
+  
+  // if (isLoadingAllBranches) return <p>Loading...</p>;
 
-  console.log(AllUsers);
-  console.log(AllUsers);
+
 
   return (
     <div>
@@ -71,17 +52,25 @@ export default function SettingsPage() {
                 User Management Settings
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
-                <ViewUsers data={AllUsers} />
-                <AddUser />
-                <EditRole data={AllUsers} />
+                <ViewUsers/>
+                <AddUser/>
+                <EditRole/>
               </div>
               <div className="text-lg font-medium justify-start">
                 Branch Management Settings
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
-                <CreateBranch />
-                <ViewBranch data={Branch} />
-                <EditBranch data={Branch} />
+                <CreateBranch/>
+                <ViewBranch/>
+                <EditBranch/>
+              </div>
+
+              <div className="text-lg font-medium justify-start">
+                UOM Management Settings
+              </div>
+              <div className="w-full h-full justify-start p-6 space-y-2">
+                <AddUOMType/>
+                <AddUOM/>
               </div>
             </>
           )}

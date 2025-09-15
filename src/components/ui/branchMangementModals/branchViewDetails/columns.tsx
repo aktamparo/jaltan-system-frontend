@@ -16,10 +16,6 @@ export type Branch = {
 
 export const columns: ColumnDef<Branch>[] = [
   {
-    accessorKey: "id",
-    header: "ID",
-  },
-  {
     accessorKey: "name",
     header: "Branch Name",
   },

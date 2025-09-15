@@ -11,11 +11,16 @@ import {
 } from "@/components/ui/modal";
 import { columns as ViewColumns } from "@/components/ui/userViewComponents/columns";
 import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
+import PaginationControls from "@/components/ui/PaginationControls";
 import { AllUsers } from "@/lib/types/account";
-
-export default function ViewUser({ data }: AllUsers) {
+import {useGetAllAccounts} from "@/lib/queries/accountQueries";
+export default function ViewUser() {
   const [showViewTable, setShowViewTable] = useState(false);
-
+  const [page, setPage] = useState(1);
+  const { data: AllUsers, isLoading: isLoadingAllAccounts } = useGetAllAccounts(page);
+ // const { data: AllUsers, isLoading: isLoadingAllAccounts } =
+    // useGetAllAccounts();
+    
   return (
     <div>
       <Button
@@ -38,11 +43,18 @@ export default function ViewUser({ data }: AllUsers) {
 
         <ModalContent>
           <div className="w-full">
-            <ViewTable columns={ViewColumns} data={data} />
+            <ViewTable columns={ViewColumns} data={AllUsers?.data || []} />
           </div>
         </ModalContent>
 
-        <ModalFooter></ModalFooter>
+        <ModalFooter>
+
+          <PaginationControls
+            currentPage={page}
+            totalPages={AllUsers?.metadata?.totalPages || 1}
+            onPageChange={setPage}
+          />
+        </ModalFooter>
       </Modal>
     </div>
   );
