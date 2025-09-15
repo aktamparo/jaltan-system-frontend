@@ -1,12 +1,10 @@
-"use client"
-
+"use client";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useChangePassword } from "@/lib/mutations/authMutation";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   Modal,
   ModalContent,
@@ -17,17 +15,15 @@ import {
 } from "@/components/ui/modal";
 import { z, ZodError } from "zod";
 
-
 const passwordSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
-  newPassword: z.string()
+  newPassword: z
+    .string()
     .min(8, "Password must be at least 8 characters")
     .max(8, "Password cannot exceed 8 characters"),
 });
 
-
 type PasswordFormData = z.infer<typeof passwordSchema>;
-
 
 export default function ChangePassword() {
   const [showChangePassword, setShowChangePassword] = useState(false);
@@ -36,19 +32,16 @@ export default function ChangePassword() {
     newPassword: "",
   });
   const changePasswordMutation = useChangePassword();
-  const queryClient = useQueryClient();
   const [errors, setErrors] = useState<Partial<PasswordFormData>>({});
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-   
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     if (errors[name as keyof PasswordFormData]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
-
 
   const validateForm = () => {
     try {
@@ -70,41 +63,36 @@ export default function ChangePassword() {
     }
   };
 
-
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-   
+
     if (validateForm()) {
       console.log("Password change submitted:", formData);
       setShowChangePassword(false);
       setFormData({ currentPassword: "", newPassword: "" });
-     changePasswordMutation.mutate(
-      {
-        currentPassword: formData.currentPassword,
-        newPassword: formData.newPassword,
-      },
-      {
-
-        onError: (err: unknown) => {
-          let errorMsg = "Failed to change password";
-          if (err instanceof Error && err.message) {
-            errorMsg = err.message;
-          }
-          alert(errorMsg);
+      changePasswordMutation.mutate(
+        {
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
         },
-      }
-    );
+        {
+          onError: (err: unknown) => {
+            let errorMsg = "Failed to change password";
+            if (err instanceof Error && err.message) {
+              errorMsg = err.message;
+            }
+            alert(errorMsg);
+          },
+        }
+      );
     }
   };
-
 
   const handleClose = () => {
     setShowChangePassword(false);
     setFormData({ currentPassword: "", newPassword: "" });
     setErrors({});
   };
-
 
   return (
     <>
@@ -117,18 +105,15 @@ export default function ChangePassword() {
           Update your password to keep your account secure
         </span>
       </Button>
-     
-      <Modal
-        isVisible={showChangePassword}
-        onClose={handleClose}
-      >
+
+      <Modal isVisible={showChangePassword} onClose={handleClose}>
         <ModalHeader>
           <ModalTitle>Change Password</ModalTitle>
           <ModalDescription>
             Update your password to keep your account secure
           </ModalDescription>
         </ModalHeader>
-       
+
         <form onSubmit={handleSubmit}>
           <ModalContent>
             <div className="space-y-4">
@@ -142,10 +127,12 @@ export default function ChangePassword() {
                   onChange={handleInputChange}
                 />
                 {errors.currentPassword && (
-                  <p className="text-sm text-red-500">{errors.currentPassword}</p>
+                  <p className="text-sm text-red-500">
+                    {errors.currentPassword}
+                  </p>
                 )}
               </div>
-             
+
               <div className="space-y-2">
                 <Label htmlFor="newPassword">New Password</Label>
                 <Input
@@ -158,14 +145,15 @@ export default function ChangePassword() {
                 {errors.newPassword && (
                   <p className="text-sm text-red-500">{errors.newPassword}</p>
                 )}
-                <p className="text-xs text-gray-500">Password must be exactly 8 characters</p>
+                <p className="text-xs text-gray-500">
+                  Password must be exactly 8 characters
+                </p>
               </div>
             </div>
           </ModalContent>
-         
+
           <ModalFooter>
-            <Button className="mt-4"
-            type="submit">
+            <Button className="mt-4" type="submit">
               Save
             </Button>
           </ModalFooter>

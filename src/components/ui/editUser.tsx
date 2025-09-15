@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User } from "@/lib/types/account";
-import { AllBranches, Branch } from "@/lib/types/branch";
+import { Branch } from "@/lib/types/branch";
 import { useUpdateUser } from "@/lib/mutations/accountMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetAllBranches } from "@/lib/queries/branchQueries";
@@ -15,7 +15,7 @@ interface EditUserProps {
   onClose: () => void;
 }
 
-export default function EditUser({ user, onClose}: EditUserProps) {
+export default function EditUser({ user, onClose }: EditUserProps) {
   const updateUserMutation = useUpdateUser();
 
   const [email, setEmail] = useState(user.email);
@@ -24,13 +24,13 @@ export default function EditUser({ user, onClose}: EditUserProps) {
   const [contactNumber, setContactNumber] = useState(
     user.employee.contactNumber
   );
-  const [branch, setBranch] = useState(user.employee.branch.id);
+  const [branchId, setBranchId] = useState(user.employee.branch.id);
   const [role, setRole] = useState(user.role);
   const [status, setStatus] = useState(user.status);
 
   const queryClient = useQueryClient();
-  const { data: AllBranches, isLoading: isLoadingAllAccounts } = useGetAllBranches(1, 100);
-  
+  const { data: AllBranches } = useGetAllBranches(1, 100);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -44,7 +44,7 @@ export default function EditUser({ user, onClose}: EditUserProps) {
           firstName,
           lastName,
           contactNumber,
-          branch: { id:branch },
+          branch: { id: branchId },
         },
       },
       {
@@ -94,8 +94,13 @@ export default function EditUser({ user, onClose}: EditUserProps) {
           onChange={(e) => setContactNumber(e.target.value)}
         />
       </div>
-      <select id="branch" className="w-full border rounded px-2 py-1">
-        {(AllBranches.data ?? []).map((branch: Branch) => (
+      <select
+        id="branch"
+        className="w-full border rounded px-2 py-1"
+        value={branchId}
+        onChange={(e) => setBranchId(e.target.value)}
+      >
+        {(AllBranches?.data ?? []).map((branch: Branch) => (
           <option key={branch.id} value={branch.id}>
             {branch.name}
           </option>

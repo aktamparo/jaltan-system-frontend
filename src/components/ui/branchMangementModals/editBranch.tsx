@@ -6,7 +6,7 @@ import { Branch } from "@/lib/types/branch";
 import EditBranchModal from "@/components/ui/branchMangementModals/editBranchModal";
 import { DataTable as ViewTable } from "@/components/ui/branchMangementModals/branchEditDetails/user-view-table";
 import { getColumns } from "@/components/ui/branchMangementModals/branchEditDetails/columns";
-import {useGetAllBranches} from "@/lib/queries/branchQueries";
+import { useGetAllBranches } from "@/lib/queries/branchQueries";
 import PaginationControls from "@/components/ui/PaginationControls";
 import {
   Modal,
@@ -17,17 +17,17 @@ import {
   ModalTitle,
 } from "@/components/ui/modal";
 
-
 export default function EditBranch() {
   const [showEditBranch, setShowEditBranch] = useState(false);
   const [showEditBranchModal, setShowEditBranchModal] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const columns = getColumns(selectedId, setSelectedId);
-  
 
   const [page, setPage] = useState(1);
-  const { data: AllBranches, isLoading: isLoadingAllBranches } = useGetAllBranches(page);
-  const selectedBranch: Branch | undefined = AllBranches?.data.find((branch: Branch) => branch.id === selectedId);
+  const { data: AllBranches } = useGetAllBranches(page);
+  const selectedBranch: Branch | undefined = AllBranches?.data.find(
+    (branch: Branch) => branch.id === selectedId
+  );
 
   return (
     <>
@@ -58,10 +58,10 @@ export default function EditBranch() {
 
         <ModalFooter>
           <PaginationControls
-                        currentPage={page}
-                        totalPages={AllBranches?.metadata?.totalPages || 1}
-                        onPageChange={setPage}
-                      />
+            currentPage={page}
+            totalPages={AllBranches?.metadata?.totalPages || 1}
+            onPageChange={setPage}
+          />
           <Button
             onClick={() => setShowEditBranchModal(true)}
             disabled={!selectedBranch}

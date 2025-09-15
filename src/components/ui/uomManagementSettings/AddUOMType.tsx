@@ -23,10 +23,7 @@ export default function AddUOMType() {
   const [uom, setUOM] = useState("");
   const queryClient = useQueryClient();
   const createUOMType = useCreateUOMType();
-  const { data: AllUOM, isLoading: isLoadingAllUOMTypes } = useGetAllUOM(
-    1,
-    100
-  );
+  const { data: AllUOM } = useGetAllUOM(1, 100);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createUOMType.mutate(

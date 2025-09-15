@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useGetUOMsByTypeId } from "@/lib/queries/uomQueries";
 import { InventoryItem } from "@/lib/types/inventory";
+import { UoM } from "@/lib/types/uom";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -14,6 +14,9 @@ interface ItemQuantityRowProps {
   item: InventoryItem;
   quantity: number;
   selectedUomId: string;
+  availableUoms: UoM[];
+  isLoadingUoms?: boolean;
+  uomsError?: Error | null;
   onQuantityChange: (quantity: number) => void;
   onUomChange: (uomId: string) => void;
 }
@@ -22,15 +25,12 @@ export function ItemQuantityRow({
   item,
   quantity,
   selectedUomId,
+  availableUoms,
+  isLoadingUoms = false,
+  uomsError = null,
   onQuantityChange,
   onUomChange,
 }: ItemQuantityRowProps) {
-  const {
-    data: availableUoms,
-    isLoading: uomsLoading,
-    error: uomsError,
-  } = useGetUOMsByTypeId(item.masterItem.uomTypeId);
-
   // Set initial UoM if not already set
   useEffect(() => {
     if (availableUoms && availableUoms.length > 0 && !selectedUomId) {
@@ -60,7 +60,7 @@ export function ItemQuantityRow({
           min="0.1"
           step="0.1"
         />
-        {uomsLoading ? (
+        {isLoadingUoms ? (
           <div className="w-20 h-10 border rounded flex items-center justify-center">
             <span className="text-sm text-gray-400">Loading...</span>
           </div>

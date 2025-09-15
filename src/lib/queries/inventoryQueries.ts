@@ -19,3 +19,22 @@ export const usePaginatedInventoryItems = (params: PaginationParams) => {
     refetchOnWindowFocus: true,
   });
 };
+
+export const usePaginatedStockOuts = (params: PaginationParams) => {
+  return useQuery({
+    queryKey: ["stockOuts", "paginated", params],
+    queryFn: () => inventoryService.getAllStockOuts(params),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: true,
+  });
+};
+
+export const useGetStockOutById = (id: string) => {
+  return useQuery({
+    queryKey: ["stockOut", id],
+    queryFn: () => inventoryService.getStockOutById(id),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 10,
+    refetchOnWindowFocus: true,
+  });
+};

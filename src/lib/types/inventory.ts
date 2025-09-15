@@ -86,3 +86,101 @@ export interface CreateStockInResponse {
   message: string;
   stockInReceipt: StockInReceipt;
 }
+
+// Stock Out Types
+export interface CreateStockOutItem {
+  itemId: string;
+  uomId: string;
+  quantity: number;
+  isDamagedGoods: boolean;
+  comment?: string;
+}
+
+export interface CreateStockOutRequest {
+  items: CreateStockOutItem[];
+}
+
+export interface UpdateStockOutRequest {
+  items: CreateStockOutItem[];
+}
+
+export interface StockOutReceiptItem {
+  stockOutId: string;
+  itemId: string;
+  inventoryId: string;
+  uomId: string;
+  quantity: number;
+  convertedQuantity: number;
+  isDamagedGoods: boolean;
+  comment: string | null;
+  uomName: string;
+  uomSymbol: string;
+}
+
+export interface StockOutReceipt {
+  stockOut: {
+    id: string;
+    createdAt: string;
+    createdById: string;
+    modifiedAt: string;
+    modifiedById: string;
+  };
+  items: StockOutReceiptItem[];
+}
+
+export interface CreateStockOutResponse {
+  message: string;
+  stockOutReceipt: StockOutReceipt;
+}
+
+export interface StockOutItem {
+  id: string;
+  inventoryId: string;
+  stockOutId: string;
+  itemId: string;
+  uomId: string;
+  uomName: string;
+  uomSymbol: string;
+  quantity: number;
+  convertedQuantity: number;
+  isDamagedGoods: boolean;
+  comment: string | null;
+  name: string;
+  currentQuantity: number;
+}
+
+export interface Account {
+  id: string;
+  email: string;
+  role: "ADMIN" | "STAFF";
+  status: "ACTIVE" | "INACTIVE";
+  employee: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface StockOut {
+  id: string;
+  createdAt: string;
+  createdById: string;
+  modifiedAt: string;
+  modifiedById: string;
+  createdBy?: Account;
+  modifiedBy?: Account;
+  items: StockOutItem[];
+}
+
+export interface PaginatedStockOutResponse {
+  metadata: PaginationMetadata;
+  data: StockOut[];
+}
+
+export interface UpdateStockOutResponse {
+  id: string;
+  createdAt: string;
+  createdById: string;
+  modifiedAt: string;
+  modifiedById: string;
+  items: StockOutItem[];
+}

@@ -12,24 +12,19 @@ import EditBranch from "@/components/ui/branchMangementModals/editBranch";
 import AddUOMType from "@/components/ui/uomManagementSettings/AddUOMType";
 import AddUOM from "@/components/ui/uomManagementSettings/AddUOM";
 import React from "react";
-import {useGetAccount} from "@/lib/queries/accountQueries";
-import {useGetAllBranches} from "@/lib/queries/branchQueries";
+import { useGetAccount } from "@/lib/queries/accountQueries";
 // // import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
 // import EditBranch from "@/components/ui/branchMangementModals/editBranch";
 export default function SettingsPage() {
-
- 
   const { data: currentUser, isLoading: isLoadingCurrentAccount } =
     useGetAccount();
   if (isLoadingCurrentAccount) return <p>Loading...</p>;
   // const { data: AllBranches, isLoading: isLoadingAllBranches } = useGetAllBranches();
-   // const { data: AllUsers, isLoading: isLoadingAllAccounts } =
-    // useGetAllAccounts();
+  // const { data: AllUsers, isLoading: isLoadingAllAccounts } =
+  // useGetAllAccounts();
   // if (isLoadingAllAccounts) return <p>Loading...</p>;
-  
+
   // if (isLoadingAllBranches) return <p>Loading...</p>;
-
-
 
   return (
     <div>
@@ -52,25 +47,25 @@ export default function SettingsPage() {
                 User Management Settings
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
-                <ViewUsers/>
-                <AddUser/>
-                <EditRole/>
+                <ViewUsers />
+                <AddUser />
+                <EditRole />
               </div>
               <div className="text-lg font-medium justify-start">
                 Branch Management Settings
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
-                <CreateBranch/>
-                <ViewBranch/>
-                <EditBranch/>
+                <CreateBranch />
+                <ViewBranch />
+                <EditBranch />
               </div>
 
               <div className="text-lg font-medium justify-start">
                 UOM Management Settings
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
-                <AddUOMType/>
-                <AddUOM/>
+                <AddUOMType />
+                <AddUOM />
               </div>
             </>
           )}

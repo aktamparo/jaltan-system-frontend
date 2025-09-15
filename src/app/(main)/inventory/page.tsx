@@ -1,14 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Searchbar from "@/components/ui/searchbar";
 import StockInItem from "@/components/inventory/StockIn/StockInItem";
 import UpdateStockIn from "@/components/inventory/StockIn/UpdateStockIn";
 import { SelectableInventoryTable } from "@/components/inventory/PaginatedInventory/selectable-inventory-table";
-import { ItemQuantityRow } from "@/components/inventory/StockIn/ItemQuantityRow";
+import { UnifiedItemRow } from "@/components/inventory/shared/UnifiedItemRow";
 import { usePaginatedInventoryItems } from "@/lib/queries/inventoryQueries";
-import { useCreateStockIn } from "@/lib/mutations/inventoryMutations";
+import {
+  useCreateStockIn,
+  useCreateStockOut,
+} from "@/lib/mutations/inventoryMutations";
+import { useMultipleUoMQueries } from "@/lib/hooks/useMultipleUoMQueries";
 import { PaginationParams, InventoryItem } from "@/lib/types/inventory";
+import { UoM } from "@/lib/types/uom";
 import { Button } from "@/components/ui/button";
 import {
   Modal,
@@ -18,18 +23,38 @@ import {
   ModalDescription,
 } from "@/components/ui/modal";
 
+type OperationType = "stock-in" | "stock-out";
+
 export default function InventoryPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [operationType, setOperationType] = useState<OperationType>("stock-in");
   const [selectedItems, setSelectedItems] = useState<InventoryItem[]>([]);
   const [showQuantityModal, setShowQuantityModal] = useState(false);
+
+  // Stock In quantities
   const [quantities, setQuantities] = useState<
     Record<string, { quantity: number; uomId: string }>
   >({});
+
+  // Stock Out quantities with additional fields
+  const [stockOutQuantities, setStockOutQuantities] = useState<
+    Record<
+      string,
+      {
+        quantity: number;
+        uomId: string;
+        isDamagedGoods: boolean;
+        comment: string;
+      }
+    >
+  >({});
+
   const pageSize = 15;
 
   const createStockInMutation = useCreateStockIn();
+  const createStockOutMutation = useCreateStockOut();
 
   const paginationParams: PaginationParams = {
     page: currentPage,
@@ -43,6 +68,27 @@ export default function InventoryPage() {
     error,
   } = usePaginatedInventoryItems(paginationParams);
 
+  // Get unique UoM type IDs from selected items
+  const uniqueUomTypeIds = useMemo(() => {
+    const typeIds = selectedItems.map((item) => item.masterItem.uomTypeId);
+    return [...new Set(typeIds)];
+  }, [selectedItems]);
+
+  // Optimized UoM fetching using the new hook
+  const {
+    uomsByType,
+    isLoading: isLoadingUoms,
+    error: uomsError,
+  } = useMultipleUoMQueries(uniqueUomTypeIds);
+
+  // Function to get UoMs for a specific item
+  const getUomsForItem = useCallback(
+    (item: InventoryItem): UoM[] => {
+      return uomsByType[item.masterItem.uomTypeId] || [];
+    },
+    [uomsByType]
+  );
+
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
   };
@@ -52,13 +98,22 @@ export default function InventoryPage() {
   };
 
   const handleStartStockIn = () => {
+    setOperationType("stock-in");
     setIsSelectionMode(true);
     setSelectedItems([]);
   };
 
-  const handleCancelStockIn = () => {
+  const handleStartStockOut = () => {
+    setOperationType("stock-out");
+    setIsSelectionMode(true);
+    setSelectedItems([]);
+  };
+
+  const handleCancelOperation = () => {
     setIsSelectionMode(false);
     setSelectedItems([]);
+    setQuantities({});
+    setStockOutQuantities({});
   };
 
   const handleItemSelect = (item: InventoryItem) => {
@@ -73,38 +128,89 @@ export default function InventoryPage() {
   };
 
   const handleNext = () => {
-    // Initialize quantities for selected items
-    const initialQuantities: Record<
-      string,
-      { quantity: number; uomId: string }
-    > = {};
-    selectedItems.forEach((item) => {
-      initialQuantities[item.id] = {
-        quantity: 0,
-        uomId: item.uom.id,
-      };
-    });
-    setQuantities(initialQuantities);
+    if (operationType === "stock-in") {
+      const initialQuantities: Record<
+        string,
+        { quantity: number; uomId: string }
+      > = {};
+      selectedItems.forEach((item) => {
+        initialQuantities[item.id] = {
+          quantity: 0,
+          uomId: item.uom.id,
+        };
+      });
+      setQuantities(initialQuantities);
+    } else {
+      const initialStockOutQuantities: Record<
+        string,
+        {
+          quantity: number;
+          uomId: string;
+          isDamagedGoods: boolean;
+          comment: string;
+        }
+      > = {};
+      selectedItems.forEach((item) => {
+        initialStockOutQuantities[item.id] = {
+          quantity: 0,
+          uomId: item.uom.id,
+          isDamagedGoods: false,
+          comment: "",
+        };
+      });
+      setStockOutQuantities(initialStockOutQuantities);
+    }
     setShowQuantityModal(true);
   };
 
+  // Stock In handlers
   const handleQuantityChange = (itemId: string, quantity: number) => {
     setQuantities((prev) => ({
       ...prev,
-      [itemId]: {
-        ...prev[itemId],
-        quantity,
-      },
+      [itemId]: { ...prev[itemId], quantity },
     }));
   };
 
   const handleUomChange = (itemId: string, uomId: string) => {
     setQuantities((prev) => ({
       ...prev,
+      [itemId]: { ...prev[itemId], uomId },
+    }));
+  };
+
+  // Stock Out handlers
+  const handleStockOutQuantityChange = (itemId: string, quantity: number) => {
+    setStockOutQuantities((prev) => ({
+      ...prev,
+      [itemId]: { ...prev[itemId], quantity },
+    }));
+  };
+
+  const handleStockOutUomChange = (itemId: string, uomId: string) => {
+    setStockOutQuantities((prev) => ({
+      ...prev,
+      [itemId]: { ...prev[itemId], uomId },
+    }));
+  };
+
+  const handleDamagedGoodsChange = (
+    itemId: string,
+    isDamagedGoods: boolean
+  ) => {
+    setStockOutQuantities((prev) => ({
+      ...prev,
       [itemId]: {
         ...prev[itemId],
-        uomId,
+        isDamagedGoods,
+        comment: isDamagedGoods ? prev[itemId]?.comment || "" : "",
       },
+    }));
+  };
+
+  const handleCommentChange = (itemId: string, comment: string) => {
+    setStockOutQuantities((prev) => ({
+      ...prev,
+      [itemId]: { ...prev[itemId], comment },
     }));
   };
 
@@ -132,6 +238,45 @@ export default function InventoryPage() {
     );
   };
 
+  const handleSubmitStockOut = () => {
+    const items = selectedItems.map((item) => ({
+      itemId: item.id,
+      uomId: stockOutQuantities[item.id].uomId,
+      quantity: stockOutQuantities[item.id].quantity,
+      isDamagedGoods: stockOutQuantities[item.id].isDamagedGoods,
+      comment: stockOutQuantities[item.id].comment || undefined,
+    }));
+
+    createStockOutMutation.mutate(
+      { items },
+      {
+        onSuccess: () => {
+          setShowQuantityModal(false);
+          setIsSelectionMode(false);
+          setSelectedItems([]);
+          setStockOutQuantities({});
+          alert("Stock-out created successfully!");
+        },
+        onError: (error) => {
+          alert(`Failed to create stock-out: ${error.message}`);
+        },
+      }
+    );
+  };
+
+  const isValidSubmission = () => {
+    if (operationType === "stock-in") {
+      return selectedItems.every((item) => quantities[item.id]?.quantity > 0);
+    } else {
+      return selectedItems.every(
+        (item) =>
+          stockOutQuantities[item.id]?.quantity > 0 &&
+          (!stockOutQuantities[item.id]?.isDamagedGoods ||
+            stockOutQuantities[item.id]?.comment.trim().length > 0)
+      );
+    }
+  };
+
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
@@ -141,7 +286,12 @@ export default function InventoryPage() {
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-xl font-medium m-0">Inventory</h1>
         {!isSelectionMode && (
-          <Button onClick={handleStartStockIn}>Stock In</Button>
+          <div className="flex gap-2">
+            <Button onClick={handleStartStockIn}>Stock In</Button>
+            <Button onClick={handleStartStockOut} variant="outline">
+              Stock Out
+            </Button>
+          </div>
         )}
       </div>
 
@@ -155,9 +305,9 @@ export default function InventoryPage() {
         {isSelectionMode && (
           <div className="flex gap-2">
             <span className="text-sm text-gray-600 mr-2">
-              {selectedItems.length} item(s) selected
+              {selectedItems.length} item(s) selected for {operationType}
             </span>
-            <Button variant="outline" onClick={handleCancelStockIn}>
+            <Button variant="outline" onClick={handleCancelOperation}>
               Cancel
             </Button>
             <Button onClick={handleNext} disabled={selectedItems.length === 0}>
@@ -190,7 +340,6 @@ export default function InventoryPage() {
           <div className="flex flex-row items-center gap-2 mt-2 ml-auto">
             <StockInItem />
             <UpdateStockIn />
-            {/* <StockOutItem /> */}
           </div>
         )}
       </div>
@@ -201,23 +350,61 @@ export default function InventoryPage() {
         onClose={() => setShowQuantityModal(false)}
       >
         <ModalHeader>
-          <ModalTitle>Set Quantities</ModalTitle>
+          <ModalTitle>
+            Set {operationType === "stock-in" ? "Stock In" : "Stock Out"}{" "}
+            Details
+          </ModalTitle>
           <ModalDescription>
-            Enter the quantity and unit of measurement for each item
+            Enter the quantity
+            {operationType === "stock-out" ? ", damaged goods status," : ""} and
+            unit of measurement for each item
           </ModalDescription>
         </ModalHeader>
         <ModalContent>
           <div className="space-y-4">
             {selectedItems.map((item) => (
-              <ItemQuantityRow
+              <UnifiedItemRow
                 key={item.id}
                 item={item}
-                quantity={quantities[item.id]?.quantity || 0}
-                selectedUomId={quantities[item.id]?.uomId || item.uom.id}
-                onQuantityChange={(quantity) =>
-                  handleQuantityChange(item.id, quantity)
+                mode={operationType}
+                quantity={
+                  operationType === "stock-in"
+                    ? quantities[item.id]?.quantity || 0
+                    : stockOutQuantities[item.id]?.quantity || 0
                 }
-                onUomChange={(uomId) => handleUomChange(item.id, uomId)}
+                selectedUomId={
+                  operationType === "stock-in"
+                    ? quantities[item.id]?.uomId || item.uom.id
+                    : stockOutQuantities[item.id]?.uomId || item.uom.id
+                }
+                availableUoms={getUomsForItem(item)}
+                isLoadingUoms={isLoadingUoms}
+                uomsError={uomsError}
+                onQuantityChange={(quantity) => {
+                  if (operationType === "stock-in") {
+                    handleQuantityChange(item.id, quantity);
+                  } else {
+                    handleStockOutQuantityChange(item.id, quantity);
+                  }
+                }}
+                onUomChange={(uomId) => {
+                  if (operationType === "stock-in") {
+                    handleUomChange(item.id, uomId);
+                  } else {
+                    handleStockOutUomChange(item.id, uomId);
+                  }
+                }}
+                // Stock Out specific props
+                isDamagedGoods={
+                  stockOutQuantities[item.id]?.isDamagedGoods || false
+                }
+                comment={stockOutQuantities[item.id]?.comment || ""}
+                onDamagedGoodsChange={(isDamaged) =>
+                  handleDamagedGoodsChange(item.id, isDamaged)
+                }
+                onCommentChange={(comment) =>
+                  handleCommentChange(item.id, comment)
+                }
               />
             ))}
           </div>
@@ -229,19 +416,26 @@ export default function InventoryPage() {
               Back
             </Button>
             <Button
-              onClick={handleSubmitStockIn}
+              onClick={
+                operationType === "stock-in"
+                  ? handleSubmitStockIn
+                  : handleSubmitStockOut
+              }
               disabled={
-                createStockInMutation.isPending ||
-                selectedItems.some(
-                  (item) =>
-                    !quantities[item.id]?.quantity ||
-                    quantities[item.id]?.quantity <= 0
-                )
+                (operationType === "stock-in"
+                  ? createStockInMutation.isPending
+                  : createStockOutMutation.isPending) || !isValidSubmission()
               }
             >
-              {createStockInMutation.isPending
+              {(
+                operationType === "stock-in"
+                  ? createStockInMutation.isPending
+                  : createStockOutMutation.isPending
+              )
                 ? "Submitting..."
-                : "Submit Stock In"}
+                : `Submit ${
+                    operationType === "stock-in" ? "Stock In" : "Stock Out"
+                  }`}
             </Button>
           </div>
         </ModalContent>
