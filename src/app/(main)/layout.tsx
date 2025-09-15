@@ -19,7 +19,6 @@ export default function MainLayout({
 
 function Content({ children }: { children: React.ReactNode }) {
   const { data: account, isLoading, error } = useGetAccount();
-  console.log("Account data:", account);
 
   if (isLoading) return <div>Loading account...</div>;
   if (error) return <div>Failed to load account</div>;
