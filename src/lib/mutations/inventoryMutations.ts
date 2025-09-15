@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { inventoryService } from "../services/inventoryServices";
+import { inventoryService,createMasteritem } from "../services/inventoryServices";
 import { handleApiError, handleApiSuccess } from "../utils/errorHandler";
 import {
   CreateStockInRequest,
@@ -71,3 +71,8 @@ export const useUpdateStockOut = () => {
     },
   });
 };
+
+export const useCreateMasterItem = () =>
+  useMutation({
+    mutationFn: createMasteritem,
+  });

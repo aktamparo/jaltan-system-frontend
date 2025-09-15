@@ -10,7 +10,57 @@ import {
   UpdateStockOutResponse,
   StockOut,
   PaginatedStockOutResponse,
+  CreateMasterItem
 } from "../types/inventory";
+
+
+export const createMasteritem = async (itemData : CreateMasterItem) => {
+  const payload = { 
+    name:itemData.name,
+    description:itemData.description,
+    category:itemData.category,
+     uomTypeId:itemData.uomTypeId };
+  const response = await fetch(`${BASE_URL}/inventory`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  let errorMsg = "Failed to create Item";
+  if (!response.ok) {
+    try {
+      const errorData = await response.json();
+      if (errorData.message) {
+        errorMsg = Array.isArray(errorData.message)
+          ? errorData.message.join(", ")
+          : errorData.message;
+      }
+    } catch {
+      // fallback if response is not JSON
+    }
+    throw new Error(errorMsg);
+  }
+
+  return response.json();
+};
+
+export const getAllMasteritems = async (page = 1, limit = 10) => {
+  const response = await fetch(`${BASE_URL}/inventory/master-items?page=${page}&limit=${limit}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch master items");
+  }
+
+  const data = await response.json();
+  return data;
+};
 
 export const inventoryService = {
   getAllBranchItems: async (page: number) => {

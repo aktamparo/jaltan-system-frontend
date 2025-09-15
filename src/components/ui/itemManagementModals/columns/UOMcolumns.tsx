@@ -1,24 +1,28 @@
 "use client";
 
-import { UomType} from "@/lib/types/uom";
 import { ColumnDef } from "@tanstack/react-table";
 //import { ReferrerEnum } from "next/dist/lib/metadata/types/metadata-types"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
+import {UoM}  from "@//lib/types/uom";
 
-export const columns: ColumnDef<UomType>[] = [
+export const columns: ColumnDef<UoM>[] = [
   {
     accessorKey: "name",
-    header: "Name",
+    header: "UOM Name",
   },
   {
-    accessorKey: "uomType",
-    header: "Last Name",
+    accessorKey: "symbol",
+    header: "Symbol",
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "isBase",
+    header: "Is Base?",
   },
-
+  {
+    accessorKey: "conversionFactor",
+    header: "Conversion Factor",
+  },
 ];
+

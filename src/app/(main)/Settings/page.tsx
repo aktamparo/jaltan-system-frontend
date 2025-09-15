@@ -11,6 +11,10 @@ import EditRole from "@/components/ui/EditRole";
 import EditBranch from "@/components/ui/branchMangementModals/editBranch";
 import AddUOMType from "@/components/ui/uomManagementSettings/AddUOMType";
 import AddUOM from "@/components/ui/uomManagementSettings/AddUOM";
+import ViewUOMType from "@/components/ui/uomManagementSettings/ViewUOMType";
+import ViewUOM from "@/components/ui/uomManagementSettings/ViewUOM";
+import CreateItem from "@/components/ui/itemManagementModals/CreateItem";
+import ViewItem from "@/components/ui/itemManagementModals/ViewItem";
 import React from "react";
 import { useGetAccount } from "@/lib/queries/accountQueries";
 // // import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
@@ -66,6 +70,15 @@ export default function SettingsPage() {
               <div className="w-full h-full justify-start p-6 space-y-2">
                 <AddUOMType />
                 <AddUOM />
+                <ViewUOMType />
+                <ViewUOM />
+              </div>
+              <div className="text-lg font-medium justify-start">
+                Master Item Settings
+              </div>
+              <div className="w-full h-full justify-start p-6 space-y-2">
+                <CreateItem />
+                <ViewItem/>
               </div>
             </>
           )}

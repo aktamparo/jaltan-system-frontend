@@ -14,7 +14,14 @@ export interface MasterItem {
   createdAt: string;
   modifiedAt: string;
 }
+export interface CreateMasterItem {
+  name: string;
+  description: string;
+  category: ("FRIDGE" | "PANTRY")[];
+  uomTypeId: string;
+  
 
+}
 export interface Inventory {
   id: string;
   branchId: string;
