@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
-import {useCreateUOM} from "@/lib/mutations/uomMutations";
+import { useCreateUOM } from "@/lib/mutations/uomMutations";
 import {
   Modal,
   ModalContent,
@@ -15,7 +15,7 @@ import {
   ModalTitle,
 } from "@/components/ui/modal";
 import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
-import {Uom,UomType} from "@/lib/types/uom";
+import { UomType } from "@/lib/types/uom";
 export default function AddUOM() {
   const [showCreateUOM, setShowCreateUOM] = useState(false);
   const [name, setName] = useState("");
@@ -24,14 +24,15 @@ export default function AddUOM() {
   const [uomTypeId, setUomTypeId] = useState("");
   const queryClient = useQueryClient();
   const createUOM = useCreateUOM();
-  const { data: AllUOMType, isLoading: isLoadingAllUOMTypes } = useGetAllUOMTypes(1, 100);
+  const { data: AllUOMType } = useGetAllUOMTypes(1, 100);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createUOM.mutate(
       {
         name,
         symbol,
-        conversionFactor: conversionFactor === "" ? 0 : parseFloat(conversionFactor),
+        conversionFactor:
+          conversionFactor === "" ? 0 : parseFloat(conversionFactor),
         uomTypeId,
       },
       {
@@ -41,7 +42,7 @@ export default function AddUOM() {
           setSymbol("");
           setConversionFactor("");
           setUomTypeId("");
-          setShowCreateUOM(false)
+          setShowCreateUOM(false);
         },
         onError: (err: unknown) => {
           let errorMsg = "Failed to create user";
@@ -53,7 +54,6 @@ export default function AddUOM() {
       }
     );
   };
-
 
   return (
     <>
@@ -67,10 +67,7 @@ export default function AddUOM() {
         </span>
       </Button>
 
-      <Modal
-        isVisible={showCreateUOM}
-        onClose={() => setShowCreateUOM(false)}
-      >
+      <Modal isVisible={showCreateUOM} onClose={() => setShowCreateUOM(false)}>
         <ModalHeader>
           <ModalTitle>Create UOM Type</ModalTitle>
           <ModalDescription>
@@ -80,18 +77,31 @@ export default function AddUOM() {
         <form onSubmit={handleSubmit}>
           <ModalContent>
             <div className="space-y-4">
-
               <div className="space-y-2">
                 <Label htmlFor="uomName">Name</Label>
-                <Input id="uomName" value={name} onChange={e => setName(e.target.value)} />
+                <Input
+                  id="uomName"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="uomSymbol">Symbol</Label>
-                <Input id="uomSymbol" value={symbol} onChange={e => setSymbol(e.target.value)} />
+                <Input
+                  id="uomSymbol"
+                  value={symbol}
+                  onChange={(e) => setSymbol(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="uomConversionFactor">Conversion Factor</Label>
-                <Input id="uomConversionFactor" value={conversionFactor} onChange={e => setConversionFactor(e.target.value)} type="number" step="any" />
+                <Input
+                  id="uomConversionFactor"
+                  value={conversionFactor}
+                  onChange={(e) => setConversionFactor(e.target.value)}
+                  type="number"
+                  step="any"
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="standardUoMId">Standard UOM</Label>
@@ -99,9 +109,11 @@ export default function AddUOM() {
                   id="uomTypeId"
                   className="w-full border rounded px-2 py-1"
                   value={uomTypeId}
-                  onChange={e => setUomTypeId(e.target.value)}
+                  onChange={(e) => setUomTypeId(e.target.value)}
                 >
-                  <option value="" disabled>Select a UOM Type</option>
+                  <option value="" disabled>
+                    Select a UOM Type
+                  </option>
                   {(AllUOMType?.data ?? []).map((uom: UomType) => (
                     <option key={uom.id} value={uom.id}>
                       {uom.type}
@@ -113,11 +125,8 @@ export default function AddUOM() {
           </ModalContent>
 
           <ModalFooter>
-            <Button type="submit">
-              Save
-            </Button>
+            <Button type="submit">Save</Button>
           </ModalFooter>
-
         </form>
       </Modal>
     </>
