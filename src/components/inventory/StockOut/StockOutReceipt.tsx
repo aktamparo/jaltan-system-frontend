@@ -10,7 +10,6 @@ import {
   IconFileInvoice,
   IconCalendarTime,
   IconUser,
-  IconBox,
 } from "@tabler/icons-react";
 
 interface Employee {
@@ -26,7 +25,7 @@ interface ModifiedBy {
   employee: Employee;
 }
 
-interface StockIn {
+interface StockOut {
   id: string;
   createdAt: string;
   modifiedAt: string;
@@ -39,29 +38,31 @@ interface ReceiptItem {
   itemName: string;
   quantity: number;
   uomSymbol: string;
+  isDamagedGoods?: boolean;
+  comment?: string;
 }
 
 export interface ReceiptData {
-  stockIn: StockIn;
+  stockOut: StockOut;
   items: ReceiptItem[];
 }
 
-interface StockInReceiptProps {
+interface StockOutReceiptProps {
   receiptData: ReceiptData;
   onClose: () => void;
 }
 
-export default function StockInReceipt({ receiptData }: StockInReceiptProps) {
+export default function StockOutReceipt({ receiptData }: StockOutReceiptProps) {
   return (
     <div className="flex flex-col items-center">
       <Card className="w-[420px] shadow-xl rounded-2xl border">
         <CardHeader className="text-center">
           <IconFileInvoice className="mx-auto h-10 w-10 text-gray-700" />
           <CardTitle className="mt-2 text-lg font-medium text-gray-600">
-            Stock In Receipt
+            Stock Out Receipt
           </CardTitle>
           <p className="text-2xl font-bold text-gray-800 mt-1 tracking-wide">
-            #{receiptData.stockIn.id}
+            #{receiptData.stockOut.id}
           </p>
         </CardHeader>
 
@@ -73,7 +74,7 @@ export default function StockInReceipt({ receiptData }: StockInReceiptProps) {
               <span>Created</span>
             </div>
             <span className="font-medium">
-              {new Date(receiptData.stockIn.createdAt).toLocaleDateString()}
+              {new Date(receiptData.stockOut.createdAt).toLocaleDateString()}
             </span>
           </div>
 
@@ -84,8 +85,8 @@ export default function StockInReceipt({ receiptData }: StockInReceiptProps) {
               <span>Created By</span>
             </div>
             <span className="font-medium">
-              {receiptData.stockIn.createdBy.employee.firstName}{" "}
-              {receiptData.stockIn.createdBy.employee.lastName}
+              {receiptData.stockOut.createdBy.employee.firstName}{" "}
+              {receiptData.stockOut.createdBy.employee.lastName}
             </span>
           </div>
 
@@ -96,7 +97,7 @@ export default function StockInReceipt({ receiptData }: StockInReceiptProps) {
               <span>Modified</span>
             </div>
             <span className="font-medium">
-              {new Date(receiptData.stockIn.modifiedAt).toLocaleDateString()}
+              {new Date(receiptData.stockOut.modifiedAt).toLocaleDateString()}
             </span>
           </div>
 
@@ -107,8 +108,8 @@ export default function StockInReceipt({ receiptData }: StockInReceiptProps) {
               <span>Modified By</span>
             </div>
             <span className="font-medium">
-              {receiptData.stockIn.modifiedBy.employee.firstName}{" "}
-              {receiptData.stockIn.modifiedBy.employee.lastName}
+              {receiptData.stockOut.modifiedBy.employee.firstName}{" "}
+              {receiptData.stockOut.modifiedBy.employee.lastName}
             </span>
           </div>
 
@@ -121,12 +122,28 @@ export default function StockInReceipt({ receiptData }: StockInReceiptProps) {
               {receiptData.items.map((item) => (
                 <div
                   key={item.itemId}
-                  className="flex justify-between items-center py-2"
+                  className="py-2 space-y-1"
                 >
-                  <span>{item.itemName}</span>
-                  <span className="font-medium">
-                    {item.quantity} {item.uomSymbol}
-                  </span>
+                  <div className="flex justify-between items-center">
+                    <span>{item.itemName}</span>
+                    <span className="font-medium">
+                      {item.quantity} {item.uomSymbol}
+                    </span>
+                  </div>
+
+                  {/* Damaged Goods */}
+                  {item.isDamagedGoods && (
+                    <div className="flex items-center gap-2 text-red-600 text-xs">
+                      <span>Damaged</span>
+                    </div>
+                  )}
+
+                  {/* Comment */}
+                  {item.comment && (
+                    <div className="flex items-start gap-2 text-gray-600 text-xs">
+                      <span>{item.comment}</span>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
