@@ -12,7 +12,7 @@ export type StockOut = {
   createdById: string;
   modifiedAt: string;
   modifiedById: string;
-  recipient?: string; // optional field specific to Stock Out
+
 };
 
 export const columns: ColumnDef<StockOut>[] = [
@@ -28,11 +28,6 @@ export const columns: ColumnDef<StockOut>[] = [
     accessorKey: "category",
     header: "Category",
     cell: ({ row }) => row.original.category.join(", "),
-  },
-  {
-    accessorKey: "recipient",
-    header: "Recipient",
-    cell: ({ row }) => row.original.recipient || "-",
   },
   {
     accessorKey: "createdAt",
