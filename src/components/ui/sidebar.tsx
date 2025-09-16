@@ -77,14 +77,14 @@ export default function Sidebar({ account }: CurrentUser) {
         <Link
           href="/stockin"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-            pathname === "/stock-in"
+            pathname === "/stockin"
               ? "text-[#D22929]"
               : "hover:text-[#D22929]"
           }`}
         >
           <IconPackageImport
             size={20}
-            className={pathname === "/stock-in" ? "text-[#D22929]" : ""}
+            className={pathname === "/stockin" ? "text-[#D22929]" : ""}
           />
           Stock In
         </Link>
@@ -92,14 +92,14 @@ export default function Sidebar({ account }: CurrentUser) {
         <Link
           href="/stockout"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-            pathname === "/stock-out"
+            pathname === "/stockout"
               ? "text-[#D22929]"
               : "hover:text-[#D22929]"
           }`}
         >
           <IconPackageExport
             size={20}
-            className={pathname === "/stock-out" ? "text-[#D22929]" : ""}
+            className={pathname === "/stockout" ? "text-[#D22929]" : ""}
           />
           Stock Out
         </Link>
@@ -222,14 +222,14 @@ export default function Sidebar({ account }: CurrentUser) {
             <Link
               href="/stockin"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-                pathname === "/stock-in"
+                pathname === "/stockin"
                   ? "text-[#D22929]"
                   : "hover:text-[#D22929]"
               }`}
             >
               <IconPackageImport
                 size={20}
-                className={pathname === "/stock-in" ? "text-[#D22929]" : ""}
+                className={pathname === "/stockin" ? "text-[#D22929]" : ""}
               />
               Stock In
             </Link>
@@ -237,14 +237,14 @@ export default function Sidebar({ account }: CurrentUser) {
             <Link
               href="/stockout"
               className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-                pathname === "/stock-out"
+                pathname === "/stockout"
                   ? "text-[#D22929]"
                   : "hover:text-[#D22929]"
               }`}
             >
               <IconPackageExport
                 size={20}
-                className={pathname === "/stock-out" ? "text-[#D22929]" : ""}
+                className={pathname === "/stockout" ? "text-[#D22929]" : ""}
               />
               Stock Out
             </Link>
