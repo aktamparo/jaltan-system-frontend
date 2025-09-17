@@ -17,7 +17,19 @@ export interface UoM {
   uomTypeId: string;
   uomType?: UomType;
 }
+export interface EditUoM {
+  id: string;
+  name?: string;
+  symbol?: string;
+  conversionFactor?: number;
+  uomTypeId?: string;
+}
 
+export interface EditUomType {
+  id: string;
+  type?: string;
+  standardUoMId?: string;
+}
 export interface CreateUomTypeRequest {
   type: string;
   standardUoMId?: string;

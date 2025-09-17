@@ -1,12 +1,12 @@
-
 "use client";
-import { useEffect } from "react";
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Branch } from "@/lib/types/branch";
+import { useCreateMasterItem } from "@/lib/mutations/inventoryMutations";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCreateUOM } from "@/lib/mutations/uomMutations";
 import {
   Modal,
   ModalContent,
@@ -17,41 +17,34 @@ import {
 } from "@/components/ui/modal";
 import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
 import { UomType } from "@/lib/types/uom";
-export default function AddUOM() {
-  const [showCreateUOM, setShowCreateUOM] = useState(false);
+
+export default function CreateItem() {
+  const [showCreateMasterItem, setShowCreateMasterItem] = useState(false);
   const [name, setName] = useState("");
-  const [symbol, setSymbol] = useState("");
-  const [conversionFactor, setConversionFactor] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState<("FRIDGE" | "PANTRY")[]>(["PANTRY"]);
   const [uomTypeId, setUomTypeId] = useState("");
+
+  const { data: AllUOMTypes } = useGetAllUOMTypes(1, 100);
+  const createMasterItem = useCreateMasterItem();
   const queryClient = useQueryClient();
-  const createUOM = useCreateUOM();
-  const { data: AllUOMType } = useGetAllUOMTypes(1, 100);
-
-  
-  useEffect(() => {
-    if (showCreateUOM) {
-      queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
-    }
-  }, [showCreateUOM, queryClient]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createUOM.mutate(
+    createMasterItem.mutate(
       {
         name,
-        symbol,
-        conversionFactor:
-          conversionFactor === "" ? 0 : parseFloat(conversionFactor),
-        uomTypeId,
+        description,
+        category,
+        uomTypeId
       },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+          queryClient.invalidateQueries({ queryKey: ["inventoryItem"] });
           setName("");
-          setSymbol("");
-          setConversionFactor("");
+          setDescription("");
+          setCategory(["PANTRY"]);
           setUomTypeId("");
-          setShowCreateUOM(false);
+          setShowCreateMasterItem(false);
         },
         onError: (err: unknown) => {
           let errorMsg = "Failed to create user";
@@ -63,69 +56,82 @@ export default function AddUOM() {
       }
     );
   };
-
   return (
     <>
       <Button
-        onClick={() => setShowCreateUOM(true)}
+        onClick={() => setShowCreateMasterItem(true)}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
-        <span className="text-s text-black">Add a new Unit of Meassurement</span>
+        <span className="text-s text-black">Create a new Item</span>
         <span className="text-s text-gray-500">
-          Register a Unit of Measurement into the system
+          Create a new Master Item
         </span>
       </Button>
 
-      <Modal isVisible={showCreateUOM} onClose={() => setShowCreateUOM(false)}>
+      <Modal
+        isVisible={showCreateMasterItem}
+        onClose={() => setShowCreateMasterItem(false)}
+      >
         <ModalHeader>
-          <ModalTitle>Create UoM</ModalTitle>
+          <ModalTitle>Create Master Item</ModalTitle>
           <ModalDescription>
-            Fill in the details to create a new Unit of Measurement.
+            Fill in the details to create a new master item
           </ModalDescription>
         </ModalHeader>
         <form onSubmit={handleSubmit}>
           <ModalContent>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="uomName">Name</Label>
+                <Label htmlFor="email">Name</Label>
                 <Input
-                  id="uomName"
+                  id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="uomSymbol">Symbol</Label>
+                <Label htmlFor="description">Description</Label>
                 <Input
-                  id="uomSymbol"
-                  value={symbol}
-                  onChange={(e) => setSymbol(e.target.value)}
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="uomConversionFactor">Conversion Factor</Label>
-                <Input
-                  id="uomConversionFactor"
-                  value={conversionFactor}
-                  onChange={(e) => setConversionFactor(e.target.value)}
-                  type="number"
-                  step="any"
-                />
+                <Label htmlFor="category">Category</Label>
+                <select
+                  id="category"
+                  className="w-full border rounded px-2 py-1"
+                  value={category.join(",")}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "FRIDGE,PANTRY") setCategory(["FRIDGE", "PANTRY"]);
+                    else setCategory([val as "FRIDGE" | "PANTRY"]);
+                  }}
+                >
+                  <option value="FRIDGE">FRIDGE</option>
+                  <option value="PANTRY">PANTRY</option>
+                  <option value="FRIDGE,PANTRY">FRIDGE & PANTRY</option>
+                </select>
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="standardUoMId">Standard UOM</Label>
+                <Label htmlFor="uomTypeId">Type</Label>
                 <select
                   id="uomTypeId"
                   className="w-full border rounded px-2 py-1"
                   value={uomTypeId}
                   onChange={(e) => setUomTypeId(e.target.value)}
+                  required
                 >
                   <option value="" disabled>
-                    Select a UOM Type
+                    Select a type
                   </option>
-                  {(AllUOMType?.data ?? []).map((uom: UomType) => (
-                    <option key={uom.id} value={uom.id}>
-                      {uom.type}
+                  {(AllUOMTypes?.data ?? []).map((uomType: UomType) => (
+                    <option key={uomType.id} value={uomType.id}>
+                      {uomType.type}
                     </option>
                   ))}
                 </select>

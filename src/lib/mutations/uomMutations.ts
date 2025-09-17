@@ -1,11 +1,29 @@
 import { useMutation } from "@tanstack/react-query";
-import {createUOM, createUOMType} from "../services/uomServices";
+import {
+  createUOM,
+  updateUoM,
+  createUOMType,
+  updateUoMType,
+  
+} from "../services/uomServices";
 
 export const useCreateUOMType = () =>
   useMutation({
     mutationFn: createUOMType,
   });
-  export const useCreateUOM = () =>
+export const useUpdateUoMType = () =>
+  useMutation({
+    mutationFn: updateUoMType,
+  });
+export const useUpdateUoM = () =>
+  useMutation({
+    mutationFn: updateUoM,
+  });
+export const useCreateUOM = () =>
   useMutation({
     mutationFn: createUOM,
+  });
+export const useUpdateUOM = () =>
+  useMutation({
+    mutationFn: updateUoM,
   });
