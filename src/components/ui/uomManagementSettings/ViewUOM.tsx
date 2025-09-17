@@ -26,9 +26,9 @@ export default function ViewUOM() {
         onClick={() => setShowViewTable(true)}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
-        <span className="text-s text-black">View All UOMs</span>
+        <span className="text-s text-black">View All Unit of Meassurements</span>
         <span className="text-s text-gray-500">
-          See all registered UOMs and their details
+          See all registered Unit of Measurements and their details
         </span>
       </Button>
 

@@ -17,7 +17,7 @@ import { useGetAllMasterItems } from "@/lib/queries/inventoryQueries";
 import { useQueries } from "@tanstack/react-query";
 import { getUOMTypeById } from "@/lib/services/uomServices";
 import EditItemModal from "@/components/ui/itemManagementModals/EditItemModal";
-import { MasterItem,EditMasterItem } from "@/lib/types/inventory";
+import { MasterItem, EditMasterItem } from "@/lib/types/inventory";
 export default function EditMasterItems() {
   const [showEditTable, setShowEditTable] = useState(false);
   const [showEditItemModal, setShowEditItemModal] = useState(false);
@@ -55,7 +55,7 @@ export default function EditMasterItems() {
   });
 
   // Custom columns definition to show master item details and UOM type name, plus radio select
-  const columns: ColumnDef<any>[] = [
+  const columns: ColumnDef<MasterItem>[] = [
     {
       id: "select",
       header: "",
@@ -84,7 +84,7 @@ export default function EditMasterItems() {
     {
       accessorKey: "uomTypeId",
       header: "UOM Type",
-      cell: ({ getValue }) => uomTypeIdToName[getValue() as string] || getValue(),
+      cell: ({ row }) => uomTypeIdToName[row.original.uomTypeId] || row.original.uomTypeId,
     },
   ];
 
@@ -133,7 +133,7 @@ export default function EditMasterItems() {
           </ModalHeader>
           <ModalContent>
             <EditItemModal
-              item={masterItems.find(item => item.id === selectedItemId) as EditMasterItem}
+              item={masterItems.find((item: MasterItem) => item.id === selectedItemId) as EditMasterItem}
               onClose={() => setShowEditItemModal(false)}
             />
           </ModalContent>

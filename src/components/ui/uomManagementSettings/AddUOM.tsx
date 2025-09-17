@@ -70,7 +70,7 @@ export default function AddUOM() {
         onClick={() => setShowCreateUOM(true)}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
-        <span className="text-s text-black">Add New UOM</span>
+        <span className="text-s text-black">Add a new Unit of Meassurement</span>
         <span className="text-s text-gray-500">
           Register a Unit of Measurement into the system
         </span>
@@ -78,9 +78,9 @@ export default function AddUOM() {
 
       <Modal isVisible={showCreateUOM} onClose={() => setShowCreateUOM(false)}>
         <ModalHeader>
-          <ModalTitle>Create UOM Type</ModalTitle>
+          <ModalTitle>Create UoM</ModalTitle>
           <ModalDescription>
-            Fill in the details to create a new Unit of Measurement type
+            Fill in the details to create a new Unit of Measurement.
           </ModalDescription>
         </ModalHeader>
         <form onSubmit={handleSubmit}>

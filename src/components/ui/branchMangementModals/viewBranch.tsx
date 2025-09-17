@@ -36,7 +36,7 @@ export default function ViewBranch() {
       >
         <ModalHeader>
           <ModalTitle>View Branch</ModalTitle>
-          <ModalDescription>Edit the branch details</ModalDescription>
+          <ModalDescription>View Branch Details</ModalDescription>
         </ModalHeader>
 
         <ModalContent>

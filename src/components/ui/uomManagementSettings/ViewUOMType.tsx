@@ -43,7 +43,7 @@ export default function ViewUOMType() {
   });
 
   // Custom columns definition to show type and resolve standardUoMId to UOM name
-  const columns: ColumnDef<any>[] = [
+  const columns: ColumnDef<{ type: string; standardUoMId?: string }>[] = [
     {
       accessorKey: "type",
       header: "Type",
@@ -51,7 +51,10 @@ export default function ViewUOMType() {
     {
       accessorKey: "standardUoMId",
       header: "Standard UOM",
-      cell: ({ getValue }) => uomIdToName[getValue() as string] || getValue(),
+      cell: ({ row }) => {
+        const id = row.original.standardUoMId;
+        return id ? (uomIdToName[id] || id) : "-";
+      },
     },
   ];
   return (
@@ -60,9 +63,9 @@ export default function ViewUOMType() {
         onClick={() => setShowViewTable(true)}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
-        <span className="text-s text-black">View All UOM</span>
+        <span className="text-s text-black">View All Unit of Measurement Types and their details</span>
         <span className="text-s text-gray-500">
-          See all registered UOM and their details
+          See all registered Unit of Measurement Types and their details
         </span>
       </Button>
 

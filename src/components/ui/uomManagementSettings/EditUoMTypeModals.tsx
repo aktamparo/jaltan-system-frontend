@@ -78,7 +78,7 @@ console.log({ id: uomType.id, type, standardUoMId: standardUoMId || undefined })
           required
         >
           <option value="">Select UOM</option>
-          {(allUOMs?.data ?? []).map((uom: any) => (
+          {(allUOMs?.data ?? []).map((uom: { id: string; name: string }) => (
             <option key={uom.id} value={uom.id}>
               {uom.name}
             </option>

@@ -52,7 +52,7 @@ export default function EditUOMType() {
   });
 
   // Table columns: type, standardUoMId, radio select
-  const columns: ColumnDef<any>[] = [
+  const columns: ColumnDef<UomType>[] = [
     {
       id: "select",
       header: "",
@@ -72,7 +72,10 @@ export default function EditUOMType() {
     {
       accessorKey: "standardUoMId",
       header: "Standard UOM",
-      cell: ({ getValue }) => uomIdToName[getValue() as string] || getValue(),
+      cell: ({ row }) => {
+        const id = row.original.standardUoMId;
+        return id ? (uomIdToName[id] || id) : "-";
+      },
     },
   ];
 

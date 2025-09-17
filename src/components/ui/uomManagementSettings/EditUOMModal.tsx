@@ -100,7 +100,7 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
           onChange={(e) => setUomTypeId(e.target.value)}
         >
           <option value="">Select UOM Type</option>
-          {(allUOMTypes?.data ?? []).map((uomType: any) => (
+          {(allUOMTypes?.data ?? []).map((uomType: { id: string; type: string }) => (
             <option key={uomType.id} value={uomType.id}>
               {uomType.type}
             </option>
