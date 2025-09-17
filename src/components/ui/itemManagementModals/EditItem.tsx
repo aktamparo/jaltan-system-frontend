@@ -132,9 +132,9 @@ export default function EditMasterItems() {
             <ModalTitle>Edit Item Details</ModalTitle>
           </ModalHeader>
           <ModalContent>
-              <EditItemModal
-                item={masterItems.find((item: MasterItem) => item.id === selectedItemId) as MasterItem}
-                onClose={() => setShowEditItemModal(false)}
+            <EditItemModal
+              item={masterItems.find(item => item.id === selectedItemId) as EditMasterItem}
+              onClose={() => setShowEditItemModal(false)}
             />
           </ModalContent>
         </Modal>

@@ -10,15 +10,15 @@ import {UoM}  from "@//lib/types/uom";
 export const columns: ColumnDef<UoM>[] = [
   {
     accessorKey: "name",
-    header: "UOM Name",
+    header: "Master Item Name",
   },
   {
-    accessorKey: "symbol",
-    header: "Symbol",
+    accessorKey: "description",
+    header: "Description",
   },
   {
-    accessorKey: "isBase",
-    header: "Is Base?",
+    accessorKey: "category",
+    header: "Category",
   },
   {
     accessorKey: "conversionFactor",

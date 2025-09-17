@@ -5,12 +5,23 @@ import { ColumnDef } from "@tanstack/react-table";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-import {UoM}  from "@//lib/types/uom";
+import {UoM,UomType}  from "@//lib/types/uom";
+import { useGetUOMTypeById } from "@/lib/queries/uomQueries";
 
 export const columns: ColumnDef<UoM>[] = [
   {
     accessorKey: "name",
     header: "UOM Name",
+  },
+  {
+    accessorKey: "uomTypeId",
+    header: "UOM Type Name",
+    cell: ({ getValue }) => {
+      const uomTypeId = getValue() as string;
+      const {data} = useGetUOMTypeById(uomTypeId);
+      const uomType = data as UomType | undefined;
+      return uomType?.type || uomTypeId;
+    },
   },
   {
     accessorKey: "symbol",
@@ -24,5 +35,6 @@ export const columns: ColumnDef<UoM>[] = [
     accessorKey: "conversionFactor",
     header: "Conversion Factor",
   },
+  
 ];
 

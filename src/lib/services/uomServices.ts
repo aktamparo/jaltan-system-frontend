@@ -1,6 +1,7 @@
 import { BASE_URL } from "../config";
 import {
   EditUomType,
+  EditUoM,
   UomType,
   UoM,
   CreateUomTypeRequest,
@@ -19,7 +20,7 @@ export const updateUoMType = async (UoMType: EditUomType) => {
   if (UoMType.type) payload.type = UoMType.type;
   if (UoMType.standardUoMId) payload.standardUoMId = UoMType.standardUoMId;
 
-  const response = await fetch(`${BASE_URL}/uom/type/:${UoMType.id}`, {
+  const response = await fetch(`${BASE_URL}/uom/type/${UoMType.id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -34,6 +35,34 @@ export const updateUoMType = async (UoMType: EditUomType) => {
 
   return response.json();
 };
+export const updateUoM = async (UoM: EditUoM) => {
+  const payload: {
+    name?: string;
+    symbol?: string;
+    conversionFactor?: number;
+    uomTypeId?: string;
+  } = {};
+  if (UoM.name) payload.name = UoM.name;
+  if (UoM.symbol) payload.symbol = UoM.symbol;
+  if (UoM.conversionFactor) payload.conversionFactor = UoM.conversionFactor;
+  if (UoM.uomTypeId) payload.uomTypeId = UoM.uomTypeId;
+
+  const response = await fetch(`${BASE_URL}/uom/${UoM.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update UoM Type");
+  }
+
+  return response.json();
+};
+
 
 export const createUOMType = async (
   uomData: CreateUomTypeRequest

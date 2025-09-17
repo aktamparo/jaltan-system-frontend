@@ -12,67 +12,56 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
 import PaginationControls from "@/components/ui/PaginationControls";
-import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
-import { getUOMById } from "@/lib/services/uomServices";
-import { useQueries } from "@tanstack/react-query";
-import { UomType } from "@/lib/types/uom";
-import EditUOMTypeModals from "@/components/ui/uomManagementSettings/EditUoMTypeModals";
-export default function EditUOMType() {
+import { useGetAllUOM, useGetUOMTypeById } from "@/lib/queries/uomQueries";
+import { UoM, UomType } from "@/lib/types/uom";
+import EditUOMModal from "@/components/ui/uomManagementSettings/EditUOMModal";
+
+export default function EditUOM() {
   const [showSelectModal, setShowSelectModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUOMId, setSelectedUOMId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const { data: AllUOMTypes } = useGetAllUOMTypes(page);
-  // Get all unique standardUoMId values from UOM types
-  const standardUoMIds = Array.from(
-    new Set(
-      (AllUOMTypes?.data ?? [])
-        .map((uomType) => uomType.standardUoMId)
-        .filter(Boolean)
-    )
-  );
+  const { data: AllUOMs } = useGetAllUOM(page);
 
-  // Use useQueries to fetch each UOM by its ID
-  const uomQueries = useQueries({
-    queries: standardUoMIds.map((id) => ({
-      queryKey: ["uom", id],
-      queryFn: () => getUOMById(id as string),
-      enabled: typeof id === "string" && !!id,
-      staleTime: 1000 * 60 * 10,
-      refetchOnWindowFocus: true,
-    })),
-  });
-
-  // Build a mapping from standardUoMId to UOM name
-  const uomIdToName: Record<string, string> = {};
-  uomQueries.forEach((q, idx) => {
-    if (q.data && standardUoMIds[idx]) {
-      uomIdToName[standardUoMIds[idx]] = q.data.name;
-    }
-  });
-
-  // Table columns: type, standardUoMId, radio select
-  const columns: ColumnDef<any>[] = [
+  // Table columns: name, symbol, isBase, conversionFactor, radio select
+  const columns: ColumnDef<UoM>[] = [
     {
       id: "select",
       header: "",
       cell: ({ row }) => (
         <input
           type="radio"
-          name="uomTypeSelect"
+          name="uomSelect"
           checked={selectedUOMId === row.original.id}
           onChange={() => setSelectedUOMId(row.original.id)}
         />
       ),
     },
     {
-      accessorKey: "type",
-      header: "Type",
+      accessorKey: "name",
+      header: "UOM Name",
     },
     {
-      accessorKey: "standardUoMId",
-      header: "Standard UOM",
-      cell: ({ getValue }) => uomIdToName[getValue() as string] || getValue(),
+      accessorKey: "uomTypeId",
+      header: "UOM Type Name",
+      cell: ({ getValue }) => {
+        const uomTypeId = getValue() as string;
+        const { data } = useGetUOMTypeById(uomTypeId);
+        const uomType = data as UomType | undefined;
+        return uomType?.type || uomTypeId;
+      },
+    },
+    {
+      accessorKey: "symbol",
+      header: "Symbol",
+    },
+    {
+      accessorKey: "isBase",
+      header: "Is Base?",
+    },
+    {
+      accessorKey: "conversionFactor",
+      header: "Conversion Factor",
     },
   ];
 
@@ -82,9 +71,9 @@ export default function EditUOMType() {
         onClick={() => setShowSelectModal(true)}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
-        <span className="text-s text-black">Edit Unit of Measurement Type</span>
+        <span className="text-s text-black">Edit Unit of Measurement</span>
         <span className="text-s text-gray-500">
-          Edit an existing unit of measurement type.
+          Edit an existing unit of measurement.
         </span>
       </Button>
 
@@ -93,22 +82,22 @@ export default function EditUOMType() {
         onClose={() => setShowSelectModal(false)}
       >
         <ModalHeader>
-          <ModalTitle>Edit Unit of Measurement Type</ModalTitle>
+          <ModalTitle>Select UOM</ModalTitle>
           <ModalDescription>
-            Edit an existing unit of measurement type.
+            All registered UOMs in the system. Only one can be selected.
           </ModalDescription>
         </ModalHeader>
 
         <ModalContent>
           <div className="w-full">
-            <ViewTable columns={columns} data={AllUOMTypes?.data || []} />
+            <ViewTable columns={columns} data={AllUOMs?.data || []} />
           </div>
         </ModalContent>
 
         <ModalFooter>
           <PaginationControls
             currentPage={page}
-            totalPages={AllUOMTypes?.metadata?.totalPages || 1}
+            totalPages={AllUOMs?.metadata?.totalPages || 1}
             onPageChange={setPage}
           />
           <Button
@@ -122,7 +111,7 @@ export default function EditUOMType() {
             }}
             className="ml-4"
           >
-            Edit Selected UOM Type
+            Edit Selected UOM
           </Button>
         </ModalFooter>
       </Modal>
@@ -132,16 +121,16 @@ export default function EditUOMType() {
           onClose={() => setShowEditModal(false)}
         >
           <ModalHeader>
-            <ModalTitle>Edit UOM Type</ModalTitle>
+            <ModalTitle>Edit UOM</ModalTitle>
           </ModalHeader>
           <ModalContent>
             {(() => {
-              const selectedUOMType = AllUOMTypes?.data.find(uomType => uomType.id === selectedUOMId);
-              if (!selectedUOMType) return null;
+              const selectedUOM = AllUOMs?.data.find(uom => uom.id === selectedUOMId);
+              if (!selectedUOM) return null;
               return (
-                <EditUOMTypeModals
+                <EditUOMModal
                   onClose={() => setShowEditModal(false)}
-                  uomType={selectedUOMType}
+                  uom={selectedUOM}
                 />
               );
             })()}
