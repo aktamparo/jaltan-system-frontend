@@ -10,10 +10,10 @@ export const useGetAllBranchItems = (page: number) => {
     refetchOnWindowFocus: true,
   });
 };
-export const useGetAllMasterItems = (page: number) => {
+export const useGetAllMasterItems = (page =1, limit=10) => {
   return useQuery({
-    queryKey: ["branchItems", page],
-    queryFn: () => inventoryService.getAllBranchItems(page),
+    queryKey: ["masterItems", page],
+    queryFn: () => getAllMasteritems(page, limit),
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: true,
   });

@@ -1,7 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { queryClient } from "@/lib/react-query";
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Modal,
@@ -15,22 +14,22 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
 import PaginationControls from "@/components/ui/PaginationControls";
 import { useGetAllMasterItems } from "@/lib/queries/inventoryQueries";
-import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
 import { useQueries } from "@tanstack/react-query";
 import { getUOMTypeById } from "@/lib/services/uomServices";
-export default function ViewMasterItems() {
-  const [showViewTable, setShowViewTable] = useState(false);
+import EditItemModal from "@/components/ui/itemManagementModals/EditItemModal";
+import { MasterItem,EditMasterItem } from "@/lib/types/inventory";
+export default function EditMasterItems() {
+  const [showEditTable, setShowEditTable] = useState(false);
+  const [showEditItemModal, setShowEditItemModal] = useState(false);
   const [page, setPage] = useState(1);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
   const { data: response } = useGetAllMasterItems(page);
   const masterItems = response?.data ?? [];
-  console.log("masterItems", response);
   // Get all unique uomTypeIds from master items
   const uomTypeIds: string[] = Array.from(new Set(masterItems.map((item: { uomTypeId?: string }) => item.uomTypeId).filter((id: string | undefined): id is string => !!id)));
-  
+
   // Use useQueries to fetch each UOM type by its ID
-  // Import getUOMTypeById at the top if not already
-  // import { getUOMTypeById } from "@/lib/services/uomServices";
   const uomTypeQueries = useQueries({
     queries: uomTypeIds.map((id: string) => ({
       queryKey: ["uomType", id],
@@ -40,11 +39,13 @@ export default function ViewMasterItems() {
       refetchOnWindowFocus: true,
     }))
   });
+
   useEffect(() => {
-    if (showViewTable) {
+    if (showEditTable) {
       queryClient.invalidateQueries({ queryKey: ["masterItems"] });
     }
-  }, [showViewTable, queryClient]);
+  }, [showEditTable]);
+
   // Build a mapping from uomTypeId to UOM type name
   const uomTypeIdToName: Record<string, string> = {};
   uomTypeQueries.forEach((q, idx) => {
@@ -53,8 +54,20 @@ export default function ViewMasterItems() {
     }
   });
 
-  // Custom columns definition to show master item details and UOM type name
+  // Custom columns definition to show master item details and UOM type name, plus radio select
   const columns: ColumnDef<any>[] = [
+    {
+      id: "select",
+      header: "",
+      cell: ({ row }) => (
+        <input
+          type="radio"
+          name="selectedItem"
+          checked={selectedItemId === row.original.id}
+          onChange={() => setSelectedItemId(row.original.id)}
+        />
+      ),
+    },
     {
       accessorKey: "name",
       header: "Name",
@@ -73,24 +86,24 @@ export default function ViewMasterItems() {
       header: "UOM Type",
       cell: ({ getValue }) => uomTypeIdToName[getValue() as string] || getValue(),
     },
-  
   ];
+
   return (
     <div>
       <Button
-        onClick={() => setShowViewTable(true)}
+        onClick={() => setShowEditTable(true)}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
-        <span className="text-s text-black">View All Master Items</span>
+        <span className="text-s text-black">Edit Master Items</span>
         <span className="text-s text-gray-500">
-          See all registered master items and their details
+          Select and edit master items and their details
         </span>
       </Button>
-      {showViewTable && (
-        <Modal isVisible={showViewTable} onClose={() => setShowViewTable(false)}>
+      {showEditTable && (
+        <Modal isVisible={showEditTable} onClose={() => setShowEditTable(false)}>
           <div className="p-6">
-            <h2 className="text-lg font-bold mb-2">Master Items</h2>
-            <p className="mb-4 text-gray-600">View all master items and their details</p>
+            <h2 className="text-lg font-bold mb-2">Edit Master Items</h2>
+            <p className="mb-4 text-gray-600">Select a master item to edit</p>
             <ViewTable columns={columns} data={masterItems} />
             <div className="mt-4">
               <PaginationControls
@@ -99,7 +112,31 @@ export default function ViewMasterItems() {
                 onPageChange={setPage}
               />
             </div>
+            <div className="mt-4 flex justify-end">
+              <Button
+                onClick={() => setShowEditItemModal(true)}
+                disabled={!selectedItemId}
+              >
+                Edit Selected Item
+              </Button>
+            </div>
           </div>
+        </Modal>
+      )}
+      {showEditItemModal && selectedItemId && (
+        <Modal
+          isVisible={showEditItemModal}
+          onClose={() => setShowEditItemModal(false)}
+        >
+          <ModalHeader>
+            <ModalTitle>Edit Item Details</ModalTitle>
+          </ModalHeader>
+          <ModalContent>
+              <EditItemModal
+                item={masterItems.find((item: MasterItem) => item.id === selectedItemId) as MasterItem}
+                onClose={() => setShowEditItemModal(false)}
+            />
+          </ModalContent>
         </Modal>
       )}
     </div>

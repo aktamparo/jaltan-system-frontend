@@ -1,5 +1,6 @@
-"use client";
 
+"use client";
+import { useEffect } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +26,14 @@ export default function AddUOM() {
   const queryClient = useQueryClient();
   const createUOM = useCreateUOM();
   const { data: AllUOMType } = useGetAllUOMTypes(1, 100);
+
+  
+  useEffect(() => {
+    if (showCreateUOM) {
+      queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+    }
+  }, [showCreateUOM, queryClient]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createUOM.mutate(

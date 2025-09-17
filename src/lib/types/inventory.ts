@@ -19,8 +19,15 @@ export interface CreateMasterItem {
   description: string;
   category: ("FRIDGE" | "PANTRY")[];
   uomTypeId: string;
-  
+}
 
+
+export interface EditMasterItem {
+  id:string;
+  name: string;
+  description: string;
+  category: ("FRIDGE" | "PANTRY")[];
+  uomTypeId: string;
 }
 export interface Inventory {
   id: string;

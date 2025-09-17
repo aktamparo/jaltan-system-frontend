@@ -15,6 +15,7 @@ import ViewUOMType from "@/components/ui/uomManagementSettings/ViewUOMType";
 import ViewUOM from "@/components/ui/uomManagementSettings/ViewUOM";
 import CreateItem from "@/components/ui/itemManagementModals/CreateItem";
 import ViewItem from "@/components/ui/itemManagementModals/ViewItem";
+import EditItem from "@/components/ui/itemManagementModals/EditItem";
 import React from "react";
 import { useGetAccount } from "@/lib/queries/accountQueries";
 // // import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
@@ -79,6 +80,7 @@ export default function SettingsPage() {
               <div className="w-full h-full justify-start p-6 space-y-2">
                 <CreateItem />
                 <ViewItem/>
+                <EditItem/>
               </div>
             </>
           )}
