@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEditMasterItem } from "@/lib/mutations/inventoryMutations";
 import { useQueryClient } from "@tanstack/react-query";
-import { MasterItem,EditMasterItem } from "@/lib/types/inventory";
+import { MasterItem, EditMasterItem } from "@/lib/types/inventory";
+import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
 
 interface EditItemModalProps {
   item: EditMasterItem;
@@ -19,6 +20,7 @@ export default function EditItemModal({ item, onClose }: EditItemModalProps) {
   const [description, setDescription] = useState(item.description || "");
   const [category, setCategory] = useState(item.category || []);
   const [uomTypeId, setUomTypeId] = useState(item.uomTypeId || "");
+  const { data: allUOMTypes } = useGetAllUOMTypes(1); // page 1 for all
   const queryClient = useQueryClient();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -80,12 +82,20 @@ export default function EditItemModal({ item, onClose }: EditItemModalProps) {
         </select>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="uomTypeId">UOM Type ID</Label>
-        <Input
+        <Label htmlFor="uomTypeId">UOM Type</Label>
+        <select
           id="uomTypeId"
+          className="w-full border rounded px-2 py-1"
           value={uomTypeId}
           onChange={(e) => setUomTypeId(e.target.value)}
-        />
+        >
+          <option value="">Select UOM Type</option>
+          {(allUOMTypes?.data ?? []).map((uomType: any) => (
+            <option key={uomType.id} value={uomType.id}>
+              {uomType.type}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="flex gap-2">
         <Button type="submit">Save</Button>
