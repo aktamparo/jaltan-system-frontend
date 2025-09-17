@@ -12,9 +12,11 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
 import PaginationControls from "@/components/ui/PaginationControls";
-import { useGetAllUOM, useGetUOMTypeById } from "@/lib/queries/uomQueries";
-import { UoM, UomType } from "@/lib/types/uom";
+import { useGetAllUOM } from "@/lib/queries/uomQueries";
+import { UoM } from "@/lib/types/uom";
 import EditUOMModal from "@/components/ui/uomManagementSettings/EditUOMModal";
+import { useQueries } from "@tanstack/react-query";
+import { getUOMTypeById } from "@/lib/services/uomServices";
 
 export default function EditUOM() {
   const [showSelectModal, setShowSelectModal] = useState(false);
@@ -22,6 +24,34 @@ export default function EditUOM() {
   const [selectedUOMId, setSelectedUOMId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const { data: AllUOMs } = useGetAllUOM(page);
+
+  // Get all unique uomTypeIds from UOMs
+  const uomTypeIds: string[] = Array.from(
+    new Set(
+      (AllUOMs?.data ?? [])
+        .map((uom) => uom.uomTypeId)
+        .filter(Boolean)
+    )
+  );
+
+  // Use useQueries to fetch each UOM Type by its ID
+  const uomTypeQueries = useQueries({
+    queries: uomTypeIds.map((id) => ({
+      queryKey: ["uomType", id],
+      queryFn: () => getUOMTypeById(id),
+      enabled: !!id,
+      staleTime: 1000 * 60 * 10,
+      refetchOnWindowFocus: true,
+    })),
+  });
+
+  // Build a mapping from uomTypeId to UOM type name
+  const uomTypeIdToName: Record<string, string> = {};
+  uomTypeQueries.forEach((q, idx) => {
+    if (q.data && uomTypeIds[idx]) {
+      uomTypeIdToName[uomTypeIds[idx]] = q.data.type;
+    }
+  });
 
   // Table columns: name, symbol, isBase, conversionFactor, radio select
   const columns: ColumnDef<UoM>[] = [
@@ -44,11 +74,9 @@ export default function EditUOM() {
     {
       accessorKey: "uomTypeId",
       header: "UOM Type Name",
-      cell: ({ getValue }) => {
-        const uomTypeId = getValue() as string;
-        const { data } = useGetUOMTypeById(uomTypeId);
-        const uomType = data as UomType | undefined;
-        return uomType?.type || uomTypeId;
+      cell: ({ row }) => {
+        const uomTypeId = row.original.uomTypeId;
+        return uomTypeIdToName[uomTypeId] || uomTypeId;
       },
     },
     {

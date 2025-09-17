@@ -1,14 +1,10 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-//import { ReferrerEnum } from "next/dist/lib/metadata/types/metadata-types"
+import { UoM } from "@/lib/types/uom";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-import {UoM,UomType}  from "@//lib/types/uom";
-import { useGetUOMTypeById } from "@/lib/queries/uomQueries";
-
-export const columns: ColumnDef<UoM>[] = [
+// Function to create columns with uomTypeIdToName mapping
+export const createUOMColumns = (uomTypeIdToName: Record<string, string>): ColumnDef<UoM>[] => [
   {
     accessorKey: "name",
     header: "UOM Name",
@@ -16,11 +12,9 @@ export const columns: ColumnDef<UoM>[] = [
   {
     accessorKey: "uomTypeId",
     header: "UOM Type Name",
-    cell: ({ getValue }) => {
-      const uomTypeId = getValue() as string;
-      const {data} = useGetUOMTypeById(uomTypeId);
-      const uomType = data as UomType | undefined;
-      return uomType?.type || uomTypeId;
+    cell: ({ row }) => {
+      const uomTypeId = row.original.uomTypeId;
+      return uomTypeIdToName[uomTypeId] || uomTypeId;
     },
   },
   {
@@ -30,11 +24,36 @@ export const columns: ColumnDef<UoM>[] = [
   {
     accessorKey: "isBase",
     header: "Is Base?",
+    cell: ({ row }) => row.original.isBase ? "Yes" : "No",
   },
   {
     accessorKey: "conversionFactor",
     header: "Conversion Factor",
   },
-  
+];
+
+// Default columns without UOM Type name resolution (fallback)
+export const columns: ColumnDef<UoM>[] = [
+  {
+    accessorKey: "name",
+    header: "UOM Name",
+  },
+  {
+    accessorKey: "uomTypeId",
+    header: "UOM Type ID",
+  },
+  {
+    accessorKey: "symbol",
+    header: "Symbol",
+  },
+  {
+    accessorKey: "isBase",
+    header: "Is Base?",
+    cell: ({ row }) => row.original.isBase ? "Yes" : "No",
+  },
+  {
+    accessorKey: "conversionFactor",
+    header: "Conversion Factor",
+  },
 ];
 

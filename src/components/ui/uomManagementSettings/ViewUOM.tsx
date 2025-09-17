@@ -9,16 +9,47 @@ import {
   ModalTitle,
   ModalFooter,
 } from "@/components/ui/modal";
-import { columns as ViewColumns } from "@/components/ui/uomManagementSettings/columns/UOMcolumns";
+import { createUOMColumns } from "@/components/ui/uomManagementSettings/columns/UOMcolumns";
 import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
 import PaginationControls from "@/components/ui/PaginationControls";
-import { useGetAllUOM } from "@/lib/queries/uomQueries";
+import { useGetAllUOM, useGetAllUOMTypes } from "@/lib/queries/uomQueries";
+import { useQueries } from "@tanstack/react-query";
+import { getUOMTypeById } from "@/lib/services/uomServices";
 export default function ViewUOM() {
   const [showViewTable, setShowViewTable] = useState(false);
   const [page, setPage] = useState(1);
   const { data: AllUOMs } = useGetAllUOM(page);
-  // const { data: AllUsers, isLoading: isLoadingAllAccounts } =
-  // useGetAllAccounts();
+  
+  // Get all unique uomTypeIds from UOMs
+  const uomTypeIds: string[] = Array.from(
+    new Set(
+      (AllUOMs?.data ?? [])
+        .map((uom) => uom.uomTypeId)
+        .filter(Boolean)
+    )
+  );
+
+  // Use useQueries to fetch each UOM Type by its ID
+  const uomTypeQueries = useQueries({
+    queries: uomTypeIds.map((id) => ({
+      queryKey: ["uomType", id],
+      queryFn: () => getUOMTypeById(id),
+      enabled: !!id,
+      staleTime: 1000 * 60 * 10,
+      refetchOnWindowFocus: true,
+    })),
+  });
+
+  // Build a mapping from uomTypeId to UOM type name
+  const uomTypeIdToName: Record<string, string> = {};
+  uomTypeQueries.forEach((q, idx) => {
+    if (q.data && uomTypeIds[idx]) {
+      uomTypeIdToName[uomTypeIds[idx]] = q.data.type;
+    }
+  });
+
+  // Create columns with the uomType name mapping
+  const columns = createUOMColumns(uomTypeIdToName);
 
   return (
     <div>
@@ -42,7 +73,7 @@ export default function ViewUOM() {
 
         <ModalContent>
           <div className="w-full">
-            <ViewTable columns={ViewColumns} data={AllUOMs?.data || []} />
+            <ViewTable columns={columns} data={AllUOMs?.data || []} />
           </div>
         </ModalContent>
 
