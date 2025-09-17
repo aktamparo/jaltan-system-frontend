@@ -5,19 +5,14 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Modal,
-  ModalContent,
-  ModalDescription,
-  ModalHeader,
-  ModalTitle,
-  ModalFooter,
 } from "@/components/ui/modal";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
 import PaginationControls from "@/components/ui/PaginationControls";
 import { useGetAllMasterItems } from "@/lib/queries/inventoryQueries";
-import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
 import { useQueries } from "@tanstack/react-query";
 import { getUOMTypeById } from "@/lib/services/uomServices";
+import { MasterItem } from "@/lib/types/inventory";
 export default function ViewMasterItems() {
   const [showViewTable, setShowViewTable] = useState(false);
   const [page, setPage] = useState(1);
@@ -44,7 +39,7 @@ export default function ViewMasterItems() {
     if (showViewTable) {
       queryClient.invalidateQueries({ queryKey: ["masterItems"] });
     }
-  }, [showViewTable, queryClient]);
+  }, [showViewTable]);
   // Build a mapping from uomTypeId to UOM type name
   const uomTypeIdToName: Record<string, string> = {};
   uomTypeQueries.forEach((q, idx) => {
@@ -54,7 +49,7 @@ export default function ViewMasterItems() {
   });
 
   // Custom columns definition to show master item details and UOM type name
-  const columns: ColumnDef<any>[] = [
+  const columns: ColumnDef<MasterItem>[] = [
     {
       accessorKey: "name",
       header: "Name",
@@ -71,7 +66,7 @@ export default function ViewMasterItems() {
     {
       accessorKey: "uomTypeId",
       header: "UOM Type",
-      cell: ({ getValue }) => uomTypeIdToName[getValue() as string] || getValue(),
+      cell: ({ row }) => uomTypeIdToName[row.original.uomTypeId] || row.original.uomTypeId,
     },
   
   ];

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEditMasterItem } from "@/lib/mutations/inventoryMutations";
 import { useQueryClient } from "@tanstack/react-query";
-import { MasterItem, EditMasterItem } from "@/lib/types/inventory";
+import { EditMasterItem } from "@/lib/types/inventory";
 import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
 
 interface EditItemModalProps {
@@ -90,7 +90,7 @@ export default function EditItemModal({ item, onClose }: EditItemModalProps) {
           onChange={(e) => setUomTypeId(e.target.value)}
         >
           <option value="">Select UOM Type</option>
-          {(allUOMTypes?.data ?? []).map((uomType: any) => (
+          {(allUOMTypes?.data ?? []).map((uomType: { id: string; type: string }) => (
             <option key={uomType.id} value={uomType.id}>
               {uomType.type}
             </option>
