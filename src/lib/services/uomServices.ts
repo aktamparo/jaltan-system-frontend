@@ -1,5 +1,6 @@
 import { BASE_URL } from "../config";
 import {
+  EditUomType,
   UomType,
   UoM,
   CreateUomTypeRequest,
@@ -9,6 +10,30 @@ import {
   PaginatedUomTypesResponse,
   PaginatedUoMsResponse,
 } from "../types/uom";
+
+export const updateUoMType = async (UoMType: EditUomType) => {
+  const payload: {
+    type?: string;
+    standardUoMId?: string;
+  } = {};
+  if (UoMType.type) payload.type = UoMType.type;
+  if (UoMType.standardUoMId) payload.standardUoMId = UoMType.standardUoMId;
+
+  const response = await fetch(`${BASE_URL}/uom/type/:${UoMType.id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update UoM Type");
+  }
+
+  return response.json();
+};
 
 export const createUOMType = async (
   uomData: CreateUomTypeRequest

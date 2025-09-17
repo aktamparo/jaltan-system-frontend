@@ -11,16 +11,16 @@ import {
   StockOut,
   PaginatedStockOutResponse,
   CreateMasterItem,
-  EditMasterItem
+  EditMasterItem,
 } from "../types/inventory";
 
-
-export const createMasteritem = async (itemData : CreateMasterItem) => {
-  const payload = { 
-    name:itemData.name,
-    description:itemData.description,
-    category:itemData.category,
-     uomTypeId:itemData.uomTypeId };
+export const createMasteritem = async (itemData: CreateMasterItem) => {
+  const payload = {
+    name: itemData.name,
+    description: itemData.description,
+    category: itemData.category,
+    uomTypeId: itemData.uomTypeId,
+  };
   const response = await fetch(`${BASE_URL}/inventory`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -46,12 +46,12 @@ export const createMasteritem = async (itemData : CreateMasterItem) => {
   return response.json();
 };
 
-export const editMasteritem = async (itemData : EditMasterItem) => {
-  const payload: { 
-    name?: string,
-    description?: string,
-    category?: string[],
-    uomTypeId?: string
+export const editMasteritem = async (itemData: EditMasterItem) => {
+  const payload: {
+    name?: string;
+    description?: string;
+    category?: string[];
+    uomTypeId?: string;
   } = {};
   if (itemData.name) payload.name = itemData.name;
   if (itemData.description) payload.description = itemData.description;
@@ -83,13 +83,16 @@ export const editMasteritem = async (itemData : EditMasterItem) => {
   return response.json();
 };
 export const getAllMasteritems = async (page = 1, limit = 10) => {
-  const response = await fetch(`${BASE_URL}/inventory/master-items?page=${page}&limit=${limit}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
+  const response = await fetch(
+    `${BASE_URL}/inventory/master-items?page=${page}&limit=${limit}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch master items");

@@ -13,6 +13,7 @@ import AddUOMType from "@/components/ui/uomManagementSettings/AddUOMType";
 import AddUOM from "@/components/ui/uomManagementSettings/AddUOM";
 import ViewUOMType from "@/components/ui/uomManagementSettings/ViewUOMType";
 import ViewUOM from "@/components/ui/uomManagementSettings/ViewUOM";
+import EditUOM from "@/components/ui/uomManagementSettings/EditUOMType";
 import CreateItem from "@/components/ui/itemManagementModals/CreateItem";
 import ViewItem from "@/components/ui/itemManagementModals/ViewItem";
 import EditItem from "@/components/ui/itemManagementModals/EditItem";
@@ -73,14 +74,15 @@ export default function SettingsPage() {
                 <AddUOM />
                 <ViewUOMType />
                 <ViewUOM />
+                <EditUOM />
               </div>
               <div className="text-lg font-medium justify-start">
                 Master Item Settings
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
                 <CreateItem />
-                <ViewItem/>
-                <EditItem/>
+                <ViewItem />
+                <EditItem />
               </div>
             </>
           )}
