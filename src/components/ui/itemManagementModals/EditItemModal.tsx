@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,12 @@ export default function EditItemModal({ item, onClose }: EditItemModalProps) {
   const [uomTypeId, setUomTypeId] = useState(item.uomTypeId || "");
   const { data: allUOMTypes } = useGetAllUOMTypes(1); // page 1 for all
   const queryClient = useQueryClient();
+
+  // Refresh queries when modal opens
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+    queryClient.invalidateQueries({ queryKey: ["masterItems"] });
+  }, [queryClient]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

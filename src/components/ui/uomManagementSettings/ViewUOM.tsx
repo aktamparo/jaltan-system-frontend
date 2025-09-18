@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Modal,
@@ -18,7 +19,15 @@ import { getUOMTypeById } from "@/lib/services/uomServices";
 export default function ViewUOM() {
   const [showViewTable, setShowViewTable] = useState(false);
   const [page, setPage] = useState(1);
+  const queryClient = useQueryClient();
   const { data: AllUOMs } = useGetAllUOM(page);
+
+  useEffect(() => {
+    if (showViewTable) {
+      queryClient.invalidateQueries({ queryKey: ["uom"] });
+      queryClient.invalidateQueries({ queryKey: ["uomType"] });
+    }
+  }, [showViewTable, queryClient]);
   
   // Get all unique uomTypeIds from UOMs
   const uomTypeIds: string[] = Array.from(

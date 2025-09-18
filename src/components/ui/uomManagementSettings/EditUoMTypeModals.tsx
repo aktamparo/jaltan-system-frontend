@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +24,12 @@ export default function EditUOMTypeModal({ uomType, onClose }: EditUOMTypeModalP
 
   const [type, setType] = useState(uomType.type);
   const [standardUoMId, setStandardUoMId] = useState(uomType.standardUoMId);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["uom"] });
+    queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+  }, [queryClient]);
+  
 console.log({ id: uomType.id, type, standardUoMId: standardUoMId || undefined });
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

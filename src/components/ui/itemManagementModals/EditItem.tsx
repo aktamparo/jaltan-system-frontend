@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { queryClient } from "@/lib/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Modal,
@@ -23,6 +24,7 @@ export default function EditMasterItems() {
   const [showEditItemModal, setShowEditItemModal] = useState(false);
   const [page, setPage] = useState(1);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const queryClientHook = useQueryClient();
 
   const { data: response } = useGetAllMasterItems(page);
   const masterItems = response?.data ?? [];
@@ -42,9 +44,17 @@ export default function EditMasterItems() {
 
   useEffect(() => {
     if (showEditTable) {
-      queryClient.invalidateQueries({ queryKey: ["masterItems"] });
+      queryClientHook.invalidateQueries({ queryKey: ["masterItems"] });
+      queryClientHook.invalidateQueries({ queryKey: ["uomType"] });
     }
-  }, [showEditTable]);
+  }, [showEditTable, queryClientHook]);
+
+  useEffect(() => {
+    if (showEditItemModal) {
+      queryClientHook.invalidateQueries({ queryKey: ["uomTypes"] });
+      queryClientHook.invalidateQueries({ queryKey: ["masterItems"] });
+    }
+  }, [showEditItemModal, queryClientHook]);
 
   // Build a mapping from uomTypeId to UOM type name
   const uomTypeIdToName: Record<string, string> = {};

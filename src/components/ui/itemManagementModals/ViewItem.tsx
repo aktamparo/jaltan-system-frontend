@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { queryClient } from "@/lib/react-query";
 import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Modal,
@@ -16,6 +17,7 @@ import { MasterItem } from "@/lib/types/inventory";
 export default function ViewMasterItems() {
   const [showViewTable, setShowViewTable] = useState(false);
   const [page, setPage] = useState(1);
+  const queryClientHook = useQueryClient();
 
   const { data: response } = useGetAllMasterItems(page);
   const masterItems = response?.data ?? [];
@@ -37,9 +39,10 @@ export default function ViewMasterItems() {
   });
   useEffect(() => {
     if (showViewTable) {
-      queryClient.invalidateQueries({ queryKey: ["masterItems"] });
+      queryClientHook.invalidateQueries({ queryKey: ["masterItems"] });
+      queryClientHook.invalidateQueries({ queryKey: ["uomType"] });
     }
-  }, [showViewTable]);
+  }, [showViewTable, queryClientHook]);
   // Build a mapping from uomTypeId to UOM type name
   const uomTypeIdToName: Record<string, string> = {};
   uomTypeQueries.forEach((q, idx) => {

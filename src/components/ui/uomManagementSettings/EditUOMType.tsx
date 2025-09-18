@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Modal,
@@ -22,7 +23,22 @@ export default function EditUOMType() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUOMId, setSelectedUOMId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const queryClient = useQueryClient();
   const { data: AllUOMTypes } = useGetAllUOMTypes(page);
+
+  useEffect(() => {
+    if (showSelectModal) {
+      queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+      queryClient.invalidateQueries({ queryKey: ["uom"] });
+    }
+  }, [showSelectModal, queryClient]);
+
+  useEffect(() => {
+    if (showEditModal) {
+      queryClient.invalidateQueries({ queryKey: ["uom"] });
+      queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+    }
+  }, [showEditModal, queryClient]);
   // Get all unique standardUoMId values from UOM types
   const standardUoMIds = Array.from(
     new Set(

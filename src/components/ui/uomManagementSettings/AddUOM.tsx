@@ -31,6 +31,7 @@ export default function AddUOM() {
   useEffect(() => {
     if (showCreateUOM) {
       queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+      queryClient.invalidateQueries({ queryKey: ["uom"] });
     }
   }, [showCreateUOM, queryClient]);
 
