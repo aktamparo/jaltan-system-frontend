@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { IconSearch } from "@tabler/icons-react";
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent } from "react";
 
 interface SearchBarProps {
   onSearchChange?: (value: string) => void;
@@ -16,7 +16,6 @@ export default function SearchBar({
   onSearchChange,
   placeholder = "Enter search...",
   defaultValue = "",
-  debounceMs = 300,
 }: SearchBarProps) {
   const [value, setValue] = useState(defaultValue);
 
@@ -33,20 +32,9 @@ export default function SearchBar({
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      handleSearch(); // Immediate search on Enter
+      handleSearch();
     }
   };
-
-  // Debounced search effect (only for typing)
-  useEffect(() => {
-    if (onSearchChange && debounceMs > 0) {
-      const timer = setTimeout(() => {
-        onSearchChange(value);
-      }, debounceMs);
-
-      return () => clearTimeout(timer);
-    }
-  }, [value, onSearchChange, debounceMs]);
 
   return (
     <div className="relative w-full max-w-sm">

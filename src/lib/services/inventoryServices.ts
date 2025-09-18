@@ -12,6 +12,7 @@ import {
   PaginatedStockOutResponse,
   CreateMasterItem,
   EditMasterItem,
+  PaginatedStockInResponse,
 } from "../types/inventory";
 
 export const createMasteritem = async (itemData: CreateMasterItem) => {
@@ -41,6 +42,54 @@ export const createMasteritem = async (itemData: CreateMasterItem) => {
       // fallback if response is not JSON
     }
     throw new Error(errorMsg);
+  }
+
+  return response.json();
+};
+
+export const getAllStockIns = async (
+  params: PaginationParams
+): Promise<PaginatedStockInResponse> => {
+  const searchParams = new URLSearchParams();
+  if (params.page) searchParams.append("page", params.page.toString());
+  if (params.limit) searchParams.append("limit", params.limit.toString());
+  if (params.search) searchParams.append("search", params.search);
+
+  const response = await fetch(
+    `${BASE_URL}/stock-in?${searchParams.toString()}`,
+    {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch stock-in receipts");
+  }
+
+  return response.json();
+};
+
+export const getAllStockOuts = async (
+  params: PaginationParams
+): Promise<PaginatedStockOutResponse> => {
+  const searchParams = new URLSearchParams();
+  if (params.page) searchParams.append("page", params.page.toString());
+  if (params.limit) searchParams.append("limit", params.limit.toString());
+  if (params.search) searchParams.append("search", params.search);
+
+  const response = await fetch(
+    `${BASE_URL}/stock-out?${searchParams.toString()}`,
+    {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch stock-out receipts");
   }
 
   return response.json();
@@ -231,10 +280,9 @@ export const inventoryService = {
     params: PaginationParams
   ): Promise<PaginatedStockOutResponse> => {
     const searchParams = new URLSearchParams();
-
     if (params.page) searchParams.append("page", params.page.toString());
     if (params.limit) searchParams.append("limit", params.limit.toString());
-
+    if (params.search) searchParams.append("search", params.search);
     const response = await fetch(
       `${BASE_URL}/stock-out?${searchParams.toString()}`,
       {
@@ -245,12 +293,31 @@ export const inventoryService = {
         credentials: "include",
       }
     );
-
     if (!response.ok) {
       throw new Error("Failed to fetch stock-outs");
     }
-
     const data: PaginatedStockOutResponse = await response.json();
     return data;
+  },
+
+  getAllStockIns: async (
+    params: PaginationParams
+  ): Promise<import("../types/inventory").PaginatedStockInResponse> => {
+    const searchParams = new URLSearchParams();
+    if (params.page) searchParams.append("page", params.page.toString());
+    if (params.limit) searchParams.append("limit", params.limit.toString());
+    if (params.search) searchParams.append("search", params.search);
+    const response = await fetch(
+      `${BASE_URL}/stock-in?${searchParams.toString()}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch stock-in receipts");
+    }
+    return response.json();
   },
 };

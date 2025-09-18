@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Branch } from "@/lib/types/branch";
 import { useUpdateBranch } from "@/lib/mutations/branchMutations";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/components/ui/toast";
 
 interface EditBranchModalProps {
   branch: Branch;
@@ -25,6 +26,7 @@ export default function EditBranchModal({
   const [province, setProvince] = useState(branch.province || "");
   const [zipCode, setZipCode] = useState(branch.zipCode || "");
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,10 +44,16 @@ export default function EditBranchModal({
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["branches"] });
           onClose();
+          toast.success(
+            "Branch Updated",
+            "Branch information has been successfully updated."
+          );
         },
         onError: (err: unknown) => {
-          console.error("Update failed:", err);
-          alert("Failed to update branch");
+          const errorMessage =
+            err instanceof Error ? err.message : "Failed to update branch";
+
+          toast.error("Update Failed", errorMessage);
         },
       }
     );

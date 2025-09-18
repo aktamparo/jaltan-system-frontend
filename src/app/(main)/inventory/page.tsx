@@ -20,6 +20,7 @@ import {
   ModalTitle,
   ModalDescription,
 } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
 
 type OperationType = "stock-in" | "stock-out";
 
@@ -30,6 +31,8 @@ export default function InventoryPage() {
   const [operationType, setOperationType] = useState<OperationType>("stock-in");
   const [selectedItems, setSelectedItems] = useState<InventoryItem[]>([]);
   const [showQuantityModal, setShowQuantityModal] = useState(false);
+
+  const toast = useToast();
 
   // Stock In quantities
   const [quantities, setQuantities] = useState<
@@ -227,10 +230,16 @@ export default function InventoryPage() {
           setIsSelectionMode(false);
           setSelectedItems([]);
           setQuantities({});
-          alert("Stock-in created successfully!");
+          toast.success(
+            "Stock In Created",
+            "Stock-in transaction created successfully!"
+          );
         },
-        onError: (error) => {
-          alert(`Failed to create stock-in: ${error.message}`);
+        onError: (err: unknown) => {
+          const errorMessage =
+            err instanceof Error ? err.message : "Failed to create stock-in";
+
+          toast.error("Stock In Failed", errorMessage);
         },
       }
     );
@@ -253,10 +262,16 @@ export default function InventoryPage() {
           setIsSelectionMode(false);
           setSelectedItems([]);
           setStockOutQuantities({});
-          alert("Stock-out created successfully!");
+          toast.success(
+            "Stock Out Created",
+            "Stock-out transaction created successfully!"
+          );
         },
-        onError: (error) => {
-          alert(`Failed to create stock-out: ${error.message}`);
+        onError: (err: unknown) => {
+          const errorMessage =
+            err instanceof Error ? err.message : "Failed to create stock-out";
+
+          toast.error("Stock Out Failed", errorMessage);
         },
       }
     );

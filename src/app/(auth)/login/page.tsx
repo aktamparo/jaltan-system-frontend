@@ -12,10 +12,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useLogin } from "@/lib/mutations/authMutation";
+import { useToast } from "@/components/ui/toast";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const toast = useToast();
 
   const loginMutation = useLogin();
 
@@ -27,11 +29,15 @@ export default function LoginPage() {
       {
         onSuccess: (data) => {
           console.log("Login success:", data);
-          window.location.href = "/dashboard";
+          window.location.href = "/inventory";
         },
         onError: (err: unknown) => {
           console.error("Login failed:", err);
-          alert("Invalid email or password");
+
+          const errorMessage =
+            err instanceof Error ? err.message : "Invalid email or password";
+
+          toast.error("Login Failed", errorMessage);
         },
       }
     );

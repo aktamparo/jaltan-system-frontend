@@ -29,7 +29,7 @@ export const stockInColumns: ColumnDef<StockIn>[] = [
     cell: ({ row }) => {
       return (
         <span className="font-medium">
-          {row.original.quantity}
+          {Number(row.original.quantity).toFixed(2)}
         </span>
       );
     },
