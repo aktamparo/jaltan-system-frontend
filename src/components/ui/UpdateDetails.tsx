@@ -59,9 +59,11 @@ export default function UpdateDetails() {
             </ModalContent>
             
             <ModalFooter>
-              <Button type="submit">
+              <div className="flex flex-col w-full gap-4">
+              <Button className="self-end" type="submit">
                 Update
               </Button>
+            </div>
             </ModalFooter>
           </Modal>
     </>

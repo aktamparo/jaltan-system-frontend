@@ -115,11 +115,11 @@ const [zipCode, setZipCode] = useState("");
         </ModalContent>
         
         <ModalFooter>
-          <Button 
-            type="submit"
-          >
-            Save
-          </Button>
+          <div className="flex flex-col w-full gap-4 mt-6">
+              <Button className="self-end" type="submit">
+                Save
+              </Button>
+            </div>
         </ModalFooter>
         </form>
       </Modal>

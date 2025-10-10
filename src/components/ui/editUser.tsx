@@ -130,8 +130,11 @@ export default function EditUser({ user, onClose }: EditUserProps) {
           <option value="INACTIVE">INACTIVE</option>
         </select>
       </div>
-      <div className="flex gap-2">
-        <Button type="submit">Save</Button>
+
+      <div className="flex flex-row w-full gap-4 mt-6 justify-end">
+        <Button type="submit">
+          Save
+        </Button>
         <Button type="button" onClick={onClose} variant="secondary">
           Cancel
         </Button>

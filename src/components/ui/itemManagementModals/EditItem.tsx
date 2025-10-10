@@ -101,26 +101,32 @@ export default function EditMasterItems() {
       </Button>
       {showEditTable && (
         <Modal isVisible={showEditTable} onClose={() => setShowEditTable(false)}>
-          <div className="p-6">
-            <h2 className="text-lg font-bold mb-2">Edit Master Items</h2>
-            <p className="mb-4 text-gray-600">Select a master item to edit</p>
+          <ModalHeader>
+            <ModalTitle>Edit Master Items</ModalTitle>
+            <ModalDescription>Select a master item to edit</ModalDescription>
+          </ModalHeader>
+          
+          <ModalContent>
             <ViewTable columns={columns} data={masterItems} />
-            <div className="mt-4">
+          </ModalContent>
+         
+          <ModalFooter>
+            <div className="relative flex w-full items-center justify-center">
               <PaginationControls
                 currentPage={page}
-                totalPages={response?.totalPages ?? 1}
+                totalPages={response?.metadata?.totalPages ?? 1}
                 onPageChange={setPage}
               />
+              <div className="absolute right-0">
+                <Button
+                  onClick={() => setShowEditItemModal(true)}
+                  disabled={!selectedItemId}
+                >
+                  Edit Selected Item
+                </Button>
+              </div>
             </div>
-            <div className="mt-4 flex justify-end">
-              <Button
-                onClick={() => setShowEditItemModal(true)}
-                disabled={!selectedItemId}
-              >
-                Edit Selected Item
-              </Button>
-            </div>
-          </div>
+          </ModalFooter>
         </Modal>
       )}
       {showEditItemModal && selectedItemId && (
