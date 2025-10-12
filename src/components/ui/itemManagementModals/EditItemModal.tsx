@@ -8,6 +8,7 @@ import { useEditMasterItem } from "@/lib/mutations/inventoryMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { EditMasterItem } from "@/lib/types/inventory";
 import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
+import { useToast } from "@/components/ui/toast";
 
 interface EditItemModalProps {
   item: EditMasterItem;
@@ -22,6 +23,7 @@ export default function EditItemModal({ item, onClose }: EditItemModalProps) {
   const [uomTypeId, setUomTypeId] = useState(item.uomTypeId || "");
   const { data: allUOMTypes } = useGetAllUOMTypes(1); // page 1 for all
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,10 +39,16 @@ export default function EditItemModal({ item, onClose }: EditItemModalProps) {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["masterItems"] });
           onClose();
+          toast.success(
+            "Item Updated",
+            "Master item has been successfully updated."
+          );
         },
         onError: (err: unknown) => {
-          console.error("Update failed:", err);
-          alert("Failed to update item");
+          const errorMessage =
+            err instanceof Error ? err.message : "Failed to update item";
+
+          toast.error("Update Failed", errorMessage);
         },
       }
     );
@@ -90,11 +98,13 @@ export default function EditItemModal({ item, onClose }: EditItemModalProps) {
           onChange={(e) => setUomTypeId(e.target.value)}
         >
           <option value="">Select UOM Type</option>
-          {(allUOMTypes?.data ?? []).map((uomType: { id: string; type: string }) => (
-            <option key={uomType.id} value={uomType.id}>
-              {uomType.type}
-            </option>
-          ))}
+          {(allUOMTypes?.data ?? []).map(
+            (uomType: { id: string; type: string }) => (
+              <option key={uomType.id} value={uomType.id}>
+                {uomType.type}
+              </option>
+            )
+          )}
         </select>
       </div>
       <div className="flex flex-row w-full gap-4 mt-6 justify-end">

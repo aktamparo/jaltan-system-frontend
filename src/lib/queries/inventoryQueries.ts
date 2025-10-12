@@ -1,5 +1,16 @@
+export const usePaginatedStockIns = (params: PaginationParams) => {
+  return useQuery({
+    queryKey: ["stockIns", "paginated", params],
+    queryFn: () => inventoryService.getAllStockIns(params),
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: true,
+  });
+};
 import { useQuery } from "@tanstack/react-query";
-import { inventoryService,getAllMasteritems } from "../services/inventoryServices";
+import {
+  inventoryService,
+  getAllMasteritems,
+} from "../services/inventoryServices";
 import { PaginationParams } from "../types/inventory";
 
 export const useGetAllBranchItems = (page: number) => {
@@ -10,7 +21,7 @@ export const useGetAllBranchItems = (page: number) => {
     refetchOnWindowFocus: true,
   });
 };
-export const useGetAllMasterItems = (page =1, limit=10) => {
+export const useGetAllMasterItems = (page = 1, limit = 10) => {
   return useQuery({
     queryKey: ["masterItems", page],
     queryFn: () => getAllMasteritems(page, limit),

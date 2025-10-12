@@ -9,6 +9,7 @@ import { Branch } from "@/lib/types/branch";
 import { useUpdateUser } from "@/lib/mutations/accountMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetAllBranches } from "@/lib/queries/branchQueries";
+import { useToast } from "@/components/ui/toast";
 
 interface EditUserProps {
   user: User;
@@ -17,6 +18,7 @@ interface EditUserProps {
 
 export default function EditUser({ user, onClose }: EditUserProps) {
   const updateUserMutation = useUpdateUser();
+  const toast = useToast();
 
   const [email, setEmail] = useState(user.email);
   const [firstName, setFirstName] = useState(user.employee.firstName);
@@ -51,10 +53,16 @@ export default function EditUser({ user, onClose }: EditUserProps) {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["accounts"] });
           onClose();
+          toast.success(
+            "User Updated",
+            "User information has been successfully updated."
+          );
         },
         onError: (err: unknown) => {
-          console.error("Update failed:", err);
-          alert("Failed to update user");
+          const errorMessage =
+            err instanceof Error ? err.message : "Failed to update user";
+
+          toast.error("Update Failed", errorMessage);
         },
       }
     );

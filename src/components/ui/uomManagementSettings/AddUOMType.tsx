@@ -1,4 +1,3 @@
-
 "use client";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -9,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCreateUOMType } from "@/lib/mutations/uomMutations";
 import { useGetAllUOM } from "@/lib/queries/uomQueries";
 import { UoM } from "@/lib/types/uom";
+import { useToast } from "@/components/ui/toast";
 import {
   Modal,
   ModalContent,
@@ -25,6 +25,7 @@ export default function AddUOMType() {
   const queryClient = useQueryClient();
   const createUOMType = useCreateUOMType();
   const { data: AllUOM } = useGetAllUOM(1, 100);
+  const toast = useToast();
   useEffect(() => {
     if (showCreateUOMType) {
       queryClient.invalidateQueries({ queryKey: ["uom"] });
@@ -40,13 +41,16 @@ export default function AddUOMType() {
           queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
           setUOMType("");
           setShowCreateUOMType(false);
+          toast.success(
+            "UOM Type Created",
+            "New UOM type has been successfully created."
+          );
         },
         onError: (err: unknown) => {
-          let errorMsg = "Failed to create user";
-          if (err instanceof Error && err.message) {
-            errorMsg = err.message;
-          }
-          alert(errorMsg);
+          const errorMessage =
+            err instanceof Error ? err.message : "Failed to create UOM type";
+
+          toast.error("UOM Type Creation Failed", errorMessage);
         },
       }
     );

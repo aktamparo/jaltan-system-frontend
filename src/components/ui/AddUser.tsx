@@ -8,6 +8,7 @@ import { Branch } from "@/lib/types/branch";
 import { useCreateUser } from "@/lib/mutations/accountMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetAllBranches } from "@/lib/queries/branchQueries";
+import { useToast } from "@/components/ui/toast";
 import {
   Modal,
   ModalContent,
@@ -30,6 +31,7 @@ export default function AddUser() {
   const { data: AllBranches } = useGetAllBranches(1, 100);
   const createUser = useCreateUser();
   const queryClient = useQueryClient();
+  const toast = useToast();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createUser.mutate(
@@ -55,13 +57,16 @@ export default function AddUser() {
           setRole("STAFF");
           setStatus("ACTIVE");
           setShowCreateUser(false);
+          toast.success(
+            "User Created",
+            "New user has been successfully created."
+          );
         },
         onError: (err: unknown) => {
-          let errorMsg = "Failed to create user";
-          if (err instanceof Error && err.message) {
-            errorMsg = err.message;
-          }
-          alert(errorMsg);
+          const errorMessage =
+            err instanceof Error ? err.message : "Failed to create user";
+
+          toast.error("User Creation Failed", errorMessage);
         },
       }
     );

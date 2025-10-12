@@ -12,26 +12,35 @@ export class ApiError extends Error {
   }
 }
 
+interface ToastInterface {
+  error: (title: string, description?: string) => void;
+  success: (title: string, description?: string) => void;
+  warning: (title: string, description?: string) => void;
+  info: (title: string, description?: string) => void;
+}
+
 /**
- * Generic error handler with console logging
+ * Generic error handler with toast notifications
  */
-export const handleApiError = (error: Error | ApiError, context: string) => {
+export const handleApiError = (
+  error: Error | ApiError,
+  context: string,
+  toast?: ToastInterface
+) => {
   console.error(`${context}:`, error);
 
-  // You can replace this with your preferred notification system
-  if (typeof window !== "undefined") {
-    console.warn(`UI Toast: ${context}: ${error.message}`);
+  if (toast && typeof window !== "undefined") {
+    toast.error(context, error.message);
   }
 };
 
 /**
- * Success handler
+ * Success handler with toast notifications
  */
-export const handleApiSuccess = (message: string) => {
+export const handleApiSuccess = (message: string, toast?: ToastInterface) => {
   console.log(`Success: ${message}`);
 
-  // You can replace this with your preferred notification system
-  if (typeof window !== "undefined") {
-    console.info(`UI Toast: ${message}`);
+  if (toast && typeof window !== "undefined") {
+    toast.success("Success", message);
   }
 };

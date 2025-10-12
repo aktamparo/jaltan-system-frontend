@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useChangePassword } from "@/lib/mutations/authMutation";
+import { useToast } from "@/components/ui/toast";
 import {
   Modal,
   ModalContent,
@@ -33,6 +34,7 @@ export default function ChangePassword() {
   });
   const changePasswordMutation = useChangePassword();
   const [errors, setErrors] = useState<Partial<PasswordFormData>>({});
+  const toast = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -76,12 +78,17 @@ export default function ChangePassword() {
           newPassword: formData.newPassword,
         },
         {
+          onSuccess: () => {
+            toast.success(
+              "Password Updated",
+              "Your password has been successfully changed."
+            );
+          },
           onError: (err: unknown) => {
-            let errorMsg = "Failed to change password";
-            if (err instanceof Error && err.message) {
-              errorMsg = err.message;
-            }
-            alert(errorMsg);
+            const errorMessage =
+              err instanceof Error ? err.message : "Failed to change password";
+
+            toast.error("Password Change Failed", errorMessage);
           },
         }
       );

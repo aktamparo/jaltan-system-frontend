@@ -52,7 +52,8 @@ export function SelectableInventoryTable({
         cell: ({ row }) => {
           return (
             <span>
-              {row.original.quantity} {row.original.uom.symbol}
+              {Number(row.original.quantity).toFixed(2)}{" "}
+              {row.original.uom.symbol}
             </span>
           );
         },

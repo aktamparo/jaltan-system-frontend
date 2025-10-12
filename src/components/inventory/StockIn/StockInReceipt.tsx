@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   IconFileInvoice,
   IconCalendarTime,
@@ -125,7 +120,7 @@ export default function StockInReceipt({ receiptData }: StockInReceiptProps) {
                 >
                   <span>{item.itemName}</span>
                   <span className="font-medium">
-                    {item.quantity} {item.uomSymbol}
+                    {Number(item.quantity).toFixed(2)} {item.uomSymbol}
                   </span>
                 </div>
               ))}
@@ -136,4 +131,3 @@ export default function StockInReceipt({ receiptData }: StockInReceiptProps) {
     </div>
   );
 }
-

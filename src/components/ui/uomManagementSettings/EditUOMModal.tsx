@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useUpdateUoM } from "../../../lib/mutations/uomMutations";
-import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";  
+import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
 import { UoM } from "@/lib/types/uom";
+
+import { useToast } from "@/components/ui/toast";
 
 interface EditUOMModalProps {
   uom: UoM;
@@ -19,45 +21,47 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
   const updateUoMMutation = useUpdateUoM();
   const queryClient = useQueryClient();
   const { data: allUOMTypes } = useGetAllUOMTypes(1, 100);
+  const toast = useToast();
 
   const [name, setName] = useState(uom.name);
   const [symbol, setSymbol] = useState(uom.symbol);
-  const [conversionFactor, setConversionFactor] = useState(uom.conversionFactor.toString());
+  const [conversionFactor, setConversionFactor] = useState(
+    uom.conversionFactor.toString()
+  );
   const [uomTypeId, setUomTypeId] = useState(uom.uomTypeId);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Only send fields that are non-empty
-    const payload: { id: string; name?: string; symbol?: string; conversionFactor?: number; uomTypeId?: string } = { id: uom.id };
+    const payload: {
+      id: string;
+      name?: string;
+      symbol?: string;
+      conversionFactor?: number;
+      uomTypeId?: string;
+    } = { id: uom.id };
     if (name && name.trim() !== "") payload.name = name;
     if (symbol && symbol.trim() !== "") payload.symbol = symbol;
-    if (conversionFactor && conversionFactor.trim() !== "") payload.conversionFactor = parseFloat(conversionFactor);
+    if (conversionFactor && conversionFactor.trim() !== "")
+      payload.conversionFactor = parseFloat(conversionFactor);
     if (uomTypeId && uomTypeId.trim() !== "") payload.uomTypeId = uomTypeId;
 
-    updateUoMMutation.mutate(
-      payload,
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["uom"] });
-          onClose();
-        },
-        onError: async (err: unknown) => {
-          let errorMsg = "Failed to update UOM";
-          if (err instanceof Response) {
-            try {
-              const data = await err.json();
-              errorMsg = data.message || errorMsg;
-            } catch {
-              errorMsg = await err.text();
-            }
-          } else if (err instanceof Error) {
-            errorMsg = err.message;
-          }
-          console.error("Update failed:", errorMsg);
-          alert(errorMsg);
-        },
-      }
-    );
+    updateUoMMutation.mutate(payload, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["uom"] });
+        onClose();
+        toast.success(
+          "UOM Updated",
+          "Unit of measurement has been successfully updated."
+        );
+      },
+      onError: (err: unknown) => {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to update UOM";
+
+        toast.error("UOM Update Failed", errorMessage);
+      },
+    });
   };
 
   return (
@@ -100,11 +104,13 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
           onChange={(e) => setUomTypeId(e.target.value)}
         >
           <option value="">Select UOM Type</option>
-          {(allUOMTypes?.data ?? []).map((uomType: { id: string; type: string }) => (
-            <option key={uomType.id} value={uomType.id}>
-              {uomType.type}
-            </option>
-          ))}
+          {(allUOMTypes?.data ?? []).map(
+            (uomType: { id: string; type: string }) => (
+              <option key={uomType.id} value={uomType.id}>
+                {uomType.type}
+              </option>
+            )
+          )}
         </select>
       </div>
       <div className="flex flex-row w-full gap-4 mt-6 justify-end">
