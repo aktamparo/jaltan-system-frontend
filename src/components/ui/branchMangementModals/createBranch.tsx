@@ -93,54 +93,6 @@ export default function CreateBranch() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="street">Street</Label>
-                <Input
-                  id="street"
-                  type="text"
-                  required
-                  value={street}
-                  onChange={(e) => setStreet(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input
-                  id="city"
-                  type="text"
-                  required
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="province">Province</Label>
-                <Input
-                  id="province"
-                  type="text"
-                  required
-                  value={province}
-                  onChange={(e) => setProvince(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="zipCode">Zip Code</Label>
-                <Input
-                  id="zipCode"
-                  type="number"
-                  min="0"
-                  step="1"
-                  required
-                  value={zipCode}
-                  onChange={(e) =>
-                    setZipCode(e.target.value.replace(/[^0-9]/g, ""))
-                  }
-                />
-              </div>
-            </div>
-          </ModalContent>
-
-<<<<<<< HEAD
             <div className="space-y-2">
               <Label htmlFor="street">Street</Label>
               <Input id="street" type="text" required value={street} onChange={e => setStreet(e.target.value)} />
@@ -169,17 +121,12 @@ export default function CreateBranch() {
         </ModalContent>
         
         <ModalFooter>
-          <div className="flex flex-col w-full gap-4 mt-6">
-              <Button className="self-end" type="submit">
-                Save
-              </Button>
-            </div>
+          <Button 
+            type="submit"
+          >
+            Save
+          </Button>
         </ModalFooter>
-=======
-          <ModalFooter>
-            <Button type="submit">Save</Button>
-          </ModalFooter>
->>>>>>> origin/main
         </form>
       </Modal>
     </>
