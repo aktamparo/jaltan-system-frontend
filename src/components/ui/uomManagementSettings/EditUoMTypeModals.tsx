@@ -7,54 +7,56 @@ import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useUpdateUoMType } from "../../../lib/mutations/uomMutations";
-import { useGetAllUOM } from "@/lib/queries/uomQueries";  
-import {UomType} from "@/lib/types/uom";
+import { useGetAllUOM } from "@/lib/queries/uomQueries";
+import { UomType } from "@/lib/types/uom";
+import { useToast } from "@/components/ui/toast";
+
 interface EditUOMTypeModalProps {
   uomType: UomType;
   onClose: () => void;
-  
 }
 
-
-export default function EditUOMTypeModal({ uomType, onClose }: EditUOMTypeModalProps) {
-  
+export default function EditUOMTypeModal({
+  uomType,
+  onClose,
+}: EditUOMTypeModalProps) {
   const updateUoMTypeMutation = useUpdateUoMType();
   const queryClient = useQueryClient();
-  const { data: allUOMs } = useGetAllUOM(1,100);
+  const { data: allUOMs } = useGetAllUOM(1, 100);
+  const toast = useToast();
 
   const [type, setType] = useState(uomType.type);
   const [standardUoMId, setStandardUoMId] = useState(uomType.standardUoMId);
-console.log({ id: uomType.id, type, standardUoMId: standardUoMId || undefined });
+  console.log({
+    id: uomType.id,
+    type,
+    standardUoMId: standardUoMId || undefined,
+  });
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Only send fields that are non-empty
-    const payload: { id: string; type?: string; standardUoMId?: string } = { id: uomType.id };
+    const payload: { id: string; type?: string; standardUoMId?: string } = {
+      id: uomType.id,
+    };
     if (type && type.trim() !== "") payload.type = type;
-    if (standardUoMId && standardUoMId.trim() !== "") payload.standardUoMId = standardUoMId;
-    updateUoMTypeMutation.mutate(
-      payload,
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["uom"] });
-          onClose();
-        },
-        onError: async (err: unknown) => {
-          let errorMsg = "Failed to update UOM Type";
-          if (err instanceof Response) {
-            try {
-              const data = await err.json();
-              errorMsg = data.message || errorMsg;
-            } catch {
-              errorMsg = await err.text();
-            }
-          } else if (err instanceof Error) {
-            errorMsg = err.message;
-          }
-          console.error("Update failed:", errorMsg);
-          alert(errorMsg);
-        },
-      }
-    );
+    if (standardUoMId && standardUoMId.trim() !== "")
+      payload.standardUoMId = standardUoMId;
+    updateUoMTypeMutation.mutate(payload, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["uom"] });
+        onClose();
+        toast.success(
+          "UOM Type Updated",
+          "UOM type has been successfully updated."
+        );
+      },
+      onError: (err: unknown) => {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to update UOM Type";
+
+        toast.error("UOM Type Update Failed", errorMessage);
+      },
+    });
   };
 
   return (

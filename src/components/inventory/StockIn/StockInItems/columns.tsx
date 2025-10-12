@@ -3,9 +3,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 export type StockIn = {
-  id: string;     
-  name: string; 
-  category: string[]; 
+  id: string;
+  name: string;
+  category: string[];
   quantity: number;
   uomSymbol: string;
 };
@@ -25,7 +25,9 @@ export function getStockInColumns(
           checked={selectedIds.includes(row.original.id)}
           onChange={() => {
             if (selectedIds.includes(row.original.id)) {
-              setSelectedIds(selectedIds.filter(id => id !== row.original.id));
+              setSelectedIds(
+                selectedIds.filter((id) => id !== row.original.id)
+              );
             } else {
               setSelectedIds([...selectedIds, row.original.id]);
             }
@@ -40,7 +42,10 @@ export function getStockInColumns(
     {
       accessorKey: "quantity",
       header: "Quantity",
-      cell: ({ row }) => `${row.original.quantity} ${row.original.uomSymbol ?? ""}`,
+      cell: ({ row }) =>
+        `${Number(row.original.quantity).toFixed(2)} ${
+          row.original.uomSymbol ?? ""
+        }`,
     },
     {
       accessorKey: "category",

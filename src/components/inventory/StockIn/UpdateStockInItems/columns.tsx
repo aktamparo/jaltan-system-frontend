@@ -3,9 +3,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 export type StockIn = {
-  id: string;     
-  name: string; 
-  category: string[]; 
+  id: string;
+  name: string;
+  category: string[];
   quantity: number;
   uomSymbol: string;
 };
@@ -35,7 +35,9 @@ export function getStockInColumns(
       accessorKey: "quantity",
       header: "Quantity",
       cell: ({ row }) =>
-        `${row.original.quantity} ${row.original.uomSymbol ?? ""}`,
+        `${Number(row.original.quantity).toFixed(2)} ${
+          row.original.uomSymbol ?? ""
+        }`,
     },
     {
       accessorKey: "category",

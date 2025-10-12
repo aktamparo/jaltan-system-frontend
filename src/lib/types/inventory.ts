@@ -1,3 +1,86 @@
+export interface StockInReceiptUser {
+  id: string;
+  email: string;
+  role: "ADMIN" | "STAFF";
+  status: "ACTIVE" | "INACTIVE";
+  employee: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface StockInReceiptItem {
+  id: string;
+  inventoryId: string;
+  stockInId: string;
+  itemId: string;
+  uomId: string;
+  uomName: string;
+  uomSymbol: string;
+  quantity: number;
+  convertedQuantity: number;
+  name: string;
+  currentQuantity: number;
+}
+
+export interface StockInReceipt {
+  id: string;
+  createdAt: string;
+  createdById: string;
+  modifiedAt: string;
+  modifiedById: string;
+  createdBy: StockInReceiptUser;
+  modifiedBy: StockInReceiptUser;
+  items: StockInReceiptItem[];
+}
+
+export interface PaginatedStockInResponse {
+  metadata: PaginationMetadata;
+  data: StockInReceipt[];
+}
+
+export interface StockOutReceiptUser {
+  id: string;
+  email: string;
+  role: "ADMIN" | "STAFF";
+  status: "ACTIVE" | "INACTIVE";
+  employee: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface StockOutReceiptItem {
+  id: string;
+  inventoryId: string;
+  stockOutId: string;
+  itemId: string;
+  uomId: string;
+  uomName: string;
+  uomSymbol: string;
+  quantity: number;
+  convertedQuantity: number;
+  isDamagedGoods: boolean;
+  comment: string | null;
+  name: string;
+  currentQuantity: number;
+}
+
+export interface StockOutReceipt {
+  id: string;
+  createdAt: string;
+  createdById: string;
+  modifiedAt: string;
+  modifiedById: string;
+  createdBy: StockOutReceiptUser;
+  modifiedBy: StockOutReceiptUser;
+  items: StockOutReceiptItem[];
+}
+
+export interface PaginatedStockOutResponse {
+  metadata: PaginationMetadata;
+  data: StockOutReceipt[];
+}
 export interface PaginationMetadata {
   total: number;
   totalPages: number;
@@ -21,9 +104,8 @@ export interface CreateMasterItem {
   uomTypeId: string;
 }
 
-
 export interface EditMasterItem {
-  id:string;
+  id: string;
   name: string;
   description: string;
   category: ("FRIDGE" | "PANTRY")[];
@@ -187,7 +269,7 @@ export interface StockOut {
 
 export interface PaginatedStockOutResponse {
   metadata: PaginationMetadata;
-  data: StockOut[];
+  data: StockOutReceipt[];
 }
 
 export interface UpdateStockOutResponse {

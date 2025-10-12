@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Branch } from "@/lib/types/branch";
 import { useCreateMasterItem } from "@/lib/mutations/inventoryMutations";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/components/ui/toast";
 import {
   Modal,
   ModalContent,
@@ -28,6 +29,7 @@ export default function CreateItem() {
   const { data: AllUOMTypes } = useGetAllUOMTypes(1, 100);
   const createMasterItem = useCreateMasterItem();
   const queryClient = useQueryClient();
+  const toast = useToast();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createMasterItem.mutate(
@@ -35,7 +37,7 @@ export default function CreateItem() {
         name,
         description,
         category,
-        uomTypeId
+        uomTypeId,
       },
       {
         onSuccess: () => {
@@ -45,13 +47,16 @@ export default function CreateItem() {
           setCategory(["PANTRY"]);
           setUomTypeId("");
           setShowCreateMasterItem(false);
+          toast.success(
+            "Item Created",
+            "New master item has been successfully created."
+          );
         },
         onError: (err: unknown) => {
-          let errorMsg = "Failed to create user";
-          if (err instanceof Error && err.message) {
-            errorMsg = err.message;
-          }
-          alert(errorMsg);
+          const errorMessage =
+            err instanceof Error ? err.message : "Failed to create item";
+
+          toast.error("Item Creation Failed", errorMessage);
         },
       }
     );
@@ -63,9 +68,7 @@ export default function CreateItem() {
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
         <span className="text-s text-black">Create a new Item</span>
-        <span className="text-s text-gray-500">
-          Create a new Master Item
-        </span>
+        <span className="text-s text-gray-500">Create a new Master Item</span>
       </Button>
 
       <Modal
@@ -107,7 +110,8 @@ export default function CreateItem() {
                   value={category.join(",")}
                   onChange={(e) => {
                     const val = e.target.value;
-                    if (val === "FRIDGE,PANTRY") setCategory(["FRIDGE", "PANTRY"]);
+                    if (val === "FRIDGE,PANTRY")
+                      setCategory(["FRIDGE", "PANTRY"]);
                     else setCategory([val as "FRIDGE" | "PANTRY"]);
                   }}
                 >

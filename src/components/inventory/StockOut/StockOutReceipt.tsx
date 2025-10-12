@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   IconFileInvoice,
   IconCalendarTime,
@@ -120,14 +115,11 @@ export default function StockOutReceipt({ receiptData }: StockOutReceiptProps) {
             </div>
             <div className="divide-y">
               {receiptData.items.map((item) => (
-                <div
-                  key={item.itemId}
-                  className="py-2 space-y-1"
-                >
+                <div key={item.itemId} className="py-2 space-y-1">
                   <div className="flex justify-between items-center">
                     <span>{item.itemName}</span>
                     <span className="font-medium">
-                      {item.quantity} {item.uomSymbol}
+                      {Number(item.quantity).toFixed(2)} {item.uomSymbol}
                     </span>
                   </div>
 
@@ -153,4 +145,3 @@ export default function StockOutReceipt({ receiptData }: StockOutReceiptProps) {
     </div>
   );
 }
-
