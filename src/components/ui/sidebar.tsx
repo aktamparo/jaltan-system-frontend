@@ -13,6 +13,7 @@ import {
   IconSettings,
   IconPackageImport, // Stock In
   IconPackageExport,   // Stock Out
+  IconChartBar,        // Sales
 } from "@tabler/icons-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname, useRouter } from "next/navigation";
@@ -102,6 +103,21 @@ export default function Sidebar({ account }: CurrentUser) {
             className={pathname === "/stockout" ? "text-[#D22929]" : ""}
           />
           Stock Out
+        </Link>
+
+        <Link
+          href="/sales"
+          className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
+            pathname === "/sales"
+              ? "text-[#D22929]"
+              : "hover:text-[#D22929]"
+          }`}
+        >
+          <IconChartBar
+            size={20}
+            className={pathname === "/sales" ? "text-[#D22929]" : ""}
+          />
+          Sales
         </Link>
 
         <Link
@@ -247,6 +263,21 @@ export default function Sidebar({ account }: CurrentUser) {
                 className={pathname === "/stockout" ? "text-[#D22929]" : ""}
               />
               Stock Out
+            </Link>
+
+            <Link
+              href="/sales"
+              className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
+                pathname === "/sales"
+                  ? "text-[#D22929]"
+                  : "hover:text-[#D22929]"
+              }`}
+            >
+              <IconChartBar
+                size={20}
+                className={pathname === "/sales" ? "text-[#D22929]" : ""}
+              />
+              Sales
             </Link>
 
             <Link
