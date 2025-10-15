@@ -76,8 +76,8 @@ export default function UpdateStockIn({}: UpdateStockInProps) {
         }
       }}
     >
-      <Button type="button" onClick={() => setShowUpdateStockIn(true)}>
-        Update Stock In Items
+      <Button type="button" size="sm" variant="outline" onClick={() => setShowUpdateStockIn(true)}>
+        Update Stock In
       </Button>
 
       {/* Select item modal */}
@@ -91,12 +91,12 @@ export default function UpdateStockIn({}: UpdateStockInProps) {
           <ViewTable columns={columns} data={dummyData} />
         </ModalContent>
 
-        <ModalFooter className="flex gap-2">
-          <Button type="submit" disabled={!selectedItem}>
-            Next
-          </Button>
-          <Button type="button" onClick={() => setShowUpdateStockIn(false)}>
+        <ModalFooter className="flex items-center justify-end gap-2">
+          <Button type="button" size="sm" variant="outline" onClick={() => setShowUpdateStockIn(false)}>
             Cancel
+          </Button>
+          <Button type="submit" size="sm" disabled={!selectedItem}>
+            Next
           </Button>
         </ModalFooter>
       </Modal>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Searchbar from "@/components/ui/searchbar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import UpdateStockIn from "@/components/inventory/StockIn/UpdateStockIn";
 import StockInReceipt from "@/components/inventory/StockIn/StockInReceipt";
 import { Modal, ModalContent } from "@/components/ui/modal";
 import { PaginatedDataTable } from "@/components/inventory/PaginatedStockIn/paginated-data-table";
@@ -16,15 +17,19 @@ import { ColumnDef } from "@tanstack/react-table";
 export default function StockInPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [selectedCreatedBy, setSelectedCreatedBy] = useState<string | null>(null);
   const [selectedReceipt, setSelectedReceipt] =
     useState<StockInReceiptType | null>(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
 
   const pageSize = 10;
-  const params: PaginationParams = {
+  const params: PaginationParams & { month?: string; createdBy?: string } = {
     page: currentPage,
     limit: pageSize,
     search: searchQuery || undefined,
+    month: selectedMonth || undefined,
+    createdBy: selectedCreatedBy || undefined,
   };
   const {
     data: paginatedData,
@@ -94,12 +99,33 @@ export default function StockInPage() {
     <>
       <div className="flex flex-row items-center justify-between mb-4">
         <h1 className="text-xl font-medium m-0">Stock In</h1>
+        <div className="flex gap-2">
+          <UpdateStockIn />
+        </div>
       </div>
       <div className="flex flex-row items-center justify-between mb-4">
-        <Searchbar
-          onSearchChange={handleSearchChange}
-          placeholder="Search stock-in receipts"
-        />
+        <div className="flex items-center gap-3">
+          <Select value={selectedMonth ?? ""} onValueChange={(val) => { setSelectedMonth(val || null); setCurrentPage(1); }}>
+            <SelectTrigger className="w-44">
+              <SelectValue placeholder="Filter by month" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="2025-10">October 2025</SelectItem>
+              <SelectItem value="2025-09">September 2025</SelectItem>
+              <SelectItem value="2025-08">August 2025</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={selectedCreatedBy ?? ""} onValueChange={(val) => { setSelectedCreatedBy(val || null); setCurrentPage(1); }}>
+            <SelectTrigger className="w-44">
+              <SelectValue placeholder="Created by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="user:john">John Doe</SelectItem>
+              <SelectItem value="user:jane">Jane Smith</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {paginatedData && (

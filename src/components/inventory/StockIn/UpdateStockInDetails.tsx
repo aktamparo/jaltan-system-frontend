@@ -5,14 +5,6 @@ import type { StockIn } from "@/components/inventory/StockIn/UpdateStockInDetail
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -70,36 +62,34 @@ export default function UpdateStockInDetails({
 
   return (
     <div className="space-y-6">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Item</TableHead>
-            <TableHead>Quantity</TableHead>
-            <TableHead>Unit of Measurement</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow key={item.id}>
-            <TableCell>{item.name}</TableCell>
-            <TableCell>
-              <Input
-                id={`quantity-${item.id}`}
-                type="number"
-                value={detail.quantity}
-                onChange={(e) =>
-                  handleChange("quantity", Number(e.target.value))
-                }
-                className="w-24"
-                min={0}
-              />
-            </TableCell>
-            <TableCell>
-              <Select
-                value={detail.uomId}
-                onValueChange={(val) => handleUomChange(val)}
-              >
-                <SelectTrigger className="w-28">
-                  <SelectValue placeholder="Select UOM" />
+      <div className="rounded-md border bg-white p-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <div className="text-sm font-medium text-foreground truncate">{item.name}</div>
+            {/* small subtitle - use category or placeholder */}
+            <div className="mt-1 text-xs text-muted-foreground">
+              {item.category && item.category.length > 0
+                ? item.category.join(", ")
+                : ""}
+            </div>
+            <div className="mt-2 text-xs text-muted-foreground">Current stock: {typeof item.quantity === 'number' ? item.quantity.toFixed(2) : String(item.quantity)}</div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Input
+              id={`quantity-${item.id}`}
+              type="number"
+              value={detail.quantity}
+              onChange={(e) => handleChange("quantity", Number(e.target.value))}
+              className="w-28"
+              min={0}
+              placeholder="Quantity"
+            />
+
+            <div className="w-28">
+              <Select value={detail.uomId} onValueChange={(val) => handleUomChange(val)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="UOM" />
                 </SelectTrigger>
                 <SelectContent>
                   {UOM_OPTIONS.map((uom) => (
@@ -109,17 +99,17 @@ export default function UpdateStockInDetails({
                   ))}
                 </SelectContent>
               </Select>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="flex justify-start gap-2">
         <Button type="button" variant="outline" onClick={onClose}>
           Back
         </Button>
         <Button type="button" onClick={handleSave}>
-          Save
+          Submit Stock In
         </Button>
       </div>
     </div>
