@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import UpdateStockIn from "@/components/inventory/StockIn/UpdateStockIn";
@@ -13,6 +13,8 @@ import {
   StockInReceipt as StockInReceiptType,
 } from "@/lib/types/inventory";
 import { ColumnDef } from "@tanstack/react-table";
+import ScrollableComponent from "@/components/ui/scrollableComponent";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function StockInPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,6 +24,13 @@ export default function StockInPage() {
   const [selectedReceipt, setSelectedReceipt] =
     useState<StockInReceiptType | null>(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  // Reload data when page mounts
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["stockins"] });
+  }, [queryClient]);
 
   const pageSize = 10;
   const params: PaginationParams & { month?: string; createdBy?: string } = {
@@ -96,13 +105,14 @@ export default function StockInPage() {
   };
 
   return (
-    <>
-      <div className="flex flex-row items-center justify-between mb-4">
-        <h1 className="text-xl font-medium m-0">Stock In</h1>
-        <div className="flex gap-2">
-          <UpdateStockIn />
+    <div className="h-full w-full flex flex-col overflow-hidden">
+      <ScrollableComponent>
+        <div className="flex flex-row items-center justify-between mb-4">
+          <h1 className="text-xl font-medium m-0">Stock In</h1>
+          <div className="flex gap-2">
+            <UpdateStockIn />
+          </div>
         </div>
-      </div>
       <div className="flex flex-row items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <Select value={selectedMonth ?? ""} onValueChange={(val) => { setSelectedMonth(val || null); setCurrentPage(1); }}>
@@ -165,6 +175,7 @@ export default function StockInPage() {
           )}
         </ModalContent>
       </Modal>
-    </>
+      </ScrollableComponent>
+    </div>
   );
 }

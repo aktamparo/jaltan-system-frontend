@@ -41,7 +41,8 @@ export default function CreateItem() {
       },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["inventoryItem"] });
+          queryClient.invalidateQueries({ queryKey: ["inventoryItems"] });
+          queryClient.invalidateQueries({ queryKey: ["masterItems"] });
           setName("");
           setDescription("");
           setCategory(["PANTRY"]);

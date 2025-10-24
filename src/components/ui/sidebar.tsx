@@ -13,6 +13,7 @@ import {
   IconSettings,
   IconPackageImport, // Stock In
   IconPackageExport,   // Stock Out
+  IconChartBar,        // Sales
 } from "@tabler/icons-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname, useRouter } from "next/navigation";
@@ -105,6 +106,21 @@ export default function Sidebar({ account }: CurrentUser) {
         </Link>
 
         <Link
+          href="/sales"
+          className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
+            pathname === "/sales"
+              ? "text-[#D22929]"
+              : "hover:text-[#D22929]"
+          }`}
+        >
+          <IconChartBar
+            size={20}
+            className={pathname === "/sales" ? "text-[#D22929]" : ""}
+          />
+          Sales
+        </Link>
+
+        <Link
           href="/logistics"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
             pathname === "/logistics"
@@ -117,19 +133,6 @@ export default function Sidebar({ account }: CurrentUser) {
             className={pathname === "/logistics" ? "text-[#D22929]" : ""}
           />
           Logistics
-        </Link>
-
-        <Link
-          href="/reports"
-          className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-            pathname === "/reports" ? "text-[#D22929]" : "hover:text-[#D22929]"
-          }`}
-        >
-          <IconReportAnalytics
-            size={20}
-            className={pathname === "/reports" ? "text-[#D22929]" : ""}
-          />
-          Reports
         </Link>
 
         <Link
@@ -247,6 +250,21 @@ export default function Sidebar({ account }: CurrentUser) {
                 className={pathname === "/stockout" ? "text-[#D22929]" : ""}
               />
               Stock Out
+            </Link>
+
+            <Link
+              href="/sales"
+              className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
+                pathname === "/sales"
+                  ? "text-[#D22929]"
+                  : "hover:text-[#D22929]"
+              }`}
+            >
+              <IconChartBar
+                size={20}
+                className={pathname === "/sales" ? "text-[#D22929]" : ""}
+              />
+              Sales
             </Link>
 
             <Link

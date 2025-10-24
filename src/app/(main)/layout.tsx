@@ -24,12 +24,12 @@ function Content({ children }: { children: React.ReactNode }) {
   if (error) return <div>Failed to load account</div>;
 
   return (
-    <div className="min-h-screen flex bg-[#eceef7]">
-      <div className="bg-white rounded-xl flex w-full m-6 flex-col">
+    <div className="h-screen flex bg-[#eceef7] overflow-hidden">
+      <div className="bg-white rounded-xl flex w-full m-6 flex-col overflow-hidden">
         <Header account={account} />
-        <div className="flex flex-1">
+        <div className="flex flex-1 overflow-hidden">
           <Sidebar account={account} />
-          <div className="flex-1 p-6">{children}</div>
+          <div className="flex-1 p-6 overflow-hidden">{children}</div>
         </div>
       </div>
     </div>
