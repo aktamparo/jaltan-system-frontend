@@ -21,6 +21,7 @@ import {
   ModalDescription,
 } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
+import ScrollableComponent from "@/components/ui/scrollableComponent";
 
 type OperationType = "stock-in" | "stock-out";
 
@@ -295,9 +296,10 @@ export default function InventoryPage() {
   }, [searchQuery]);
 
   return (
-    <>
-      <div className="flex flex-row items-center justify-between mb-4">
-        <h1 className="text-xl font-medium m-0">Inventory</h1>
+    <div className="h-full w-full flex flex-col overflow-hidden">
+      <ScrollableComponent>
+        <div className="flex flex-row items-center justify-between mb-4">
+          <h1 className="text-xl font-medium m-0">Inventory</h1>
         {!isSelectionMode && (
           <div className="flex gap-2">
             <Button onClick={handleStartStockIn}>Stock In</Button>
@@ -330,7 +332,7 @@ export default function InventoryPage() {
         )}
       </div>
 
-      <div className="flex flex-col w-full h-full gap-4">
+      <div className="flex flex-col w-full gap-4">
         <SelectableInventoryTable
           data={response?.data || []}
           metadata={
@@ -446,6 +448,7 @@ export default function InventoryPage() {
           </div>
         </ModalContent>
       </Modal>
-    </>
+      </ScrollableComponent>
+    </div>
   );
 }

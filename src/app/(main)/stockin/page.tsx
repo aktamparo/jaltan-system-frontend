@@ -12,6 +12,7 @@ import {
   StockInReceipt as StockInReceiptType,
 } from "@/lib/types/inventory";
 import { ColumnDef } from "@tanstack/react-table";
+import ScrollableComponent from "@/components/ui/scrollableComponent";
 
 export default function StockInPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -91,10 +92,11 @@ export default function StockInPage() {
   };
 
   return (
-    <>
-      <div className="flex flex-row items-center justify-between mb-4">
-        <h1 className="text-xl font-medium m-0">Stock In</h1>
-      </div>
+    <div className="h-full w-full flex flex-col overflow-hidden">
+      <ScrollableComponent>
+        <div className="flex flex-row items-center justify-between mb-4">
+          <h1 className="text-xl font-medium m-0">Stock In</h1>
+        </div>
       <div className="flex flex-row items-center justify-between mb-4">
         <Searchbar
           onSearchChange={handleSearchChange}
@@ -139,6 +141,7 @@ export default function StockInPage() {
           )}
         </ModalContent>
       </Modal>
-    </>
+      </ScrollableComponent>
+    </div>
   );
 }

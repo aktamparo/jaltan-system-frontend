@@ -18,6 +18,7 @@ import CreateItem from "@/components/ui/itemManagementModals/CreateItem";
 import ViewItem from "@/components/ui/itemManagementModals/ViewItem";
 import EditItem from "@/components/ui/itemManagementModals/EditItem";
 import EditUOM from "@/components/ui/uomManagementSettings/EditUOM";
+import ScrollableComponent from "@/components/ui/scrollableComponent";
 import React from "react";
 import { useGetAccount } from "@/lib/queries/accountQueries";
 // // import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
@@ -34,9 +35,9 @@ export default function SettingsPage() {
   // if (isLoadingAllBranches) return <p>Loading...</p>;
 
   return (
-    <div>
-      <div className="flex flex-col justify-start mb-4">
-        <h1 className="text-xl font-medium m-0">Settings</h1>
+    <div className="h-full w-full flex flex-col overflow-hidden">
+      <ScrollableComponent>
+        <h1 className="text-xl font-medium m-0 mb-4">Settings</h1>
 
         <div className="w-full py-4 flex flex-col gap-0">
           <div className="text-lg font-medium justify-start">
@@ -97,7 +98,7 @@ export default function SettingsPage() {
             </>
           )}
         </div>
-      </div>
+      </ScrollableComponent>
     </div>
   );
 }
