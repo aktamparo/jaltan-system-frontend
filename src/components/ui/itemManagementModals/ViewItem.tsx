@@ -5,6 +5,11 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Modal,
+  ModalContent,
+  ModalDescription,
+  ModalFooter,
+  ModalHeader,
+  ModalTitle,
 } from "@/components/ui/modal";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
@@ -83,18 +88,24 @@ export default function ViewMasterItems() {
       </Button>
       {showViewTable && (
         <Modal isVisible={showViewTable} onClose={() => setShowViewTable(false)}>
-          <div className="p-6">
-            <h2 className="text-lg font-bold mb-2">Master Items</h2>
-            <p className="mb-4 text-gray-600">View all master items and their details</p>
+          <ModalHeader>
+            <ModalTitle>Master Items</ModalTitle>
+            <ModalDescription>View all master items and their details</ModalDescription>
+          </ModalHeader>
+          
+          <ModalContent>
             <ViewTable columns={columns} data={masterItems} />
-            <div className="mt-4">
+          </ModalContent>
+          
+          <ModalFooter>
+            <div className="flex w-full items-center justify-center">
               <PaginationControls
                 currentPage={page}
-                totalPages={response?.totalPages ?? 1}
+                totalPages={response?.metadata?.totalPages ?? 1}
                 onPageChange={setPage}
               />
             </div>
-          </div>
+          </ModalFooter>
         </Modal>
       )}
     </div>

@@ -78,11 +78,13 @@ export default function ViewUOM() {
         </ModalContent>
 
         <ModalFooter>
-          <PaginationControls
-            currentPage={page}
-            totalPages={AllUOMs?.metadata?.totalPages || 1}
-            onPageChange={setPage}
-          />
+          <div className="flex w-full items-center justify-center">
+            <PaginationControls
+              currentPage={page}
+              totalPages={AllUOMs?.metadata?.totalPages || 1}
+              onPageChange={setPage}
+            />
+          </div>
         </ModalFooter>
       </Modal>
     </div>

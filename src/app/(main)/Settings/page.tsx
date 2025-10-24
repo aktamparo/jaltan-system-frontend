@@ -68,16 +68,24 @@ export default function SettingsPage() {
               </div>
 
               <div className="text-lg font-medium justify-start">
-                UOM Management Settings
+                Unit of Measurement Type Management Settings
               </div>
+
               <div className="w-full h-full justify-start p-6 space-y-2">
                 <AddUOMType />
-                <AddUOM />
                 <ViewUOMType />
-                <ViewUOM />
-                <EditUOM />
                 <EditUOMType />
               </div>
+
+              <div className="text-lg font-medium justify-start">
+                Unit of Measurement Management Settings
+              </div>
+              <div className="w-full h-full justify-start p-6 space-y-2">
+                <AddUOM />
+                <ViewUOM />
+                <EditUOM />
+              </div>
+              
               <div className="text-lg font-medium justify-start">
                 Master Item Settings
               </div>

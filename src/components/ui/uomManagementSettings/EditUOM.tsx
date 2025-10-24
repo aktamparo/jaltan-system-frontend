@@ -123,24 +123,28 @@ export default function EditUOM() {
         </ModalContent>
 
         <ModalFooter>
-          <PaginationControls
-            currentPage={page}
-            totalPages={AllUOMs?.metadata?.totalPages || 1}
-            onPageChange={setPage}
-          />
-          <Button
-            type="button"
-            disabled={!selectedUOMId}
-            onClick={() => {
-              if (selectedUOMId) {
-                setShowSelectModal(false);
+
+            <div className="relative flex w-full items-center justify-center">
+                                <PaginationControls
+                                  currentPage={page}
+                                  totalPages={AllUOMs?.metadata?.totalPages || 1}
+                                  onPageChange={setPage}
+                                />
+                                <div className="absolute right-0">
+                                  <Button
+                                    onClick={() => {
+                        if (selectedUOMId) {
+                          setShowSelectModal(false);
                 setShowEditModal(true);
-              }
-            }}
-            className="ml-4"
-          >
-            Edit Selected UOM
-          </Button>
+                        }
+                      }}
+                      type="button"
+                      disabled={!selectedUOMId}
+                                  >
+                                    Edit Selected UOM
+                                  </Button>
+                                </div>
+                              </div>
         </ModalFooter>
       </Modal>
       {showEditModal && selectedUOMId && (

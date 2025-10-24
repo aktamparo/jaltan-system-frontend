@@ -53,7 +53,7 @@ export function SelectableInventoryTable({
           return (
             <span>
               {Number(row.original.quantity).toFixed(2)}{" "}
-              {row.original.uom.symbol}
+              {row.original.uom?.symbol || '-'}
             </span>
           );
         },

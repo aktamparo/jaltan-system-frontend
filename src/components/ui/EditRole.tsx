@@ -58,20 +58,22 @@ export default function EditRole() {
         </ModalContent>
 
         <ModalFooter>
-          <div className="flex flex-col w-full gap-4">
+          <div className="relative flex w-full items-center justify-center">
             <PaginationControls
               currentPage={page}
               totalPages={AllUsers?.metadata?.totalPages || 1}
               onPageChange={setPage}
             />
-            <Button
-              onClick={() => setShowEditUser(true)}
+                    <div className="absolute right-0">
+                      <Button
+                        onClick={() => setShowEditUser(true)}
               disabled={!selectedUser}
               className="self-end"
-            >
-              Edit Selected User
-            </Button>
-          </div>
+                      >
+                        Edit Selected User
+                      </Button>
+                    </div>
+                  </div>
         </ModalFooter>
       </Modal>
 

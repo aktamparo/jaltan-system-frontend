@@ -57,17 +57,21 @@ export default function EditBranch() {
         </ModalContent>
 
         <ModalFooter>
-          <PaginationControls
-            currentPage={page}
-            totalPages={AllBranches?.metadata?.totalPages || 1}
-            onPageChange={setPage}
-          />
-          <Button
-            onClick={() => setShowEditBranchModal(true)}
-            disabled={!selectedBranch}
-          >
-            Edit Selected Branch
-          </Button>
+          <div className="relative flex w-full items-center justify-center">
+            <PaginationControls
+              currentPage={page}
+              totalPages={AllBranches?.metadata?.totalPages || 1}
+              onPageChange={setPage}
+            />
+            <div className="absolute right-0">
+              <Button
+                onClick={() => setShowEditBranchModal(true)}
+                disabled={!selectedBranch}
+              >
+                Edit Selected Branch
+              </Button>
+            </div>
+          </div>
         </ModalFooter>
       </Modal>
       {showEditBranchModal && selectedBranch && (

@@ -160,9 +160,11 @@ export default function ChangePassword() {
           </ModalContent>
 
           <ModalFooter>
-            <Button className="mt-4" type="submit">
-              Save
-            </Button>
+            <div className="flex flex-col w-full gap-4">
+              <Button className="self-end" type="submit">
+                Save
+              </Button>
+            </div>
           </ModalFooter>
         </form>
       </Modal>
