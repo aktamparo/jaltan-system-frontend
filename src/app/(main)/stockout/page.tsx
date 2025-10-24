@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Searchbar from "@/components/ui/searchbar";
 import { Button } from "@/components/ui/button";
 import StockOutReceipt from "@/components/inventory/StockOut/StockOutReceipt";
@@ -13,6 +13,7 @@ import {
 } from "@/lib/types/inventory";
 import { ColumnDef } from "@tanstack/react-table";
 import ScrollableComponent from "@/components/ui/scrollableComponent";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function StockOutPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,6 +21,13 @@ export default function StockOutPage() {
   const [selectedReceipt, setSelectedReceipt] =
     useState<StockOutReceiptType | null>(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  // Reload data when page mounts
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["stockouts"] });
+  }, [queryClient]);
 
   const pageSize = 10;
   const params: PaginationParams = {

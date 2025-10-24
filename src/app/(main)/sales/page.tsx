@@ -15,6 +15,7 @@ import CSVUpload from "@/components/sales/CSVUpload";
 import SalesDataTable from "@/components/sales/SalesDataTable";
 import { BackendSalesSummary, SalesSummary } from "@/lib/types/sales";
 import ScrollableComponent from "@/components/ui/scrollableComponent";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Transform backend response to frontend format
 const transformBackendData = (backendData: BackendSalesSummary): SalesSummary => {
@@ -50,6 +51,13 @@ export default function SalesPage() {
   const [preset, setPreset] = useState<string>("Custom")
   const [directApiData, setDirectApiData] = useState<BackendSalesSummary | null>(null);
   const [directApiLoading, setDirectApiLoading] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  // Reload data when page mounts
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["sales"] });
+  }, [queryClient]);
 
   const { data: summary, isLoading, error, refetch } = useGetSalesSummary({
     startDate: startDate || undefined,

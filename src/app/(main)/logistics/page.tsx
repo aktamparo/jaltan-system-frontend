@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import Searchbar from "@/components/ui/searchbar";
 import { Button } from "@/components/ui/button";
 import { SelectableInventoryTable } from "@/components/inventory/PaginatedInventory/selectable-inventory-table";
@@ -49,6 +49,11 @@ export default function LogisticsPage() {
 
   // Query client for manual cache invalidation
   const queryClient = useQueryClient();
+
+  // Reload data when page mounts
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: requestQueryKeys.lists() });
+  }, [queryClient]);
 
   // Get current user to determine role
   const { data: currentUser, isLoading: isLoadingUser } = useGetAccount();

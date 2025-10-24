@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/toast";
 import ScrollableComponent from "@/components/ui/scrollableComponent";
+import { useQueryClient } from "@tanstack/react-query";
 
 type OperationType = "stock-in" | "stock-out";
 
@@ -34,6 +35,12 @@ export default function InventoryPage() {
   const [showQuantityModal, setShowQuantityModal] = useState(false);
 
   const toast = useToast();
+  const queryClient = useQueryClient();
+
+  // Reload data when page mounts
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["inventory"] });
+  }, [queryClient]);
 
   // Stock In quantities
   const [quantities, setQuantities] = useState<

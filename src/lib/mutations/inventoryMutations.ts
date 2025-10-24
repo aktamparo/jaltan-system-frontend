@@ -20,6 +20,7 @@ export const useCreateStockIn = () => {
       // Invalidate and refetch inventory items after successful stock-in
       queryClient.invalidateQueries({ queryKey: ["inventoryItems"] });
       queryClient.invalidateQueries({ queryKey: ["branchItems"] });
+      queryClient.invalidateQueries({ queryKey: ["stockIns"] });
 
       handleApiSuccess("Stock-in created successfully");
     },

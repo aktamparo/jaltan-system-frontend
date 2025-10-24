@@ -38,6 +38,7 @@ export default function EditItemModal({ item, onClose }: EditItemModalProps) {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["masterItems"] });
+          queryClient.invalidateQueries({ queryKey: ["inventoryItems"] });
           onClose();
           toast.success(
             "Item Updated",
