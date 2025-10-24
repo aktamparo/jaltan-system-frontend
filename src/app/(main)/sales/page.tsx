@@ -14,6 +14,8 @@ import PaymentMethodChart from "@/components/sales/PaymentMethodChart";
 import CSVUpload from "@/components/sales/CSVUpload";
 import SalesDataTable from "@/components/sales/SalesDataTable";
 import { BackendSalesSummary, SalesSummary } from "@/lib/types/sales";
+import ScrollableComponent from "@/components/ui/scrollableComponent";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Transform backend response to frontend format
 const transformBackendData = (backendData: BackendSalesSummary): SalesSummary => {
@@ -49,6 +51,13 @@ export default function SalesPage() {
   const [preset, setPreset] = useState<string>("Custom")
   const [directApiData, setDirectApiData] = useState<BackendSalesSummary | null>(null);
   const [directApiLoading, setDirectApiLoading] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  // Reload data when page mounts
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["sales"] });
+  }, [queryClient]);
 
   const { data: summary, isLoading, error, refetch } = useGetSalesSummary({
     startDate: startDate || undefined,
@@ -161,12 +170,13 @@ export default function SalesPage() {
   }
 
   return (
-    <>
-      <div className="flex flex-row items-center justify-between mb-4">
-        <h1 className="text-xl font-medium m-0">Sales</h1>
-      </div>
+    <div className="h-full w-full flex flex-col overflow-hidden">
+      <ScrollableComponent>
+        <div className="flex flex-row items-center justify-between mb-4">
+          <h1 className="text-xl font-medium m-0">Sales</h1>
+        </div>
 
-      {/* Tab Navigation */}
+        {/* Tab Navigation */}
       <div className="mb-6">
         <div className="flex border-b">
             <button
@@ -327,6 +337,7 @@ export default function SalesPage() {
             <CSVUpload />
           </div>
         )}
-    </>
+      </ScrollableComponent>
+    </div>
   );
 }

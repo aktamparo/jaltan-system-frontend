@@ -15,6 +15,7 @@ import { useUpdateRequest } from "@/lib/mutations/requestMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { requestQueryKeys } from "@/lib/queries/requestQueries";
 import { RequestStatus } from "@/lib/types/request";
+import { useToast } from "@/components/ui/toast";
 
 interface AdminRequestReviewProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export default function AdminRequestReview({
   const [originalStatus, setOriginalStatus] = useState<RequestStatus | "">("");
   
   const queryClient = useQueryClient();
+  const toast = useToast();
   const { data: request, isLoading } = useRequestById(requestId);
   const updateRequestMutation = useUpdateRequest();
 
@@ -64,9 +66,15 @@ export default function AdminRequestReview({
           queryClient.invalidateQueries({ 
             queryKey: requestQueryKeys.detail(requestId) 
           });
+          toast.success(
+            "Status Updated",
+            `Request status has been updated to ${selectedStatus}.`
+          );
           onClose();
         },
         onError: (error) => {
+          const errorMessage = error instanceof Error ? error.message : "Failed to update status";
+          toast.error("Update Failed", errorMessage);
           console.error("Failed to update request:", error);
         },
       }
@@ -78,7 +86,8 @@ export default function AdminRequestReview({
     onClose();
   };
 
-  const isStatusLocked = selectedStatus === RequestStatus.CANCELLED || selectedStatus === RequestStatus.RESOLVED;
+  // Check the original status to determine if editing should be locked
+  const isStatusLocked = originalStatus === RequestStatus.CANCELLED || originalStatus === RequestStatus.RESOLVED;
   const statusOptions = [RequestStatus.PENDING, RequestStatus.APPROVED, RequestStatus.RESOLVED, RequestStatus.CANCELLED];
 
   if (isLoading) {

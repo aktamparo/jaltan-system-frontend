@@ -136,19 +136,6 @@ export default function Sidebar({ account }: CurrentUser) {
         </Link>
 
         <Link
-          href="/reports"
-          className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-            pathname === "/reports" ? "text-[#D22929]" : "hover:text-[#D22929]"
-          }`}
-        >
-          <IconReportAnalytics
-            size={20}
-            className={pathname === "/reports" ? "text-[#D22929]" : ""}
-          />
-          Reports
-        </Link>
-
-        <Link
           href="/settings"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
             pathname === "/settings" ? "text-[#D22929]" : "hover:text-[#D22929]"

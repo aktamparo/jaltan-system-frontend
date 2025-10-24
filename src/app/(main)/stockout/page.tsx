@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Searchbar from "@/components/ui/searchbar";
 import { Button } from "@/components/ui/button";
 import StockOutReceipt from "@/components/inventory/StockOut/StockOutReceipt";
@@ -12,6 +12,8 @@ import {
   StockOutReceipt as StockOutReceiptType,
 } from "@/lib/types/inventory";
 import { ColumnDef } from "@tanstack/react-table";
+import ScrollableComponent from "@/components/ui/scrollableComponent";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function StockOutPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,6 +21,13 @@ export default function StockOutPage() {
   const [selectedReceipt, setSelectedReceipt] =
     useState<StockOutReceiptType | null>(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  // Reload data when page mounts
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["stockouts"] });
+  }, [queryClient]);
 
   const pageSize = 10;
   const params: PaginationParams = {
@@ -91,10 +100,11 @@ export default function StockOutPage() {
   };
 
   return (
-    <>
-      <div className="flex flex-row items-center justify-between mb-4">
-        <h1 className="text-xl font-medium m-0">Stock Out</h1>
-      </div>
+    <div className="h-full w-full flex flex-col overflow-hidden">
+      <ScrollableComponent>
+        <div className="flex flex-row items-center justify-between mb-4">
+          <h1 className="text-xl font-medium m-0">Stock Out</h1>
+        </div>
       <div className="flex flex-row items-center justify-between mb-4">
         <Searchbar
           onSearchChange={handleSearchChange}
@@ -142,6 +152,7 @@ export default function StockOutPage() {
           )}
         </ModalContent>
       </Modal>
-    </>
+      </ScrollableComponent>
+    </div>
   );
 }
