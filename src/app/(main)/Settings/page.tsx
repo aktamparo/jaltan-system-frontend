@@ -55,17 +55,18 @@ export default function SettingsPage() {
                 User Management Settings
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
-                <ViewUsers />
                 <AddUser />
                 <EditRole />
+                <ViewUsers />
               </div>
               <div className="text-lg font-medium justify-start">
                 Branch Management Settings
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
                 <CreateBranch />
-                <ViewBranch />
                 <EditBranch />
+                <ViewBranch />
+                
               </div>
 
               <div className="text-lg font-medium justify-start">
@@ -74,8 +75,9 @@ export default function SettingsPage() {
 
               <div className="w-full h-full justify-start p-6 space-y-2">
                 <AddUOMType />
-                <ViewUOMType />
                 <EditUOMType />
+                <ViewUOMType />
+                
               </div>
 
               <div className="text-lg font-medium justify-start">
@@ -83,8 +85,9 @@ export default function SettingsPage() {
               </div>
               <div className="w-full h-full justify-start p-6 space-y-2">
                 <AddUOM />
-                <ViewUOM />
                 <EditUOM />
+                <ViewUOM />
+                
               </div>
               
               <div className="text-lg font-medium justify-start">
