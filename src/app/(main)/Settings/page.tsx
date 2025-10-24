@@ -1,5 +1,4 @@
 "use client";
-import { useEffect } from "react";
 import ViewBranch from "@/components/ui/branchMangementModals/viewBranch";
 
 import CreateBranch from "@/components/ui/branchMangementModals/createBranch";
@@ -22,24 +21,11 @@ import EditUOM from "@/components/ui/uomManagementSettings/EditUOM";
 import ScrollableComponent from "@/components/ui/scrollableComponent";
 import React from "react";
 import { useGetAccount } from "@/lib/queries/accountQueries";
-import { useQueryClient } from "@tanstack/react-query";
 // // import type { Branch } from "@/components/ui/branchMangementModals/branchViewDetails/columns";
 // import EditBranch from "@/components/ui/branchMangementModals/editBranch";
 export default function SettingsPage() {
   const { data: currentUser, isLoading: isLoadingCurrentAccount } =
     useGetAccount();
-  
-  const queryClient = useQueryClient();
-
-  // Reload data when page mounts
-  useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["branches"] });
-    queryClient.invalidateQueries({ queryKey: ["accounts"] });
-    queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
-    queryClient.invalidateQueries({ queryKey: ["uoms"] });
-    queryClient.invalidateQueries({ queryKey: ["masterItems"] });
-  }, [queryClient]);
-  
   if (isLoadingCurrentAccount) return <p>Loading...</p>;
   // const { data: AllBranches, isLoading: isLoadingAllBranches } = useGetAllBranches();
   // const { data: AllUsers, isLoading: isLoadingAllAccounts } =
@@ -60,7 +46,7 @@ export default function SettingsPage() {
           <div className="w-full h-full justify-start p-6 space-y-2">
             <ChangePassword />
             <UpdateDetails />
-            <ViewLogin />
+          
           </div>
 
           {currentUser?.role === "ADMIN" && (
