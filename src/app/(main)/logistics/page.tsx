@@ -34,6 +34,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { requestQueryKeys } from "@/lib/queries/requestQueries";
 import { useGetAccount } from "@/lib/queries/accountQueries";
 import AdminRequestTable from "@/components/logistics/AdminRequestTable";
+import { useToast } from "@/components/ui/toast";
 
 export default function LogisticsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -159,6 +160,7 @@ function StaffLogisticsInterface({
   // Backend integration
   const createRequestMutation = useCreateRequest();
   const updateRequestMutation = useUpdateRequest();
+  const toast = useToast();
 
   // Fetch specific request for review/edit
   const { data: requestToReview } = useRequestById(reviewingRequestId);
@@ -352,7 +354,7 @@ function StaffLogisticsInterface({
       const validItems = selectedItems.filter(item => item?.id && quantities[item.id]?.quantity > 0);
       
       if (validItems.length === 0) {
-        console.error("No valid items to submit");
+        toast.error("Invalid Request", "Please select items with valid quantities.");
         return;
       }
 
@@ -373,6 +375,8 @@ function StaffLogisticsInterface({
       setSelectedItems([]);
       setQuantities({});
       setRequestComment("");
+      
+      toast.success("Request Created", "Your logistics request has been submitted successfully.");
     } catch (error: any) {
       // Handle special success case
       if (error?.message === 'REQUEST_CREATED_SUCCESSFULLY') {
@@ -382,8 +386,12 @@ function StaffLogisticsInterface({
         setSelectedItems([]);
         setQuantities({});
         setRequestComment("");
+        toast.success("Request Created", "Your logistics request has been submitted successfully.");
         return;
       }
+      
+      const errorMessage = error instanceof Error ? error.message : "Failed to create request";
+      toast.error("Request Failed", errorMessage);
       console.error("Failed to create request:", error);
     }
   };
@@ -531,7 +539,7 @@ function StaffLogisticsInterface({
       const validItems = editSelectedItems.filter(item => item?.id && editQuantities[item.id]?.quantity > 0);
       
       if (validItems.length === 0) {
-        console.error("No valid items to submit");
+        toast.error("Invalid Request", "Please select items with valid quantities.");
         return;
       }
 
@@ -562,7 +570,11 @@ function StaffLogisticsInterface({
       queryClient.invalidateQueries({ 
         queryKey: requestQueryKeys.lists() 
       });
+      
+      toast.success("Request Updated", "Your logistics request has been updated successfully.");
     } catch (error: any) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to update request";
+      toast.error("Update Failed", errorMessage);
       console.error("Failed to update request:", error);
     }
   };
@@ -737,6 +749,7 @@ function StaffLogisticsInterface({
                               size="sm"
                               variant="outline"
                               onClick={() => handleReview(request.id)}
+                              className="text-blue-600 border-blue-600 hover:bg-blue-50"
                             >
                               Review
                             </Button>
