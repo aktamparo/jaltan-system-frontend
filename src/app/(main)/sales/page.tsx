@@ -46,9 +46,10 @@ type TabType = "analytics" | "data" | "upload";
 
 export default function SalesPage() {
   const [activeTab, setActiveTab] = useState<TabType>("analytics");
-  const [startDate, setStartDate] = useState(""); // Start empty for custom
-  const [endDate, setEndDate] = useState(""); // Start empty for custom
-  const [preset, setPreset] = useState<string>("Custom")
+  const today = startOfToday();
+  const [startDate, setStartDate] = useState(format(startOfYear(today), 'yyyy-MM-dd')); // Default to start of this year
+  const [endDate, setEndDate] = useState(format(today, 'yyyy-MM-dd')); // Default to today
+  const [preset, setPreset] = useState<string>("This Year") // Default to "This Year"
   const [directApiData, setDirectApiData] = useState<BackendSalesSummary | null>(null);
   const [directApiLoading, setDirectApiLoading] = useState(false);
 

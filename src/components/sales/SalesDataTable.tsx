@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import DatePickerInput from "@/components/ui/date-picker";
 import { useToast } from "@/components/ui/toast";
 import { useGetSalesList } from "@/lib/queries/salesQueries";
 import { useDeleteSalesByCSV } from "@/lib/mutations/salesMutations";
@@ -15,8 +16,10 @@ import { format, parseISO } from "date-fns";
 export default function SalesDataTable() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [date, setDate] = useState("");
+  const [sortBy, setSortBy] = useState("date_desc");
+  const [csvFileToDelete, setCsvFileToDelete] = useState("");
+  const [availableCsvFiles, setAvailableCsvFiles] = useState<string[]>([]);
   
   const toast = useToast();
   const deleteMutation = useDeleteSalesByCSV();
@@ -25,24 +28,40 @@ export default function SalesDataTable() {
     page,
     limit: 15,
     search: search || undefined,
-    startDate: startDate || undefined,
-    endDate: endDate || undefined,
+    startDate: date || undefined,
+    endDate: date || undefined,
+    sortBy: sortBy || undefined,
   });
 
   const salesData = response?.data ?? [];
 
-  const handleDeleteCSV = (csvFileName: string) => {
-    if (!csvFileName) {
-      toast.error("Error", "No CSV filename specified");
+  // Extract unique CSV filenames from sales data
+  useEffect(() => {
+    if (salesData.length > 0) {
+      const uniqueFiles = Array.from(
+        new Set(
+          salesData
+            .map(record => record.csvFileName)
+            .filter((fileName): fileName is string => fileName !== undefined && fileName.trim() !== "")
+        )
+      ).sort();
+      setAvailableCsvFiles(uniqueFiles);
+    }
+  }, [salesData]);
+
+  const handleDeleteCSV = () => {
+    if (!csvFileToDelete) {
+      toast.error("Error", "Please select a CSV file to delete");
       return;
     }
 
-    if (confirm(`Are you sure you want to delete all sales records from "${csvFileName}"?`)) {
-      deleteMutation.mutate(csvFileName, {
+    if (confirm(`Are you sure you want to delete all sales records from "${csvFileToDelete}"?`)) {
+      deleteMutation.mutate(csvFileToDelete, {
         onSuccess: (response) => {
           toast.success("Delete Successful", 
-            `Successfully deleted ${response.deletedCount} sales records from ${csvFileName}`
+            `Successfully deleted ${response.deletedCount} sales records from ${csvFileToDelete}`
           );
+          setCsvFileToDelete("");
         },
         onError: (error) => {
           const errorMessage = error instanceof Error ? error.message : "Delete failed";
@@ -140,20 +159,9 @@ export default function SalesDataTable() {
         if (!fileName) return <span className="text-gray-400">Manual</span>;
         
         return (
-          <div className="flex items-center space-x-2">
-            <span className="text-xs font-mono truncate max-w-24" title={fileName}>
-              {fileName}
-            </span>
-            <Button
-              onClick={() => handleDeleteCSV(fileName)}
-              variant="outline"
-              size="sm"
-              className="h-6 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
-              disabled={deleteMutation.isPending}
-            >
-              Delete CSV
-            </Button>
-          </div>
+          <span className="text-xs font-mono truncate" title={fileName}>
+            {fileName}
+          </span>
         );
       },
     },
@@ -164,14 +172,10 @@ export default function SalesDataTable() {
     setPage(1); // Reset to first page when searching
   };
 
-  const handleDateFilterChange = () => {
-    setPage(1); // Reset to first page when filtering
-  };
-
   const clearFilters = () => {
     setSearch("");
-    setStartDate("");
-    setEndDate("");
+    setDate("");
+    setSortBy("date_desc");
     setPage(1);
   };
 
@@ -206,30 +210,64 @@ export default function SalesDataTable() {
           onChange={handleSearchChange}
           className="w-full"
         />
-        <Input
-          type="date"
-          placeholder="Start Date"
-          value={startDate}
-          onChange={(e) => {
-            setStartDate(e.target.value);
-            handleDateFilterChange();
+        <DatePickerInput
+          value={date}
+          onChange={(iso) => { 
+            setDate(iso); 
+            setPage(1);
           }}
-          className="w-full"
+          placeholder="Filter by Date"
         />
-        <Input
-          type="date"
-          placeholder="End Date"
-          value={endDate}
+        <select
+          value={sortBy}
           onChange={(e) => {
-            setEndDate(e.target.value);
-            handleDateFilterChange();
+            setSortBy(e.target.value);
+            setPage(1);
           }}
-          className="w-full"
-        />
+          className="w-full h-9 px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+        >
+          <option value="date_desc">Date (Newest → Oldest)</option>
+          <option value="date_asc">Date (Oldest → Newest)</option>
+        </select>
         <Button onClick={clearFilters} variant="outline" className="w-full">
           Clear Filters
         </Button>
       </div>
+
+      {/* Delete CSV Section */}
+      {availableCsvFiles.length > 0 && (
+        <div className="border rounded-lg p-4 mb-6">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Delete Records by CSV File
+              </label>
+              <select
+                value={csvFileToDelete}
+                onChange={(e) => setCsvFileToDelete(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D22929]"
+              >
+                <option value="">Select a CSV file...</option>
+                {availableCsvFiles.map((fileName) => (
+                  <option key={fileName} value={fileName}>
+                    {fileName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button
+              onClick={handleDeleteCSV}
+              disabled={!csvFileToDelete || deleteMutation.isPending}
+              className="mt-6 bg-[#D22929] hover:bg-[#D22929] text-white disabled:opacity-50 disabled:bg-[#D22929]"
+            >
+              {deleteMutation.isPending ? "Deleting..." : "Delete CSV Records"}
+            </Button>
+          </div>
+          <p className="text-xs text-[#D22929] mt-2">
+            Warning: This will permanently delete all sales records imported from the selected CSV file.
+          </p>
+        </div>
+      )}
 
       {/* Data Table */}
       {isLoading ? (
@@ -257,7 +295,7 @@ export default function SalesDataTable() {
           {salesData.length === 0 && !isLoading && (
             <div className="text-center py-8">
               <p className="text-gray-500">No sales records found.</p>
-              {(search || startDate || endDate) && (
+              {search && (
                 <Button onClick={clearFilters} className="mt-4">
                   Clear filters to see all records
                 </Button>

@@ -89,6 +89,7 @@ export interface SalesQueryParams {
   search?: string;
   startDate?: string;
   endDate?: string;
+  sortBy?: string;
 }
 
 export interface SalesAnalyticsFilters {
