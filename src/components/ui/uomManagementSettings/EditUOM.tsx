@@ -17,13 +17,14 @@ import { UoM } from "@/lib/types/uom";
 import EditUOMModal from "@/components/ui/uomManagementSettings/EditUOMModal";
 import { useQueries } from "@tanstack/react-query";
 import { getUOMTypeById } from "@/lib/services/uomServices";
+import { queryClient } from "@/lib/react-query";
 
 export default function EditUOM() {
   const [showSelectModal, setShowSelectModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedUOMId, setSelectedUOMId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const { data: AllUOMs } = useGetAllUOM(page);
+  const { data: AllUOMs } = useGetAllUOM(page, 10);
 
   // Get all unique uomTypeIds from UOMs
   const uomTypeIds: string[] = Array.from(
@@ -96,7 +97,10 @@ export default function EditUOM() {
   return (
     <>
       <Button
-        onClick={() => setShowSelectModal(true)}
+        onClick={() => {
+          queryClient.invalidateQueries({ queryKey: ["uom"] });
+          setShowSelectModal(true);
+        }}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
         <span className="text-s text-black">Edit Unit of Measurement</span>
@@ -135,6 +139,7 @@ export default function EditUOM() {
                                     onClick={() => {
                         if (selectedUOMId) {
                           setShowSelectModal(false);
+                          queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
                 setShowEditModal(true);
                         }
                       }}
