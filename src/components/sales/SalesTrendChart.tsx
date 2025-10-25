@@ -31,9 +31,11 @@ ChartJS.register(
 interface SalesTrendChartProps {
   data?: DailySalesTrend[];
   isLoading?: boolean;
+  startDate?: string;
+  endDate?: string;
 }
 
-export default function SalesTrendChart({ data = [], isLoading }: SalesTrendChartProps) {
+export default function SalesTrendChart({ data = [], isLoading, startDate, endDate }: SalesTrendChartProps) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -47,6 +49,18 @@ export default function SalesTrendChart({ data = [], isLoading }: SalesTrendChar
         <div className="h-64 bg-gray-200 rounded animate-pulse"></div>
       </div>
     );
+  }
+
+  // Generate dynamic title based on date range
+  let chartTitle = "Sales Trends";
+  if (startDate && endDate) {
+    try {
+      const start = format(parseISO(startDate), "MMM dd, yyyy");
+      const end = format(parseISO(endDate), "MMM dd, yyyy");
+      chartTitle = `Sales Trends (${start} - ${end})`;
+    } catch (error) {
+      chartTitle = "Sales Trends";
+    }
   }
 
   const chartData = {
@@ -82,7 +96,7 @@ export default function SalesTrendChart({ data = [], isLoading }: SalesTrendChar
     plugins: {
       title: {
         display: true,
-        text: "Sales Trends (Last 30 Days)",
+        text: chartTitle,
         font: {
           size: 16,
           weight: "bold" as const,

@@ -301,7 +301,9 @@ export default function SalesPage() {
                   <div className="lg:col-span-2">
                     <SalesTrendChart 
                       data={displayData?.dailySalesTrends ?? []} 
-                      isLoading={isLoading} 
+                      isLoading={isLoading}
+                      startDate={startDate}
+                      endDate={endDate}
                     />
                   </div>
 
