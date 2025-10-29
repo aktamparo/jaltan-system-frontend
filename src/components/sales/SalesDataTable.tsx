@@ -16,8 +16,8 @@ import { format, parseISO } from "date-fns";
 export default function SalesDataTable() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [date, setDate] = useState("");
-  const [sortBy, setSortBy] = useState("date_desc");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [csvFileToDelete, setCsvFileToDelete] = useState("");
   const [availableCsvFiles, setAvailableCsvFiles] = useState<string[]>([]);
   
@@ -28,9 +28,8 @@ export default function SalesDataTable() {
     page,
     limit: 15,
     search: search || undefined,
-    startDate: date || undefined,
-    endDate: date || undefined,
-    sortBy: sortBy || undefined,
+    startDate: startDate || undefined,
+    endDate: endDate || undefined,
   });
 
   const salesData = response?.data ?? [];
@@ -174,8 +173,8 @@ export default function SalesDataTable() {
 
   const clearFilters = () => {
     setSearch("");
-    setDate("");
-    setSortBy("date_desc");
+    setStartDate("");
+    setEndDate("");
     setPage(1);
   };
 
@@ -211,24 +210,21 @@ export default function SalesDataTable() {
           className="w-full"
         />
         <DatePickerInput
-          value={date}
+          value={startDate}
           onChange={(iso) => { 
-            setDate(iso); 
+            setStartDate(iso); 
             setPage(1);
           }}
-          placeholder="Filter by Date"
+          placeholder="Start Date"
         />
-        <select
-          value={sortBy}
-          onChange={(e) => {
-            setSortBy(e.target.value);
+        <DatePickerInput
+          value={endDate}
+          onChange={(iso) => { 
+            setEndDate(iso); 
             setPage(1);
           }}
-          className="w-full h-9 px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-        >
-          <option value="date_desc">Date (Newest → Oldest)</option>
-          <option value="date_asc">Date (Oldest → Newest)</option>
-        </select>
+          placeholder="End Date"
+        />
         <Button onClick={clearFilters} variant="outline" className="w-full">
           Clear Filters
         </Button>
