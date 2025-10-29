@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
-  IconLayoutDashboard,
   IconPackage,
   IconTruck,
   IconReportAnalytics,
@@ -45,21 +44,6 @@ export default function Sidebar({ account }: CurrentUser) {
   return (
     <>
       <div className="hidden sm:flex sm:flex-col sm:w-64 h-full bg-white border">
-        <Link
-          href="/dashboard"
-          className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-            pathname === "/dashboard"
-              ? "text-[#D22929]"
-              : "hover:text-[#D22929]"
-          }`}
-        >
-          <IconLayoutDashboard
-            size={20}
-            className={pathname === "/dashboard" ? "text-[#D22929]" : ""}
-          />
-          Dashboard
-        </Link>
-
         <Link
           href="/inventory"
           className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
@@ -184,21 +168,6 @@ export default function Sidebar({ account }: CurrentUser) {
                 <IconX size={20} />
               </Button>
             </div>
-
-            <Link
-              href="/dashboard"
-              className={`flex items-center gap-2 p-4 hover:bg-gray-50 ${
-                pathname === "/dashboard"
-                  ? "text-[#D22929]"
-                  : "hover:text-[#D22929]"
-              }`}
-            >
-              <IconLayoutDashboard
-                size={20}
-                className={pathname === "/dashboard" ? "text-[#D22929]" : ""}
-              />
-              Dashboard
-            </Link>
 
             <Link
               href="/inventory"
