@@ -5,7 +5,6 @@ import {
   IconFileInvoice,
   IconCalendarTime,
   IconUser,
-  IconBox,
 } from "@tabler/icons-react";
 
 interface Employee {

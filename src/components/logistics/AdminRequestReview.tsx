@@ -8,7 +8,6 @@ import {
   ModalHeader,
   ModalTitle,
   ModalDescription,
-  ModalFooter,
 } from "@/components/ui/modal";
 import { useRequestById } from "@/lib/queries/requestQueries";
 import { useUpdateRequest } from "@/lib/mutations/requestMutations";

@@ -4,7 +4,6 @@ import ViewBranch from "@/components/ui/branchMangementModals/viewBranch";
 import CreateBranch from "@/components/ui/branchMangementModals/createBranch";
 import ChangePassword from "@/components/ui/ChangePassword";
 import UpdateDetails from "@/components/ui/UpdateDetails";
-import ViewLogin from "@/components/ui/ViewLogin";
 import ViewUsers from "@/components/ui/ViewUsers";
 import AddUser from "@/components/ui/AddUser";
 import EditRole from "@/components/ui/EditRole";

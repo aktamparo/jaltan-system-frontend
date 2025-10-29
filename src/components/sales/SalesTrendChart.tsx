@@ -51,6 +51,11 @@ export default function SalesTrendChart({ data = [], isLoading, startDate, endDa
     );
   }
 
+  // Sort data chronologically (oldest to newest) for left-to-right display
+  const sortedData = [...data].sort((a, b) => {
+    return new Date(a.date).getTime() - new Date(b.date).getTime();
+  });
+
   // Generate dynamic title based on date range
   let chartTitle = "Sales Trends";
   if (startDate && endDate) {
@@ -58,17 +63,17 @@ export default function SalesTrendChart({ data = [], isLoading, startDate, endDa
       const start = format(parseISO(startDate), "MMM dd, yyyy");
       const end = format(parseISO(endDate), "MMM dd, yyyy");
       chartTitle = `Sales Trends (${start} - ${end})`;
-    } catch (error) {
+    } catch {
       chartTitle = "Sales Trends";
     }
   }
 
   const chartData = {
-    labels: data.map((item) => format(parseISO(item.date), "MMM dd")),
+    labels: sortedData.map((item) => format(parseISO(item.date), "MMM dd")),
     datasets: [
       {
         label: "Revenue (₱)",
-        data: data.map((item) => item.totalRevenue),
+        data: sortedData.map((item) => item.totalRevenue),
         borderColor: "rgb(59, 130, 246)",
         backgroundColor: "rgba(59, 130, 246, 0.1)",
         fill: true,
@@ -77,7 +82,7 @@ export default function SalesTrendChart({ data = [], isLoading, startDate, endDa
       },
       {
         label: "Transactions",
-        data: data.map((item) => item.transactionCount),
+        data: sortedData.map((item) => item.transactionCount),
         borderColor: "rgb(16, 185, 129)",
         backgroundColor: "rgba(16, 185, 129, 0.1)",
         fill: true,

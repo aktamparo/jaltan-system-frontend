@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import DatePickerInput from "@/components/ui/date-picker";
 import { format, startOfToday, subDays, startOfMonth, endOfMonth, subMonths, startOfYear } from 'date-fns'
 import { useGetSalesSummary } from "@/lib/queries/salesQueries";
@@ -46,9 +45,10 @@ type TabType = "analytics" | "data" | "upload";
 
 export default function SalesPage() {
   const [activeTab, setActiveTab] = useState<TabType>("analytics");
-  const [startDate, setStartDate] = useState(""); // Start empty for custom
-  const [endDate, setEndDate] = useState(""); // Start empty for custom
-  const [preset, setPreset] = useState<string>("Custom")
+  const today = startOfToday();
+  const [startDate, setStartDate] = useState(format(startOfYear(today), 'yyyy-MM-dd')); // Default to start of this year
+  const [endDate, setEndDate] = useState(format(today, 'yyyy-MM-dd')); // Default to today
+  const [preset, setPreset] = useState<string>("This Year") // Default to "This Year"
   const [directApiData, setDirectApiData] = useState<BackendSalesSummary | null>(null);
   const [directApiLoading, setDirectApiLoading] = useState(false);
 
@@ -106,10 +106,6 @@ export default function SalesPage() {
       trendsCount: displayData.dailySalesTrends?.length
     });
   }
-
-  const handleDateFilterChange = () => {
-    // kept for backward-compat but no-op; auto-refetch is handled via effect below
-  };
 
   // Auto-apply: whenever both startDate and endDate are set, refetch data
   useEffect(() => {

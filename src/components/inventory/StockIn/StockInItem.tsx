@@ -47,6 +47,7 @@ export default function StockInItem({}: StockInItemProps) {
     const dummyReceipt: ReceiptData = {
       stockIn: {
         id: "STOCKIN123",
+        referenceNumber: "REF-" + new Date().getTime(),
         createdAt: new Date().toISOString(),
         createdBy: { employee: { firstName: "John", lastName: "Doe" } },
         modifiedAt: new Date().toISOString(),
