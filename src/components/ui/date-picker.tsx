@@ -108,19 +108,7 @@ export default function DatePickerInput({ value, onChange, placeholder }: Props)
             value={inputValue}
             placeholder={placeholder ?? "Jan/01/2024"}
             className="pr-10"
-            onChange={(e) => setInputValue(e.target.value)}
-            onBlur={() => {
-              blurTimeout.current = window.setTimeout(() => {
-                applyTypedValue()
-                setOpen(false)
-              }, 150)
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                applyTypedValue()
-                e.preventDefault()
-              }
-            }}
+            readOnly
             aria-expanded={open}
           />
 

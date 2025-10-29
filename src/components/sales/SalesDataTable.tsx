@@ -201,31 +201,40 @@ export default function SalesDataTable() {
       </div>
 
       {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-6">
         <Input
           type="text"
           placeholder="Search items, transactions..."
           value={search}
           onChange={handleSearchChange}
-          className="w-full"
+          className="w-64 h-10"
         />
-        <DatePickerInput
-          value={startDate}
-          onChange={(iso) => { 
-            setStartDate(iso); 
-            setPage(1);
-          }}
-          placeholder="Start Date"
-        />
-        <DatePickerInput
-          value={endDate}
-          onChange={(iso) => { 
-            setEndDate(iso); 
-            setPage(1);
-          }}
-          placeholder="End Date"
-        />
-        <Button onClick={clearFilters} variant="outline" className="w-full">
+        
+        <div className="w-64">
+          <DatePickerInput
+            value={startDate}
+            onChange={(iso) => { 
+              setStartDate(iso); 
+              setPage(1);
+            }}
+            placeholder="MMM/dd/yyyy"
+          />
+        </div>
+        
+        <span className="text-gray-500">to</span>
+        
+        <div className="w-64">
+          <DatePickerInput
+            value={endDate}
+            onChange={(iso) => { 
+              setEndDate(iso); 
+              setPage(1);
+            }}
+            placeholder="MMM/dd/yyyy"
+          />
+        </div>
+
+        <Button onClick={clearFilters} variant="outline" className="h-10 px-6 whitespace-nowrap">
           Clear Filters
         </Button>
       </div>
