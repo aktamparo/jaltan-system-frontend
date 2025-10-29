@@ -63,7 +63,7 @@ export default function SalesTrendChart({ data = [], isLoading, startDate, endDa
       const start = format(parseISO(startDate), "MMM dd, yyyy");
       const end = format(parseISO(endDate), "MMM dd, yyyy");
       chartTitle = `Sales Trends (${start} - ${end})`;
-    } catch (error) {
+    } catch {
       chartTitle = "Sales Trends";
     }
   }

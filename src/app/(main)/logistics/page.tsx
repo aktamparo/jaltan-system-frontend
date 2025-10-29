@@ -29,8 +29,8 @@ import {
   ModalTitle,
   ModalDescription,
 } from "@/components/ui/modal";
-import RequestReceipt, { RequestReceiptData } from "@/components/logistics/RequestReceipt";
-import { useQueryClient } from "@tanstack/react-query";
+import RequestReceipt from "@/components/logistics/RequestReceipt";
+import { useQueryClient, QueryClient } from "@tanstack/react-query";
 import { requestQueryKeys } from "@/lib/queries/requestQueries";
 import { useGetAccount } from "@/lib/queries/accountQueries";
 import AdminRequestTable from "@/components/logistics/AdminRequestTable";
@@ -138,7 +138,7 @@ interface StaffLogisticsInterfaceProps {
   reviewingRequestId: string;
   setReviewingRequestId: (id: string) => void;
   pageSize: number;
-  queryClient: any;
+  queryClient: QueryClient;
 }
 
 function StaffLogisticsInterface({
@@ -382,9 +382,9 @@ function StaffLogisticsInterface({
       setRequestComment("");
       
       toast.success("Request Created", "Your logistics request has been submitted successfully.");
-    } catch (error: any) {
+    } catch (error) {
       // Handle special success case
-      if (error?.message === 'REQUEST_CREATED_SUCCESSFULLY') {
+      if (error && typeof error === 'object' && 'message' in error && error.message === 'REQUEST_CREATED_SUCCESSFULLY') {
         // Treat as success
         setShowQuantityModal(false);
         setIsSelectionMode(false);
@@ -577,7 +577,7 @@ function StaffLogisticsInterface({
       });
       
       toast.success("Request Updated", "Your logistics request has been updated successfully.");
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to update request";
       toast.error("Update Failed", errorMessage);
       console.error("Failed to update request:", error);

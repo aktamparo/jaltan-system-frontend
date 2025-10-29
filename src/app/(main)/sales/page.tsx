@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import DatePickerInput from "@/components/ui/date-picker";
 import { format, startOfToday, subDays, startOfMonth, endOfMonth, subMonths, startOfYear } from 'date-fns'
 import { useGetSalesSummary } from "@/lib/queries/salesQueries";
@@ -107,10 +106,6 @@ export default function SalesPage() {
       trendsCount: displayData.dailySalesTrends?.length
     });
   }
-
-  const handleDateFilterChange = () => {
-    // kept for backward-compat but no-op; auto-refetch is handled via effect below
-  };
 
   // Auto-apply: whenever both startDate and endDate are set, refetch data
   useEffect(() => {
