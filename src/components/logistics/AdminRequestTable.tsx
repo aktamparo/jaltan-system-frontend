@@ -75,7 +75,7 @@ export default function AdminRequestTable({ searchQuery }: AdminRequestTableProp
           <thead>
             <tr className="border-b bg-gray-50">
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
-                ID
+                Reference Number
               </th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
                 Created By
@@ -92,7 +92,7 @@ export default function AdminRequestTable({ searchQuery }: AdminRequestTableProp
             {requestsData.data.map((request) => (
               <tr key={request.id} className="border-b hover:bg-gray-50">
                 <td className="px-4 py-3 text-sm text-gray-900">
-                  {request.id.slice(-8)}
+                  {request.referenceNumber}
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900">
                   {request.createdBy?.employee?.firstName}{" "}

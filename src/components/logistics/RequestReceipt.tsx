@@ -49,7 +49,7 @@ export default function RequestReceipt({ receiptData }: RequestReceiptProps) {
             Logistics Request
           </CardTitle>
           <p className="text-2xl font-bold text-gray-800 mt-1 tracking-wide">
-            #{receiptData.request.id}
+            {receiptData.request.referenceNumber}
           </p>
         </CardHeader>
 

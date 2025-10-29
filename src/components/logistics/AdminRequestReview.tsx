@@ -119,7 +119,7 @@ export default function AdminRequestReview({
     <Modal isVisible={isOpen} onClose={onClose}>
       <ModalContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
         <ModalHeader>
-          <ModalTitle>Review Request #{request.id}</ModalTitle>
+          <ModalTitle>Review Request {request.referenceNumber}</ModalTitle>
           <ModalDescription>
             Created by: {request.createdBy?.employee?.firstName} {request.createdBy?.employee?.lastName}
           </ModalDescription>

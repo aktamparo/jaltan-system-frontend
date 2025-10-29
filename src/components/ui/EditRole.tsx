@@ -13,7 +13,7 @@ import {
 import { getColumns as EditColumns } from "@/components/ui/userEditComponents/columns";
 import { DataTable as EditTable } from "@/components/ui/userEditComponents/user-view-table";
 import EditUser from "@/components/ui/editUser";
-import { useGetAllAccounts } from "@/lib/queries/accountQueries";
+import { useGetAllAccounts, useGetAccount } from "@/lib/queries/accountQueries";
 import React from "react";
 import { User } from "@/lib/types/account";
 import PaginationControls from "@/components/ui/PaginationControls";
@@ -23,10 +23,15 @@ export default function EditRole() {
   const [showEditUser, setShowEditUser] = useState(false);
   const [page, setPage] = useState(1);
   const { data: AllUsers } = useGetAllAccounts(page);
-  const userArray: User[] = AllUsers?.data ?? [];
+  const { data: currentUser } = useGetAccount();
+  // Filter out the current user from the list
+  const userArray: User[] = (AllUsers?.data ?? []).filter(
+    (user: User) => user.id !== currentUser?.id
+  );
   const selectedUser: User | undefined = userArray.find(
     (user: User) => user.id === selectedId
   );
+  
 
   return (
     <>
