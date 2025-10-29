@@ -12,7 +12,7 @@ import {
 import { createUOMColumns } from "@/components/ui/uomManagementSettings/columns/UOMcolumns";
 import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
 import PaginationControls from "@/components/ui/PaginationControls";
-import { useGetAllUOM, useGetAllUOMTypes } from "@/lib/queries/uomQueries";
+import { useGetAllUOM } from "@/lib/queries/uomQueries";
 import { useQueries } from "@tanstack/react-query";
 import { getUOMTypeById } from "@/lib/services/uomServices";
 export default function ViewUOM() {

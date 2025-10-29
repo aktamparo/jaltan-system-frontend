@@ -33,7 +33,7 @@ export default function DatePickerInput({ value, onChange, placeholder }: Props)
       } else {
         setInputValue(value)
       }
-    } catch (e) {
+    } catch {
       setInputValue(value)
     }
   }, [value])
@@ -61,7 +61,7 @@ export default function DatePickerInput({ value, onChange, placeholder }: Props)
     try {
       const p = parseISO(trimmed)
       if (isValid(p)) parsed = p
-    } catch (e) {
+    } catch {
       parsed = undefined
     }
 
@@ -84,7 +84,7 @@ export default function DatePickerInput({ value, onChange, placeholder }: Props)
             parsed = p
             break
           }
-        } catch (e) {
+        } catch {
           // ignore
         }
       }

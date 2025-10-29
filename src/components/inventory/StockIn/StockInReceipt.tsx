@@ -5,7 +5,6 @@ import {
   IconFileInvoice,
   IconCalendarTime,
   IconUser,
-  IconBox,
 } from "@tabler/icons-react";
 
 interface Employee {
@@ -23,6 +22,7 @@ interface ModifiedBy {
 
 interface StockIn {
   id: string;
+  referenceNumber: string;
   createdAt: string;
   modifiedAt: string;
   createdBy: CreatedBy;
