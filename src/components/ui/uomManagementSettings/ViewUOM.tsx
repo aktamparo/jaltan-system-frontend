@@ -15,6 +15,7 @@ import PaginationControls from "@/components/ui/PaginationControls";
 import { useGetAllUOM, useGetAllUOMTypes } from "@/lib/queries/uomQueries";
 import { useQueries } from "@tanstack/react-query";
 import { getUOMTypeById } from "@/lib/services/uomServices";
+import { queryClient } from "@/lib/react-query";
 export default function ViewUOM() {
   const [showViewTable, setShowViewTable] = useState(false);
   const [page, setPage] = useState(1);
@@ -54,7 +55,10 @@ export default function ViewUOM() {
   return (
     <div>
       <Button
-        onClick={() => setShowViewTable(true)}
+        onClick={() => {
+          queryClient.invalidateQueries({ queryKey: ["uom"] });
+          setShowViewTable(true);
+        }}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
         <span className="text-s text-black">View All Unit of Meassurements</span>
@@ -65,9 +69,9 @@ export default function ViewUOM() {
 
       <Modal isVisible={showViewTable} onClose={() => setShowViewTable(false)}>
         <ModalHeader>
-          <ModalTitle>View All Users</ModalTitle>
+          <ModalTitle>View All Units of Meassurement</ModalTitle>
           <ModalDescription>
-            All registered users in the system
+            All registered Units of Meassurement in the system
           </ModalDescription>
         </ModalHeader>
 

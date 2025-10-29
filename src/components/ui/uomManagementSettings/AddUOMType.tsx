@@ -59,7 +59,10 @@ export default function AddUOMType() {
   return (
     <>
       <Button
-        onClick={() => setShowCreateUOMType(true)}
+        onClick={() => {
+          queryClient.invalidateQueries({ queryKey: ["uom"] });
+          queryClient.invalidateQueries({ queryKey: ["uomTypes"] })
+          setShowCreateUOMType(true);}}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
         <span className="text-s text-black">

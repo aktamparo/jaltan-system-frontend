@@ -22,6 +22,7 @@ interface ModifiedBy {
 
 interface StockOut {
   id: string;
+  referenceNumber: string;
   createdAt: string;
   modifiedAt: string;
   createdBy: CreatedBy;
@@ -57,7 +58,7 @@ export default function StockOutReceipt({ receiptData }: StockOutReceiptProps) {
             Stock Out Receipt
           </CardTitle>
           <p className="text-2xl font-bold text-gray-800 mt-1 tracking-wide">
-            #{receiptData.stockOut.id}
+            #{receiptData.stockOut.referenceNumber}
           </p>
         </CardHeader>
 
@@ -69,7 +70,7 @@ export default function StockOutReceipt({ receiptData }: StockOutReceiptProps) {
               <span>Created</span>
             </div>
             <span className="font-medium">
-              {new Date(receiptData.stockOut.createdAt).toLocaleDateString()}
+              {new Date(receiptData.stockOut.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} at {new Date(receiptData.stockOut.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>
 
@@ -92,7 +93,7 @@ export default function StockOutReceipt({ receiptData }: StockOutReceiptProps) {
               <span>Modified</span>
             </div>
             <span className="font-medium">
-              {new Date(receiptData.stockOut.modifiedAt).toLocaleDateString()}
+              {new Date(receiptData.stockOut.modifiedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} at {new Date(receiptData.stockOut.modifiedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>
 

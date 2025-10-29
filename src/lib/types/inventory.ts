@@ -11,6 +11,7 @@ export interface StockInReceiptUser {
 
 export interface StockInReceiptItem {
   id: string;
+  referenceNumber: string
   inventoryId: string;
   stockInId: string;
   itemId: string;
@@ -25,6 +26,7 @@ export interface StockInReceiptItem {
 
 export interface StockInReceipt {
   id: string;
+  referenceNumber: string;
   createdAt: string;
   createdById: string;
   modifiedAt: string;
@@ -52,6 +54,7 @@ export interface StockOutReceiptUser {
 
 export interface StockOutReceiptItem {
   id: string;
+  referenceNumber: string;
   inventoryId: string;
   stockOutId: string;
   itemId: string;
@@ -68,6 +71,7 @@ export interface StockOutReceiptItem {
 
 export interface StockOutReceipt {
   id: string;
+  referenceNumber: string;
   createdAt: string;
   createdById: string;
   modifiedAt: string;

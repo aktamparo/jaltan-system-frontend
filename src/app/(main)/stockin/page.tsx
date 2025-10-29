@@ -46,12 +46,12 @@ export default function StockInPage() {
     {
       accessorKey: "id",
       header: "ID",
-      cell: ({ row }) => row.original.id,
+      cell: ({ row }) => row.original.referenceNumber,
     },
     {
       accessorKey: "createdAt",
       header: "Created At",
-      cell: ({ row }) => new Date(row.original.createdAt).toLocaleString(),
+      cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + ' at ' + new Date(row.original.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
     },
     {
       accessorKey: "createdBy",
@@ -62,7 +62,7 @@ export default function StockInPage() {
     {
       accessorKey: "modifiedAt",
       header: "Modified At",
-      cell: ({ row }) => new Date(row.original.modifiedAt).toLocaleString(),
+      cell: ({ row }) => new Date(row.original.modifiedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + ' at ' + new Date(row.original.modifiedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
     },
     {
       accessorKey: "modifiedBy",
@@ -138,7 +138,7 @@ export default function StockInPage() {
               receiptData={{
                 stockIn: selectedReceipt,
                 items: selectedReceipt.items.map((item) => ({
-                  itemId: item.itemId,
+                  itemId: item.referenceNumber,
                   itemName: item.name,
                   quantity: item.quantity,
                   uomSymbol: item.uomSymbol,

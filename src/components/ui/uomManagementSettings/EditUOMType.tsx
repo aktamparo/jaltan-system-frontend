@@ -17,6 +17,7 @@ import { getUOMById } from "@/lib/services/uomServices";
 import { useQueries } from "@tanstack/react-query";
 import { UomType } from "@/lib/types/uom";
 import EditUOMTypeModals from "@/components/ui/uomManagementSettings/EditUoMTypeModals";
+import { queryClient } from "@/lib/react-query";
 export default function EditUOMType() {
   const [showSelectModal, setShowSelectModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -82,7 +83,9 @@ export default function EditUOMType() {
   return (
     <>
       <Button
-        onClick={() => setShowSelectModal(true)}
+        onClick={() => {
+          queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+          setShowSelectModal(true);}}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
         <span className="text-s text-black">Edit Unit of Measurement Type</span>
@@ -120,6 +123,7 @@ export default function EditUOMType() {
                           onClick={() => {
               if (selectedUOMId) {
                 setShowSelectModal(false);
+                queryClient.invalidateQueries({ queryKey: ["uom"] });
                 setShowEditModal(true);
               }
             }}
