@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +32,7 @@ export default function SalesDataTable() {
     endDate: endDate || undefined,
   });
 
-  const salesData = response?.data ?? [];
+  const salesData = useMemo(() => response?.data ?? [], [response?.data]);
 
   // Extract unique CSV filenames from sales data
   useEffect(() => {
