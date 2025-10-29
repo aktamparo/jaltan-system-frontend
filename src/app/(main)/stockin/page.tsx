@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Searchbar from "@/components/ui/searchbar";
 import { Button } from "@/components/ui/button";
 import StockInReceipt from "@/components/inventory/StockIn/StockInReceipt";
+import EditStockIn from "@/components/inventory/StockIn/EditStockIn";
 import { Modal, ModalContent } from "@/components/ui/modal";
 import { PaginatedDataTable } from "@/components/inventory/PaginatedStockIn/paginated-data-table";
 import { usePaginatedStockIns } from "@/lib/queries/inventoryQueries";
@@ -21,6 +22,7 @@ export default function StockInPage() {
   const [selectedReceipt, setSelectedReceipt] =
     useState<StockInReceiptType | null>(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -96,7 +98,23 @@ export default function StockInPage() {
 
   const handleViewReceipt = (receipt: StockInReceiptType) => {
     setSelectedReceipt(receipt);
+    setIsEditMode(false);
     setShowReceiptModal(true);
+  };
+
+  const handleEditMode = () => {
+    setIsEditMode(true);
+  };
+
+  const handleEditSuccess = () => {
+    setIsEditMode(false);
+    setShowReceiptModal(false);
+    queryClient.invalidateQueries({ queryKey: ["stockins"] });
+  };
+
+  const handleCloseModal = () => {
+    setShowReceiptModal(false);
+    setIsEditMode(false);
   };
 
   return (
@@ -130,10 +148,10 @@ export default function StockInPage() {
       {/* Receipt Modal */}
       <Modal
         isVisible={showReceiptModal}
-        onClose={() => setShowReceiptModal(false)}
+        onClose={handleCloseModal}
       >
         <ModalContent>
-          {selectedReceipt && (
+          {selectedReceipt && !isEditMode && (
             <StockInReceipt
               receiptData={{
                 stockIn: {
@@ -147,7 +165,24 @@ export default function StockInPage() {
                   uomSymbol: item.uomSymbol,
                 })),
               }}
-              onClose={() => setShowReceiptModal(false)}
+              onClose={handleCloseModal}
+              onEdit={handleEditMode}
+            />
+          )}
+          {selectedReceipt && isEditMode && (
+            <EditStockIn
+              receiptData={{
+                stockIn: {
+                  id: selectedReceipt.id,
+                  createdAt: selectedReceipt.createdAt,
+                  createdById: selectedReceipt.createdBy?.id || "",
+                  modifiedAt: selectedReceipt.modifiedAt,
+                  modifiedById: selectedReceipt.modifiedBy?.id || "",
+                },
+                items: selectedReceipt.items,
+              }}
+              onClose={handleCloseModal}
+              onSuccess={handleEditSuccess}
             />
           )}
         </ModalContent>

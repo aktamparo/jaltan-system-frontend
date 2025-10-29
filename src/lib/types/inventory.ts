@@ -161,6 +161,10 @@ export interface CreateStockInRequest {
   items: CreateStockInItem[];
 }
 
+export interface UpdateStockInRequest {
+  items: CreateStockInItem[];
+}
+
 export interface StockInReceiptItem {
   stockInId: string;
   itemId: string;
