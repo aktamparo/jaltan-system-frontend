@@ -318,12 +318,10 @@ export default function InventoryPage() {
       </div>
 
       <div className="flex flex-row items-center justify-between mb-4">
-        <div className="flex flex-row items-center gap-2">
-          <Searchbar
-            onSearchChange={handleSearchChange}
-            placeholder="Search inventory items..."
-          />
-        </div>
+        <Searchbar
+          onSearchChange={handleSearchChange}
+          placeholder="Search inventory items..."
+        />
         {isSelectionMode && (
           <div className="flex gap-2">
             <span className="text-sm text-gray-600 mr-2">

@@ -24,7 +24,7 @@ export default function ViewBranch() {
         onClick={() => setShowCreateBranch(true)}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
-        <span className="text-s text-black">View all branches</span>
+        <span className="text-s text-black">View All Branches</span>
         <span className="text-s text-gray-500">
           View the details of all branches
         </span>

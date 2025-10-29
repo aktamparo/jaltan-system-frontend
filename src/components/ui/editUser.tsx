@@ -102,18 +102,22 @@ export default function EditUser({ user, onClose }: EditUserProps) {
           onChange={(e) => setContactNumber(e.target.value)}
         />
       </div>
-      <select
-        id="branch"
-        className="w-full border rounded px-2 py-1"
-        value={branchId}
-        onChange={(e) => setBranchId(e.target.value)}
-      >
-        {(AllBranches?.data ?? []).map((branch: Branch) => (
+      <div className="space-y-2">
+        <Label htmlFor="branch">Branch</Label>
+        <select
+          id="branch"
+          className="w-full border rounded px-2 py-1"
+          value={branchId}
+          onChange={(e) => setBranchId(e.target.value)}
+        >
+          {(AllBranches?.data ?? []).map((branch: Branch) => (
           <option key={branch.id} value={branch.id}>
             {branch.name}
           </option>
         ))}
       </select>
+      </div>
+      
       <div className="space-y-2">
         <Label htmlFor="role">Role</Label>
         <select

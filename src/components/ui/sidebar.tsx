@@ -149,13 +149,6 @@ export default function Sidebar({ account }: CurrentUser) {
         </Link>
 
         <div className="mt-auto">
-          <div className="flex items-center gap-2 p-4">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback />
-            </Avatar>
-            <span className="font-medium">{username}</span>
-          </div>
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 p-4 text-s w-full text-left hover:bg-gray-50"
@@ -313,13 +306,6 @@ export default function Sidebar({ account }: CurrentUser) {
             </Link>
 
             <div className="mt-auto">
-              <div className="flex items-center gap-2 p-4">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback />
-                </Avatar>
-                <span className="font-medium">{username}</span>
-              </div>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 p-4 text-s w-full text-left hover:bg-gray-50"

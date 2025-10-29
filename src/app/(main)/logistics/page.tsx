@@ -716,7 +716,7 @@ function StaffLogisticsInterface({
                     <thead className="bg-gray-50">
                       <tr>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
-                          ID
+                          Reference Number
                         </th>
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
                           Created At
@@ -736,7 +736,7 @@ function StaffLogisticsInterface({
                       {paginatedData.map((request) => (
                         <tr key={request.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm text-gray-900">
-                            {request.id}
+                            {request.referenceNumber}
                           </td>
                           <td className="px-4 py-3 text-sm text-gray-900">
                             {new Date(request.createdAt).toLocaleDateString()}

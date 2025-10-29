@@ -34,12 +34,16 @@ export interface RequestItem {
 
 export interface Request {
   id: string;
+  referenceNumber: string;
   items: RequestItem[];
   status: RequestStatus;
   createdAt: string;
   createdById: string;
   createdBy: {
     id: string;
+    email: string;
+    role: 'ADMIN' | 'STAFF';
+    status: 'ACTIVE' | 'INACTIVE';
     employee: {
       firstName: string;
       lastName: string;
@@ -49,6 +53,9 @@ export interface Request {
   modifiedById: string;
   modifiedBy: {
     id: string;
+    email: string;
+    role: 'ADMIN' | 'STAFF';
+    status: 'ACTIVE' | 'INACTIVE';
     employee: {
       firstName: string;
       lastName: string;
@@ -58,6 +65,7 @@ export interface Request {
   approvedById?: string;
   approvedBy?: {
     id: string;
+    email: string;
     employee: {
       firstName: string;
       lastName: string;
@@ -67,6 +75,7 @@ export interface Request {
   cancelledById?: string;
   cancelledBy?: {
     id: string;
+    email: string;
     employee: {
       firstName: string;
       lastName: string;
