@@ -13,7 +13,6 @@ import {
   ModalTitle,
   ModalDescription,
 } from "@/components/ui/modal";
-import StockInReceipt, { ReceiptData } from "@/components/inventory/StockIn/StockInReceipt";
 import UpdateStockInDetails from "@/components/inventory/StockIn/UpdateStockInDetails";
 
 interface UpdateStockInProps {
@@ -27,42 +26,19 @@ type StockInSaveDetails = {
   uomId: string;
 };
 
-export default function UpdateStockIn({}: UpdateStockInProps) {
+export default function UpdateStockIn({ data = [] }: UpdateStockInProps) {
   const [showUpdateStockIn, setShowUpdateStockIn] = useState(false);
   const [showUpdateStockInItems, setShowUpdateStockInItems] = useState(false);
-  const [showReceipt, setShowReceipt] = useState(false);
-  const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const dummyData: StockIn[] = [
-    { id: "1", name: "Rice", category: ["PANTRY"], quantity: 5, uomSymbol: "kg" },
-    { id: "2", name: "Chicken", category: ["FRIDGE"], quantity: 10, uomSymbol: "kg" },
-    { id: "3", name: "Milk", category: ["FRIDGE", "PANTRY"], quantity: 100, uomSymbol: "ml" },
-  ];
-
   const columns = getStockInColumns(selectedId, setSelectedId);
-  const selectedItem = dummyData.find((item) => item.id === selectedId) || null;
+  const selectedItem = data.find((item) => item.id === selectedId) || null;
 
   const handleSaveStockInDetails = async (stockDetailsArray: StockInSaveDetails[]) => {
-    const dummyReceipt: ReceiptData = {
-      stockIn: {
-        id: "STOCKIN123",
-        createdAt: new Date().toISOString(),
-        createdBy: { employee: { firstName: "John", lastName: "Doe" } },
-        modifiedAt: new Date().toISOString(),
-        modifiedBy: { employee: { firstName: "John", lastName: "Doe" } },
-      },
-      items: stockDetailsArray.map((details, idx) => ({
-        itemId: `INV${idx + 1}`,
-        itemName: selectedItem?.name || details.itemId,
-        quantity: details.quantity,
-        uomSymbol: selectedItem?.uomSymbol || details.uomName,
-      })),
-    };
-
-    setReceiptData(dummyReceipt);
+    // TODO: Implement actual stock-in update logic with backend API
+    console.log("Stock-in details saved:", stockDetailsArray);
     setShowUpdateStockInItems(false);
-    setShowReceipt(true);
+    setShowUpdateStockIn(false);
   };
 
   return (
@@ -71,8 +47,6 @@ export default function UpdateStockIn({}: UpdateStockInProps) {
         e.preventDefault();
         if (showUpdateStockIn) {
           setShowUpdateStockInItems(true);
-        } else if (showReceipt) {
-          setShowReceipt(false);
         }
       }}
     >
@@ -88,7 +62,7 @@ export default function UpdateStockIn({}: UpdateStockInProps) {
         </ModalHeader>
 
         <ModalContent className="mb-4">
-          <ViewTable columns={columns} data={dummyData} />
+          <ViewTable columns={columns} data={data} />
         </ModalContent>
 
         <ModalFooter className="flex gap-2">
@@ -121,28 +95,6 @@ export default function UpdateStockIn({}: UpdateStockInProps) {
               onSave={handleSaveStockInDetails}
             />
           </ModalContent>
-        </Modal>
-      )}
-
-      {/* Receipt modal */}
-      {showReceipt && receiptData && (
-        <Modal isVisible={showReceipt} onClose={() => setShowReceipt(false)}>
-          <ModalHeader>
-            <ModalTitle>Stock-In Receipt</ModalTitle>
-            <ModalDescription>Review your stock-in details below.</ModalDescription>
-          </ModalHeader>
-
-          <ModalContent>
-            <StockInReceipt receiptData={receiptData} onClose={() => setShowReceipt(false)} />
-          </ModalContent>
-
-          <ModalFooter className="space-y-2 gap-2">
-            <Button type="submit"
-            onClick={() => {
-                setShowReceipt(false);
-                setShowUpdateStockIn(true);  
-                }}>Done</Button>
-          </ModalFooter>
         </Modal>
       )}
     </form>

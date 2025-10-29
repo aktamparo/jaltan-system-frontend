@@ -136,7 +136,10 @@ export default function StockInPage() {
           {selectedReceipt && (
             <StockInReceipt
               receiptData={{
-                stockIn: selectedReceipt,
+                stockIn: {
+                  ...selectedReceipt,
+                  referenceNumber: (selectedReceipt as any).referenceNumber ?? "",
+                },
                 items: selectedReceipt.items.map((item) => ({
                   itemId: item.itemId,
                   itemName: item.name,
