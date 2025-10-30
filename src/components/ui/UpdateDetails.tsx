@@ -107,15 +107,15 @@ export default function UpdateDetails() {
             onClose={() => setShowPersonalDetails(false)}
           >
             <form onSubmit={handleSubmit}>
-            <ModalHeader>
-              <ModalTitle>Update Personal Details</ModalTitle>
-              <ModalDescription>
-                Modify your name, contact number, and branch assignment
-              </ModalDescription>
-            </ModalHeader>
-            
-            <ModalContent>
-              <div className="space-y-4">
+              <ModalHeader>
+                <ModalTitle>Update Personal Details</ModalTitle>
+                <ModalDescription>
+                  Modify your name, contact number, and branch assignment
+                </ModalDescription>
+              </ModalHeader>
+
+              <ModalContent>
+                <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstname">First Name</Label>
                   <Input 

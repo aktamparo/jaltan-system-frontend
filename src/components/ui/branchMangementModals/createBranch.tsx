@@ -76,12 +76,13 @@ export default function CreateBranch() {
         onClose={() => setShowCreateBranch(false)}
       >
         <form onSubmit={handleSubmit}>
-          <ModalHeader>
-            <ModalTitle>Create Branch</ModalTitle>
-            <ModalDescription>Create a new branch</ModalDescription>
-          </ModalHeader>
-          <ModalContent>
-            <div className="space-y-4">
+            <ModalHeader>
+              <ModalTitle>Create Branch</ModalTitle>
+              <ModalDescription>Create a new branch</ModalDescription>
+            </ModalHeader>
+
+            <ModalContent>
+              <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Branch Name</Label>
                 <Input
