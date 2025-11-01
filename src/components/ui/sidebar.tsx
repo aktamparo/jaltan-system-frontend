@@ -21,23 +21,31 @@ import { useLogout } from "@/lib/mutations/authMutation";
 import { CurrentUser } from "@/lib/types/account";
 import Link from "next/link";
 import { queryClient } from "@/lib/react-query";
+import LogoutConfirmationModal from "@/components/ui/LogoutConfirmationModal";
 
 export default function Sidebar({ account }: CurrentUser) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   const username = `${account.firstName} ${account.lastName}`;
   const logoutMutation = useLogout();
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutConfirm = async () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
         queryClient.clear();
         router.push("/login");
+        setShowLogoutModal(false);
       },
       onError: (err) => {
         console.error("Logout failed", err);
+        setShowLogoutModal(false);
       },
     });
   };
@@ -150,7 +158,7 @@ export default function Sidebar({ account }: CurrentUser) {
 
         <div className="mt-auto">
           <button
-            onClick={handleLogout}
+            onClick={handleLogoutClick}
             className="flex items-center gap-2 p-4 text-s w-full text-left hover:bg-gray-50"
           >
             <IconLogout size={16} /> Logout
@@ -307,7 +315,7 @@ export default function Sidebar({ account }: CurrentUser) {
 
             <div className="mt-auto">
               <button
-                onClick={handleLogout}
+                onClick={handleLogoutClick}
                 className="flex items-center gap-2 p-4 text-s w-full text-left hover:bg-gray-50"
               >
                 <IconLogout size={16} /> Logout
@@ -316,6 +324,12 @@ export default function Sidebar({ account }: CurrentUser) {
           </div>
         )}
       </div>
+
+      <LogoutConfirmationModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogoutConfirm}
+      />
     </>
   );
 }
