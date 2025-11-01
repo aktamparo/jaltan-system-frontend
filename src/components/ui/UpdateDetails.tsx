@@ -151,20 +151,13 @@ export default function UpdateDetails() {
               </div>
             </ModalContent>
             
-            <ModalFooter>
+            <ModalFooter className="mt-6">
               <div className="flex flex-row w-full gap-4 justify-end">
                 <Button 
                   type="submit"
                   disabled={updateUserMutation.isPending}
                 >
                   {updateUserMutation.isPending ? "Updating..." : "Update"}
-                </Button>
-                <Button 
-                  type="button" 
-                  onClick={() => setShowPersonalDetails(false)} 
-                  variant="secondary"
-                >
-                  Cancel
                 </Button>
               </div>
             </ModalFooter>
