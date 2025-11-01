@@ -34,37 +34,31 @@ export default function LogoutConfirmationModal({
   };
 
   return (
-    <Modal isVisible={isOpen} onClose={onClose}>
-      <ModalHeader>
-        <ModalTitle>Confirm Logout</ModalTitle>
+    <Modal isVisible={isOpen} onClose={onClose} className="max-w-md" hideCloseButton>
+      <ModalHeader className="text-center items-center">
+        <ModalTitle className="text-lg font-semibold">Confirmation</ModalTitle>
         <ModalDescription>
-          Are you sure you want to log out? You will need to sign in again to
-          access your account.
+          Are you sure you want to log out?
         </ModalDescription>
       </ModalHeader>
-      <ModalContent>
-        <div className="py-4">
-          <p className="text-sm text-gray-600">
-            Any unsaved changes will be lost. Make sure you have saved your work before logging out.
-          </p>
-        </div>
-      </ModalContent>
-      <ModalFooter>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onClose}
-          disabled={isLoggingOut}
-        >
-          Cancel
-        </Button>
+      <ModalFooter className="justify-center gap-3">
         <Button
           type="button"
           variant="destructive"
           onClick={handleConfirm}
           disabled={isLoggingOut}
+          className="min-w-24"
         >
           {isLoggingOut ? "Logging out..." : "Logout"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onClose}
+          disabled={isLoggingOut}
+          className="min-w-24"
+        >
+          Cancel
         </Button>
       </ModalFooter>
     </Modal>
