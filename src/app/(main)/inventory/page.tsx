@@ -290,10 +290,7 @@ export default function InventoryPage() {
       return selectedItems.every((item) => quantities[item.id]?.quantity > 0);
     } else {
       return selectedItems.every(
-        (item) =>
-          stockOutQuantities[item.id]?.quantity > 0 &&
-          (!stockOutQuantities[item.id]?.isDamagedGoods ||
-            stockOutQuantities[item.id]?.comment.trim().length > 0)
+        (item) => stockOutQuantities[item.id]?.quantity > 0
       );
     }
   };
