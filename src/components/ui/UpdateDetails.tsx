@@ -106,14 +106,13 @@ export default function UpdateDetails() {
             isVisible={showPersonalDetails}
             onClose={() => setShowPersonalDetails(false)}
           >
-            <form onSubmit={handleSubmit}>
               <ModalHeader>
                 <ModalTitle>Update Personal Details</ModalTitle>
                 <ModalDescription>
                   Modify your name, contact number, and branch assignment
                 </ModalDescription>
               </ModalHeader>
-
+            <form onSubmit={handleSubmit}>
               <ModalContent>
                 <div className="space-y-4">
                 <div className="space-y-2">
