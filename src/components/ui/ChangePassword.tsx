@@ -152,14 +152,11 @@ export default function ChangePassword() {
                 {errors.newPassword && (
                   <p className="text-sm text-red-500">{errors.newPassword}</p>
                 )}
-                <p className="text-xs text-gray-500">
-                  Password must be exactly 8 characters
-                </p>
               </div>
             </div>
           </ModalContent>
 
-          <ModalFooter>
+          <ModalFooter className="mt-6">
             <div className="flex flex-col w-full gap-4">
               <Button className="self-end" type="submit">
                 Save

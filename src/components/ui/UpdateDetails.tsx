@@ -106,16 +106,15 @@ export default function UpdateDetails() {
             isVisible={showPersonalDetails}
             onClose={() => setShowPersonalDetails(false)}
           >
+              <ModalHeader>
+                <ModalTitle>Update Personal Details</ModalTitle>
+                <ModalDescription>
+                  Modify your name, contact number, and branch assignment
+                </ModalDescription>
+              </ModalHeader>
             <form onSubmit={handleSubmit}>
-            <ModalHeader>
-              <ModalTitle>Update Personal Details</ModalTitle>
-              <ModalDescription>
-                Modify your name, contact number, and branch assignment
-              </ModalDescription>
-            </ModalHeader>
-            
-            <ModalContent>
-              <div className="space-y-4">
+              <ModalContent>
+                <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstname">First Name</Label>
                   <Input 
@@ -151,20 +150,13 @@ export default function UpdateDetails() {
               </div>
             </ModalContent>
             
-            <ModalFooter>
+            <ModalFooter className="mt-6">
               <div className="flex flex-row w-full gap-4 justify-end">
                 <Button 
                   type="submit"
                   disabled={updateUserMutation.isPending}
                 >
                   {updateUserMutation.isPending ? "Updating..." : "Update"}
-                </Button>
-                <Button 
-                  type="button" 
-                  onClick={() => setShowPersonalDetails(false)} 
-                  variant="secondary"
-                >
-                  Cancel
                 </Button>
               </div>
             </ModalFooter>

@@ -75,13 +75,13 @@ export default function CreateBranch() {
         isVisible={showCreateBranch}
         onClose={() => setShowCreateBranch(false)}
       >
+            <ModalHeader>
+              <ModalTitle>Create Branch</ModalTitle>
+              <ModalDescription>Create a new branch</ModalDescription>
+            </ModalHeader>
         <form onSubmit={handleSubmit}>
-          <ModalHeader>
-            <ModalTitle>Create Branch</ModalTitle>
-            <ModalDescription>Create a new branch</ModalDescription>
-          </ModalHeader>
-          <ModalContent>
-            <div className="space-y-4">
+            <ModalContent>
+              <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Branch Name</Label>
                 <Input
@@ -121,11 +121,11 @@ export default function CreateBranch() {
         </ModalContent>
         
         <ModalFooter>
-          <Button 
-            type="submit"
-          >
-            Save
-          </Button>
+          <div className="flex flex-col w-full gap-4 mt-6">
+            <Button className="self-end" type="submit">
+              Save
+            </Button>
+          </div>
         </ModalFooter>
         </form>
       </Modal>

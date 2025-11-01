@@ -10,9 +10,10 @@ interface ModalProps {
   onClose: () => void;
   children?: ReactNode;
   className?: string;
+  hideCloseButton?: boolean;
 }
 
-export default function Modal({ isVisible, onClose, children, className }: ModalProps) {
+export default function Modal({ isVisible, onClose, children, className, hideCloseButton }: ModalProps) {
   if (!isVisible) return null;
 
   return (
@@ -27,14 +28,16 @@ export default function Modal({ isVisible, onClose, children, className }: Modal
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onClose}
-          className="absolute top-4 right-4"
-        >
-          <IconX size={20} />
-        </Button>
+        {!hideCloseButton && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+            className="absolute top-4 right-4"
+          >
+            <IconX size={20} />
+          </Button>
+        )}
         {children}
       </div>
     </div>
