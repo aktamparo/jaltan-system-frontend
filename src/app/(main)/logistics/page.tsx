@@ -746,71 +746,69 @@ function StaffLogisticsInterface({
               </div>
             ) : (
               <>
-                <div className="border rounded-lg overflow-hidden">
+                <div className="rounded-md border">
                   <table className="w-full">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
+                    <thead>
+                      <tr className="border-b bg-gray-50">
+                        <th className="h-12 px-4 text-left align-middle font-medium text-gray-900">
                           Reference Number
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
+                        <th className="h-12 px-4 text-left align-middle font-medium text-gray-900">
                           Created At
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
+                        <th className="h-12 px-4 text-left align-middle font-medium text-gray-900">
                           Created By
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
+                        <th className="h-12 px-4 text-left align-middle font-medium text-gray-900">
                           Status
                         </th>
-                        <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
+                        <th className="h-12 px-4 text-left align-middle font-medium text-gray-900">
                           Action
                         </th>
                         {isAdmin && (
-                          <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
+                          <th className="h-12 px-4 text-left align-middle font-medium text-gray-900">
                             Edit
                           </th>
                         )}
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody>
                       {paginatedData.map((request) => {
                         const isOwnRequest = request.createdBy.id === currentUserId;
                         const canEdit = isAdmin && isOwnRequest && request.status === 'PENDING';
                         
                         return (
-                          <tr key={request.id} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 text-sm text-gray-900">
+                          <tr key={request.id} className="border-b hover:bg-gray-50">
+                            <td className="p-4 align-middle">
                               {request.referenceNumber}
                             </td>
-                            <td className="px-4 py-3 text-sm text-gray-900">
+                            <td className="p-4 align-middle">
                               {new Date(request.createdAt).toLocaleDateString()}
                             </td>
-                            <td className="px-4 py-3 text-sm text-gray-900">
+                            <td className="p-4 align-middle">
                               {request.createdBy.employee.firstName} {request.createdBy.employee.lastName}
                             </td>
-                            <td className="px-4 py-3 text-sm">
+                            <td className="p-4 align-middle">
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusBadgeClass(request.status)}`}>
                                 {request.status}
                               </span>
                             </td>
-                            <td className="px-4 py-3 text-sm">
+                            <td className="p-4 align-middle">
                               <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleReview(request.id)}
-                                className="text-blue-600 border-blue-600 hover:bg-blue-50"
                               >
                                 Review
                               </Button>
                             </td>
                             {isAdmin && (
-                              <td className="px-4 py-3 text-sm">
+                              <td className="p-4 align-middle">
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   onClick={() => handleEdit(request.id)}
                                   disabled={!canEdit}
-                                  className={canEdit ? "text-green-600 border-green-600 hover:bg-green-50" : "opacity-50 cursor-not-allowed"}
                                 >
                                   Edit
                                 </Button>
