@@ -33,7 +33,7 @@ import RequestReceipt from "@/components/logistics/RequestReceipt";
 import { useQueryClient, QueryClient } from "@tanstack/react-query";
 import { requestQueryKeys } from "@/lib/queries/requestQueries";
 import { useGetAccount } from "@/lib/queries/accountQueries";
-import AdminRequestTable from "@/components/logistics/AdminRequestTable";
+import AdminRequestReview from "@/components/logistics/AdminRequestReview";
 import { useToast } from "@/components/ui/toast";
 
 export default function LogisticsPage() {
@@ -70,22 +70,28 @@ export default function LogisticsPage() {
   // Render different interfaces based on user role
   if (currentUser.role === "ADMIN") {
     return (
-      <div className="space-y-6">
-        <div className="flex flex-row items-center justify-between mb-4">
-          <h1 className="text-xl font-medium m-0">Logistics</h1>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <Searchbar
-              onSearchChange={setSearchQuery}
-              placeholder="Search requests..."
-            />
-          </div>
-        </div>
-
-        <AdminRequestTable searchQuery={searchQuery} />
-      </div>
+      <StaffLogisticsInterface
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        isSelectionMode={isSelectionMode}
+        setIsSelectionMode={setIsSelectionMode}
+        selectedItems={selectedItems}
+        setSelectedItems={setSelectedItems}
+        showQuantityModal={showQuantityModal}
+        setShowQuantityModal={setShowQuantityModal}
+        showReviewModal={showReviewModal}
+        setShowReviewModal={setShowReviewModal}
+        showEditModal={showEditModal}
+        setShowEditModal={setShowEditModal}
+        reviewingRequestId={reviewingRequestId}
+        setReviewingRequestId={setReviewingRequestId}
+        pageSize={pageSize}
+        queryClient={queryClient}
+        isAdmin={true}
+        currentUserId={currentUser.id}
+      />
     );
   }
 
@@ -110,6 +116,8 @@ export default function LogisticsPage() {
       setReviewingRequestId={setReviewingRequestId}
       pageSize={pageSize}
       queryClient={queryClient}
+      isAdmin={false}
+      currentUserId={currentUser.id}
     />
   );
 }
@@ -134,6 +142,8 @@ interface StaffLogisticsInterfaceProps {
   setReviewingRequestId: (id: string) => void;
   pageSize: number;
   queryClient: QueryClient;
+  isAdmin: boolean;
+  currentUserId: string;
 }
 
 function StaffLogisticsInterface({
@@ -155,6 +165,8 @@ function StaffLogisticsInterface({
   setReviewingRequestId,
   pageSize,
   queryClient,
+  isAdmin,
+  currentUserId,
 }: StaffLogisticsInterfaceProps) {
 
   // Backend integration
@@ -194,6 +206,10 @@ function StaffLogisticsInterface({
   const [editComment, setEditComment] = useState("");
   const [editSelectedItems, setEditSelectedItems] = useState<InventoryItem[]>([]);
   const [isEditSelectionMode, setIsEditSelectionMode] = useState(false);
+  
+  // Admin review modal state
+  const [showAdminReviewModal, setShowAdminReviewModal] = useState(false);
+  const [adminReviewingRequestId, setAdminReviewingRequestId] = useState<string>("");
 
   // Pagination params for inventory
   const paginationParams: PaginationParams = {
@@ -291,8 +307,33 @@ function StaffLogisticsInterface({
   };
 
   const handleReview = (id: string) => {
+    if (isAdmin) {
+      setAdminReviewingRequestId(id);
+      setShowAdminReviewModal(true);
+    } else {
+      setReviewingRequestId(id);
+      setShowReviewModal(true);
+    }
+  };
+
+  const handleEdit = async (id: string) => {
+    // Reset edit state before opening
+    setEditSelectedItems([]);
+    setEditQuantities({});
+    setEditComment("");
+    
     setReviewingRequestId(id);
-    setShowReviewModal(true);
+    // Fetch the request data and wait for it
+    await queryClient.invalidateQueries({ 
+      queryKey: requestQueryKeys.detail(id) 
+    });
+    await queryClient.refetchQueries({ 
+      queryKey: requestQueryKeys.detail(id) 
+    });
+    // Give time for state to update
+    setTimeout(() => {
+      setShowEditModal(true);
+    }, 200);
   };
 
   const handleCreate = () => {
@@ -429,19 +470,18 @@ function StaffLogisticsInterface({
         });
         return newItems;
       } else {
-        // Add item
-        const newItems = [...prev, item];
-        // Add default quantity
+        // Add item - add immediately to quantities before updating state
         setEditQuantities((prevQuantities) => ({
           ...prevQuantities,
-          [item.id]: { quantity: 0, uomId: item.uom?.id || '' },
+          [item.id]: { quantity: 1, uomId: item.uom?.id || '' },
         }));
-        return newItems;
+        return [...prev, item];
       }
     });
   };
 
-  const initializeEditMode = () => {
+  // Use useEffect to initialize edit mode when requestToReview changes
+  const initializeEditMode = useCallback(() => {
     if (!requestToReview || !requestToReview.items) return;
     
     // Set comment
@@ -506,7 +546,14 @@ function StaffLogisticsInterface({
       }
     });
     setEditQuantities(initialQuantities);
-  };
+  }, [requestToReview]);
+
+  // Initialize edit mode when requestToReview is loaded (only once when modal first opens)
+  useEffect(() => {
+    if (showEditModal && requestToReview && editSelectedItems.length === 0) {
+      initializeEditMode();
+    }
+  }, [showEditModal, requestToReview, initializeEditMode, editSelectedItems.length]);
 
   const handleAddItems = () => {
     setIsEditSelectionMode(true);
@@ -523,15 +570,7 @@ function StaffLogisticsInterface({
   const handleConfirmEditSelection = () => {
     setIsEditSelectionMode(false);
     setShowEditModal(true); // Reopen the edit modal with updated items
-    // Trigger data reload by invalidating the specific request query
-    if (reviewingRequestId) {
-      queryClient.invalidateQueries({ 
-        queryKey: requestQueryKeys.detail(reviewingRequestId) 
-      });
-      queryClient.invalidateQueries({ 
-        queryKey: requestQueryKeys.lists() 
-      });
-    }
+    // Don't invalidate queries - keep the edit state
   };
 
   const handleSubmitEditRequest = async () => {
@@ -559,6 +598,7 @@ function StaffLogisticsInterface({
       
       // Reset state after successful submission
       setShowEditModal(false);
+      setReviewingRequestId("");
       setEditSelectedItems([]);
       setEditQuantities({});
       setEditComment("");
@@ -725,37 +765,60 @@ function StaffLogisticsInterface({
                         <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
                           Action
                         </th>
+                        {isAdmin && (
+                          <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">
+                            Edit
+                          </th>
+                        )}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {paginatedData.map((request) => (
-                        <tr key={request.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm text-gray-900">
-                            {request.referenceNumber}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-900">
-                            {new Date(request.createdAt).toLocaleDateString()}
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-900">
-                            {request.createdBy.employee.firstName} {request.createdBy.employee.lastName}
-                          </td>
-                          <td className="px-4 py-3 text-sm">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusBadgeClass(request.status)}`}>
-                              {request.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-sm">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleReview(request.id)}
-                              className="text-blue-600 border-blue-600 hover:bg-blue-50"
-                            >
-                              Review
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
+                      {paginatedData.map((request) => {
+                        const isOwnRequest = request.createdBy.id === currentUserId;
+                        const canEdit = isAdmin && isOwnRequest && request.status === 'PENDING';
+                        
+                        return (
+                          <tr key={request.id} className="hover:bg-gray-50">
+                            <td className="px-4 py-3 text-sm text-gray-900">
+                              {request.referenceNumber}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-900">
+                              {new Date(request.createdAt).toLocaleDateString()}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-900">
+                              {request.createdBy.employee.firstName} {request.createdBy.employee.lastName}
+                            </td>
+                            <td className="px-4 py-3 text-sm">
+                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusBadgeClass(request.status)}`}>
+                                {request.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-sm">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleReview(request.id)}
+                                className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                              >
+                                Review
+                              </Button>
+                            </td>
+                            {isAdmin && (
+                              <td className="px-4 py-3 text-sm">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEdit(request.id)}
+                                  disabled={!canEdit}
+                                  className={canEdit ? "text-green-600 border-green-600 hover:bg-green-50" : "opacity-50 cursor-not-allowed"}
+                                >
+                                  Edit
+                                </Button>
+                              </td>
+                            )}
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -866,6 +929,7 @@ function StaffLogisticsInterface({
       <Modal
         isVisible={showReviewModal}
         onClose={() => setShowReviewModal(false)}
+        className="max-w-2xl"
       >
         <ModalHeader>
           <ModalTitle>Request Details</ModalTitle>
@@ -892,19 +956,30 @@ function StaffLogisticsInterface({
               />
               
               {/* Edit Button */}
-              <div className="flex justify-center mt-6">
-                <Button
-                  onClick={() => {
-                    setShowReviewModal(false);
-                    initializeEditMode();
-                    setShowEditModal(true);
-                  }}
-                  disabled={requestToReview.status !== 'PENDING'}
-                  className={requestToReview.status !== 'PENDING' ? 'opacity-50 cursor-not-allowed' : ''}
-                >
-                  {requestToReview.status !== 'PENDING' ? 'Cannot Edit (Not Pending)' : 'Edit Request'}
-                </Button>
-              </div>
+              {(() => {
+                const isOwnRequest = requestToReview.createdBy?.id === currentUserId;
+                const canEdit = isOwnRequest && requestToReview.status === 'PENDING';
+                
+                return (
+                  <div className="flex justify-center mt-6">
+                    <Button
+                      onClick={() => {
+                        setShowReviewModal(false);
+                        initializeEditMode();
+                        setShowEditModal(true);
+                      }}
+                      disabled={!canEdit}
+                      className={!canEdit ? 'opacity-50 cursor-not-allowed' : ''}
+                    >
+                      {!isOwnRequest 
+                        ? 'Cannot Edit (Not Your Request)' 
+                        : requestToReview.status !== 'PENDING' 
+                          ? 'Cannot Edit (Not Pending)' 
+                          : 'Edit Request'}
+                    </Button>
+                  </div>
+                );
+              })()}
             </div>
           )}
           {(!requestToReview || !requestToReview.items) && (
@@ -987,6 +1062,15 @@ function StaffLogisticsInterface({
           </div>
         </ModalContent>
       </Modal>
+
+      {/* Admin Review Modal */}
+      {isAdmin && (
+        <AdminRequestReview
+          isOpen={showAdminReviewModal}
+          requestId={adminReviewingRequestId}
+          onClose={() => setShowAdminReviewModal(false)}
+        />
+      )}
     </>
   );
 }
