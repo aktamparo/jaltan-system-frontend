@@ -45,7 +45,7 @@ export default function StockInPage() {
   const columns: ColumnDef<StockInReceiptType>[] = [
     {
       accessorKey: "id",
-      header: "ID",
+      header: "Reference Number",
       cell: ({ row }) => row.original.referenceNumber,
     },
     {

@@ -45,7 +45,7 @@ export default function StockOutPage() {
   const columns: ColumnDef<StockOutReceiptType>[] = [
     {
       accessorKey: "id",
-      header: "ID",
+      header: "Reference Number",
       cell: ({ row }) => row.original.referenceNumber,
     },
     {
