@@ -17,6 +17,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useGetAccount } from "@/lib/queries/accountQueries";
 import { useToast } from "@/components/ui/toast";
 import { User } from "@/lib/types/account";
+import { Branch } from "@/lib/types/branch";
+import { useGetAllBranches } from "@/lib/queries/branchQueries";
 
 export default function UpdateDetails() {
     const [showPersonalDetails, setShowPersonalDetails] = useState(false);
@@ -25,10 +27,12 @@ export default function UpdateDetails() {
     const updateUserMutation = useUpdateUser();
     const queryClient = useQueryClient();
     const toast = useToast();
+    const { data: AllBranches } = useGetAllBranches(1, 100);
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [contactNumber, setContactNumber] = useState("");
+    const [branchId, setBranchId] = useState("");
 
     // Initialize form when modal opens
     const handleOpenModal = () => {
@@ -36,6 +40,7 @@ export default function UpdateDetails() {
         setFirstName(currentUser.firstName || "");
         setLastName(currentUser.lastName || "");
         setContactNumber(currentUser.contactNumber || "");
+        setBranchId(currentUser.branch || "");
       }
       setShowPersonalDetails(true);
     };
@@ -59,7 +64,7 @@ export default function UpdateDetails() {
           lastName,
           contactNumber,
           branch: {
-            id: currentUser.branch,
+            id: branchId,
           },
         },
       };
@@ -147,6 +152,25 @@ export default function UpdateDetails() {
                     required 
                   />
                 </div>
+
+                {currentUser?.role === "ADMIN" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="branch">Branch</Label>
+                    <select
+                      id="branch"
+                      className="w-full border rounded px-2 py-1"
+                      value={branchId}
+                      onChange={(e) => setBranchId(e.target.value)}
+                      required
+                    >
+                      {(AllBranches?.data ?? []).map((branch: Branch) => (
+                        <option key={branch.id} value={branch.id}>
+                          {branch.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
             </ModalContent>
             
