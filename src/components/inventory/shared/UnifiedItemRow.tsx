@@ -94,9 +94,6 @@ export function UnifiedItemRow({
         <div className="flex-1">
           <h4 className="font-medium">{item.masterItem.name}</h4>
           <p className="text-sm text-gray-600">{item.masterItem.description}</p>
-          <p className="text-xs text-gray-500">
-            Current stock: {Number(item.quantity).toFixed(2)} {item.uom?.symbol || '-'}
-          </p>
         </div>
         <div className="flex items-center gap-2">
           <Input
@@ -132,6 +129,9 @@ export function UnifiedItemRow({
           </div>
           {isDamagedGoods && (
             <div className="mt-2">
+              <label className="text-sm font-medium text-gray-700 mb-2 block">
+                Comment
+              </label>
               <Input
                 type="text"
                 placeholder="Add comment about damage..."
