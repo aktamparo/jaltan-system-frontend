@@ -4,6 +4,7 @@ import {
   PaginationParams,
   CreateStockInRequest,
   CreateStockInResponse,
+  UpdateStockInRequest,
   CreateStockOutRequest,
   CreateStockOutResponse,
   UpdateStockOutRequest,
@@ -211,6 +212,27 @@ export const inventoryService = {
 
     if (!response.ok) {
       throw new Error("Failed to create stock-in");
+    }
+
+    const data: CreateStockInResponse = await response.json();
+    return data;
+  },
+
+  updateStockIn: async (
+    id: string,
+    payload: UpdateStockInRequest
+  ): Promise<CreateStockInResponse> => {
+    const response = await fetch(`${BASE_URL}/stock-in/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update stock-in");
     }
 
     const data: CreateStockInResponse = await response.json();

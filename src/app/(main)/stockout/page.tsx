@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Searchbar from "@/components/ui/searchbar";
 import { Button } from "@/components/ui/button";
 import StockOutReceipt from "@/components/inventory/StockOut/StockOutReceipt";
+import EditStockOut from "@/components/inventory/StockOut/EditStockOut";
 import { Modal, ModalContent } from "@/components/ui/modal";
 import { PaginatedDataTable } from "@/components/inventory/PaginatedStockOut/paginated-data-table";
 import { usePaginatedStockOuts } from "@/lib/queries/inventoryQueries";
@@ -21,6 +22,7 @@ export default function StockOutPage() {
   const [selectedReceipt, setSelectedReceipt] =
     useState<StockOutReceiptType | null>(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -96,7 +98,23 @@ export default function StockOutPage() {
 
   const handleViewReceipt = (receipt: StockOutReceiptType) => {
     setSelectedReceipt(receipt);
+    setIsEditMode(false);
     setShowReceiptModal(true);
+  };
+
+  const handleEditMode = () => {
+    setIsEditMode(true);
+  };
+
+  const handleEditSuccess = () => {
+    setIsEditMode(false);
+    setShowReceiptModal(false);
+    queryClient.invalidateQueries({ queryKey: ["stockouts"] });
+  };
+
+  const handleCloseModal = () => {
+    setShowReceiptModal(false);
+    setIsEditMode(false);
   };
 
   return (
@@ -131,10 +149,10 @@ export default function StockOutPage() {
       {/* Receipt Modal */}
       <Modal
         isVisible={showReceiptModal}
-        onClose={() => setShowReceiptModal(false)}
+        onClose={handleCloseModal}
       >
         <ModalContent>
-          {selectedReceipt && (
+          {selectedReceipt && !isEditMode && (
             <StockOutReceipt
               receiptData={{
                 stockOut: selectedReceipt,
@@ -147,7 +165,24 @@ export default function StockOutPage() {
                   comment: item.comment || undefined,
                 })),
               }}
-              onClose={() => setShowReceiptModal(false)}
+              onClose={handleCloseModal}
+              onEdit={handleEditMode}
+            />
+          )}
+          {selectedReceipt && isEditMode && (
+            <EditStockOut
+              receiptData={{
+                stockOut: {
+                  id: selectedReceipt.id,
+                  createdAt: selectedReceipt.createdAt,
+                  createdById: selectedReceipt.createdBy?.id || "",
+                  modifiedAt: selectedReceipt.modifiedAt,
+                  modifiedById: selectedReceipt.modifiedBy?.id || "",
+                },
+                items: selectedReceipt.items,
+              }}
+              onClose={handleCloseModal}
+              onSuccess={handleEditSuccess}
             />
           )}
         </ModalContent>

@@ -4,6 +4,7 @@ import { handleApiError, handleApiSuccess } from "../utils/errorHandler";
 import {
   CreateStockInRequest,
   CreateStockInResponse,
+  UpdateStockInRequest,
   CreateStockOutRequest,
   CreateStockOutResponse,
   UpdateStockOutRequest,
@@ -26,6 +27,29 @@ export const useCreateStockIn = () => {
     },
     onError: (error: Error) => {
       handleApiError(error, "Failed to create stock-in");
+    },
+  });
+};
+
+export const useUpdateStockIn = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    CreateStockInResponse,
+    Error,
+    { id: string; payload: UpdateStockInRequest }
+  >({
+    mutationFn: ({ id, payload }) =>
+      inventoryService.updateStockIn(id, payload),
+    onSuccess: (_, { id }) => {
+      // Invalidate and refetch inventory items and specific stock-in
+      queryClient.invalidateQueries({ queryKey: ["inventoryItems"] });
+      queryClient.invalidateQueries({ queryKey: ["branchItems"] });
+      queryClient.invalidateQueries({ queryKey: ["stockIns"] });
+      queryClient.invalidateQueries({ queryKey: ["stockIn", id] });
+    },
+    onError: (error: Error) => {
+      console.error("Failed to update stock-in:", error.message);
     },
   });
 };

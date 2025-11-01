@@ -179,7 +179,7 @@ export default function SalesPage() {
               onClick={() => setActiveTab("analytics")}
               className={`px-6 py-3 font-medium text-sm ${
                 activeTab === "analytics"
-                  ? "border-b-2 border-blue-500 text-blue-600"
+                  ? "border-b-2 border-gray-900 text-gray-900"
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -189,7 +189,7 @@ export default function SalesPage() {
               onClick={() => setActiveTab("data")}
               className={`px-6 py-3 font-medium text-sm ${
                 activeTab === "data"
-                  ? "border-b-2 border-blue-500 text-blue-600"
+                  ? "border-b-2 border-gray-900 text-gray-900"
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -199,7 +199,7 @@ export default function SalesPage() {
               onClick={() => setActiveTab("upload")}
               className={`px-6 py-3 font-medium text-sm ${
                 activeTab === "upload"
-                  ? "border-b-2 border-blue-500 text-blue-600"
+                  ? "border-b-2 border-gray-900 text-gray-900"
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -256,11 +256,11 @@ export default function SalesPage() {
 
             {/* Prompt to select dates when both are empty */}
             {!startDate || !endDate ? (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-8 text-center">
-                <p className="text-blue-900 text-lg font-medium mb-2">
+              <div className="border border-gray-200 rounded-lg p-8 text-center">
+                <p className="text-gray-900 text-lg font-medium mb-2">
                   Select a date range to view analytics
                 </p>
-                <p className="text-sm text-blue-700">
+                <p className="text-sm text-gray-600">
                   Choose a preset or enter custom dates to see sales data and trends.
                 </p>
               </div>

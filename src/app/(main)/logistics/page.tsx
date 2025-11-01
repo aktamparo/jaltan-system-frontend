@@ -71,13 +71,8 @@ export default function LogisticsPage() {
   if (currentUser.role === "ADMIN") {
     return (
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Request Management</h1>
-            <p className="mt-1 text-sm text-gray-600">
-              Review and manage all requests
-            </p>
-          </div>
+        <div className="flex flex-row items-center justify-between mb-4">
+          <h1 className="text-xl font-medium m-0">Logistics</h1>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
