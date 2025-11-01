@@ -90,7 +90,7 @@ export default function EditUOMType() {
       >
         <span className="text-s text-black">Edit Unit of Measurement Type</span>
         <span className="text-s text-gray-500">
-          Edit an existing unit of measurement type.
+          Edit an existing unit of measurement type
         </span>
       </Button>
 
@@ -101,7 +101,7 @@ export default function EditUOMType() {
         <ModalHeader>
           <ModalTitle>Edit Unit of Measurement Type</ModalTitle>
           <ModalDescription>
-            Edit an existing unit of measurement type.
+            Edit an existing unit of measurement type
           </ModalDescription>
         </ModalHeader>
 
@@ -130,7 +130,7 @@ export default function EditUOMType() {
                           type="button"
             disabled={!selectedUOMId}
                         >
-                          Edit Selected UOM Type
+                          Edit Selected UoM Type
                         </Button>
                       </div>
                     </div>
@@ -143,7 +143,7 @@ export default function EditUOMType() {
           onClose={() => setShowEditModal(false)}
         >
           <ModalHeader>
-            <ModalTitle>Edit UOM Type</ModalTitle>
+            <ModalTitle>Edit Unit of Measurement Type</ModalTitle>
           </ModalHeader>
           <ModalContent>
             {(() => {

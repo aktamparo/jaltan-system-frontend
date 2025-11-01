@@ -65,15 +65,15 @@ export default function ViewUOMType() {
       >
         <span className="text-s text-black">View All Unit of Measurement Types and their details</span>
         <span className="text-s text-gray-500">
-          See all registered Unit of Measurement Types and their details
+          See all registered unit of measurement types and their details
         </span>
       </Button>
 
       <Modal isVisible={showViewTable} onClose={() => setShowViewTable(false)}>
         <ModalHeader>
-          <ModalTitle>View All UOM Types</ModalTitle>
+          <ModalTitle>View All Unit of Measurement Types</ModalTitle>
           <ModalDescription>
-            All registered UOM Types in the system
+            All registered unit of measurement types in the system
           </ModalDescription>
         </ModalHeader>
 

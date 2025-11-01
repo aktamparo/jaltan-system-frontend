@@ -42,15 +42,15 @@ export default function AddUOMType() {
           setUOMType("");
           setShowCreateUOMType(false);
           toast.success(
-            "UOM Type Created",
-            "New UOM type has been successfully created."
+            "UoM Type Created",
+            "New UoM type has been successfully created."
           );
         },
         onError: (err: unknown) => {
           const errorMessage =
-            err instanceof Error ? err.message : "Failed to create UOM type";
+            err instanceof Error ? err.message : "Failed to create UoM type";
 
-          toast.error("UOM Type Creation Failed", errorMessage);
+          toast.error("UoM Type Creation Failed", errorMessage);
         },
       }
     );
@@ -69,7 +69,7 @@ export default function AddUOMType() {
           Add New Unit of Measurement Type
         </span>
         <span className="text-s text-gray-500">
-          Register a UOM Type into the system
+          Register a unit of measurement type into the system
         </span>
       </Button>
 
@@ -78,16 +78,16 @@ export default function AddUOMType() {
         onClose={() => setShowCreateUOMType(false)}
       >
         <ModalHeader>
-          <ModalTitle>Create UOM Type</ModalTitle>
+          <ModalTitle>Add New Unit of Measurement Type</ModalTitle>
           <ModalDescription>
-            Fill in the details to create a new UOM type
+            Fill in the details to create a new unit of measurement type
           </ModalDescription>
         </ModalHeader>
         <form onSubmit={handleSubmit}>
           <ModalContent>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="uomType">Type</Label>
+                <Label htmlFor="uomType">Unit of Measurement Type Name</Label>
                 <Input
                   id="uomType"
                   value={uomType}
@@ -96,7 +96,7 @@ export default function AddUOMType() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="standardUoMId">Standard UOM</Label>
+                <Label htmlFor="standardUoMId">Standard Unit of Measurement</Label>
                 <select
                   id="uom"
                   className="w-full border rounded px-2 py-1"
@@ -104,7 +104,7 @@ export default function AddUOMType() {
                   onChange={(e) => setUOM(e.target.value)}
                 >
                   <option value="" disabled>
-                    Select a UOM Type
+                    Select a UoM
                   </option>
                   {(AllUOM?.data ?? []).map((uom: UoM) => (
                     <option key={uom.id} value={uom.id}>
