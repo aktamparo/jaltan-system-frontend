@@ -105,7 +105,7 @@ export default function EditUOM() {
       >
         <span className="text-s text-black">Edit Unit of Measurement</span>
         <span className="text-s text-gray-500">
-          Edit an existing unit of measurement.
+          Edit an existing unit of measurement
         </span>
       </Button>
 
@@ -114,9 +114,9 @@ export default function EditUOM() {
         onClose={() => setShowSelectModal(false)}
       >
         <ModalHeader>
-          <ModalTitle>Select UOM</ModalTitle>
+          <ModalTitle>Edit Unit of Measurement</ModalTitle>
           <ModalDescription>
-            All registered UOMs in the system. Only one can be selected.
+            All registered unit of measurements in the system. Only one can be selected
           </ModalDescription>
         </ModalHeader>
 
@@ -146,7 +146,7 @@ export default function EditUOM() {
                       type="button"
                       disabled={!selectedUOMId}
                                   >
-                                    Edit Selected UOM
+                                    Edit Selected UoM
                                   </Button>
                                 </div>
                               </div>
@@ -158,7 +158,7 @@ export default function EditUOM() {
           onClose={() => setShowEditModal(false)}
         >
           <ModalHeader>
-            <ModalTitle>Edit UOM</ModalTitle>
+            <ModalTitle>Edit Unit of Measurement</ModalTitle>
           </ModalHeader>
           <ModalContent>
             {(() => {

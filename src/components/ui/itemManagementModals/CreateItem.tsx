@@ -67,8 +67,8 @@ export default function CreateItem() {
         onClick={() => setShowCreateMasterItem(true)}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
-        <span className="text-s text-black">Create a new Item</span>
-        <span className="text-s text-gray-500">Create a new Master Item</span>
+        <span className="text-s text-black">Create Master Item</span>
+        <span className="text-s text-gray-500">Create a new master item</span>
       </Button>
 
       <Modal

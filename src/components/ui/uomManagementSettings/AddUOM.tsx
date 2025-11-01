@@ -77,18 +77,18 @@ export default function AddUOM() {
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
         <span className="text-s text-black">
-          Add a new Unit of Meassurement
+          Add a New Unit of Measurement
         </span>
         <span className="text-s text-gray-500">
-          Register a Unit of Measurement into the system
+          Register a unit of measurement into the system
         </span>
       </Button>
 
       <Modal isVisible={showCreateUOM} onClose={() => setShowCreateUOM(false)}>
         <ModalHeader>
-          <ModalTitle>Create UoM</ModalTitle>
+          <ModalTitle>Add a New Unit of Measurement</ModalTitle>
           <ModalDescription>
-            Fill in the details to create a new Unit of Measurement.
+            Fill in the details to create a new unit of measurement
           </ModalDescription>
         </ModalHeader>
         <form onSubmit={handleSubmit}>
@@ -121,7 +121,7 @@ export default function AddUOM() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="standardUoMId">Standard UOM</Label>
+                <Label htmlFor="standardUoMId">Unit of Measurement Type</Label>
                 <select
                   id="uomTypeId"
                   className="w-full border rounded px-2 py-1"
@@ -129,7 +129,7 @@ export default function AddUOM() {
                   onChange={(e) => setUomTypeId(e.target.value)}
                 >
                   <option value="" disabled>
-                    Select a UOM Type
+                    Select a UoM Type
                   </option>
                   {(AllUOMType?.data ?? []).map((uom: UomType) => (
                     <option key={uom.id} value={uom.id}>

@@ -51,15 +51,15 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
         queryClient.invalidateQueries({ queryKey: ["uom"] });
         onClose();
         toast.success(
-          "UOM Updated",
+          "UoM Updated",
           "Unit of measurement has been successfully updated."
         );
       },
       onError: (err: unknown) => {
         const errorMessage =
-          err instanceof Error ? err.message : "Failed to update UOM";
+          err instanceof Error ? err.message : "Failed to update UoM";
 
-        toast.error("UOM Update Failed", errorMessage);
+        toast.error("UoM Update Failed", errorMessage);
       },
     });
   };
@@ -67,12 +67,12 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4">
       <div className="space-y-2">
-        <Label htmlFor="name">UOM Name</Label>
+        <Label htmlFor="name">Unit of Measurement Name</Label>
         <Input
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Enter UOM name"
+          placeholder="Enter UoM name"
         />
       </div>
       <div className="space-y-2">
@@ -81,7 +81,7 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
           id="symbol"
           value={symbol}
           onChange={(e) => setSymbol(e.target.value)}
-          placeholder="Enter UOM symbol"
+          placeholder="Enter UoM symbol"
         />
       </div>
       <div className="space-y-2">
@@ -96,14 +96,14 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="uomTypeId">UOM Type</Label>
+        <Label htmlFor="uomTypeId">Unit of Measurement Type</Label>
         <select
           id="uomTypeId"
           className="w-full border rounded px-2 py-1"
           value={uomTypeId}
           onChange={(e) => setUomTypeId(e.target.value)}
         >
-          <option value="">Select UOM Type</option>
+          <option value="">Select UoM Type</option>
           {(allUOMTypes?.data ?? []).map(
             (uomType: { id: string; type: string }) => (
               <option key={uomType.id} value={uomType.id}>

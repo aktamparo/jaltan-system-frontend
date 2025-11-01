@@ -61,17 +61,17 @@ export default function ViewUOM() {
         }}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
-        <span className="text-s text-black">View All Unit of Meassurements</span>
+        <span className="text-s text-black">View All Unit of Measurements</span>
         <span className="text-s text-gray-500">
-          See all registered Unit of Measurements and their details
+          See all registered units of measurement and their details
         </span>
       </Button>
 
       <Modal isVisible={showViewTable} onClose={() => setShowViewTable(false)}>
         <ModalHeader>
-          <ModalTitle>View All Units of Meassurement</ModalTitle>
+          <ModalTitle>View All Units of Measurement</ModalTitle>
           <ModalDescription>
-            All registered Units of Meassurement in the system
+            All registered units of measurement in the system
           </ModalDescription>
         </ModalHeader>
 

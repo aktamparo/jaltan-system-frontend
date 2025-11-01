@@ -62,16 +62,16 @@ export default function EditUOMTypeModal({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 p-4">
       <div className="space-y-2">
-        <Label htmlFor="type">UOM Type Name</Label>
+        <Label htmlFor="type">Unit of Measurement Type Name</Label>
         <Input
           id="type"
           value={type}
           onChange={(e) => setType(e.target.value)}
-          placeholder="Enter UOM type name"
+          placeholder="Enter UoM type name"
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="standardUoMId">Standard UOM</Label>
+        <Label htmlFor="standardUoMId">Standard Unit of Measurement</Label>
         <select
           id="standardUoMId"
           className="w-full border rounded px-2 py-1"
@@ -79,7 +79,7 @@ export default function EditUOMTypeModal({
           onChange={(e) => setStandardUoMId(e.target.value)}
           required
         >
-          <option value="">Select UOM</option>
+          <option value="">Select UoM</option>
           {(allUOMs?.data ?? []).map((uom: { id: string; name: string }) => (
             <option key={uom.id} value={uom.id}>
               {uom.name}
