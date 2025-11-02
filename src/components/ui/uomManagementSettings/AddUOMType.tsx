@@ -195,7 +195,7 @@ export default function AddUOMType() {
                     {uomList.length === 0 ? (
                       <tr>
                         <td colSpan={5} className="px-4 py-8 text-center text-sm text-gray-500">
-                          No units added yet. Click "Add UoM" to get started.
+                          No units added yet. Click &quot;Add UoM&quot; to get started.
                         </td>
                       </tr>
                     ) : (
