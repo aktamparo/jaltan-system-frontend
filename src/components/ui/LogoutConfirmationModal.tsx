@@ -47,7 +47,7 @@ export default function LogoutConfirmationModal({
           variant="destructive"
           onClick={handleConfirm}
           disabled={isLoggingOut}
-          className="min-w-24"
+          className="min-w-24 bg-[#D22929] hover:bg-[#B71C1C]"
         >
           {isLoggingOut ? "Logging out..." : "Logout"}
         </Button>

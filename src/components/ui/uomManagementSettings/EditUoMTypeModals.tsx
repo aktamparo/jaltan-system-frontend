@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { useUpdateUoMType } from "../../../lib/mutations/uomMutations";
-import { useGetAllUOM } from "@/lib/queries/uomQueries";
+import { useGetUOMsByTypeId } from "@/lib/queries/uomQueries";
 import { UomType } from "@/lib/types/uom";
 import { useToast } from "@/components/ui/toast";
 
@@ -22,7 +22,7 @@ export default function EditUOMTypeModal({
 }: EditUOMTypeModalProps) {
   const updateUoMTypeMutation = useUpdateUoMType();
   const queryClient = useQueryClient();
-  const { data: allUOMs } = useGetAllUOM(1, 100);
+  const { data: uomsByType } = useGetUOMsByTypeId(uomType.id, 1, 100);
   const toast = useToast();
 
   const [type, setType] = useState(uomType.type);
@@ -80,7 +80,7 @@ export default function EditUOMTypeModal({
           required
         >
           <option value="">Select UoM</option>
-          {(allUOMs?.data ?? []).map((uom: { id: string; name: string }) => (
+          {(uomsByType?.data ?? []).map((uom: { id: string; name: string }) => (
             <option key={uom.id} value={uom.id}>
               {uom.name}
             </option>

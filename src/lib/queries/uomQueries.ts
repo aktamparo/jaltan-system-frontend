@@ -47,10 +47,15 @@ export const useGetUOMById = (id: string) => {
   });
 };
 
-export const useGetUOMsByTypeId = (uomTypeId: string) => {
+export const useGetUOMsByTypeId = (
+  uomTypeId: string,
+  page = 1,
+  limit = 15,
+  search?: string
+) => {
   return useQuery({
-    queryKey: ["uomsByType", uomTypeId],
-    queryFn: () => getUOMsByTypeId(uomTypeId),
+    queryKey: ["uomsByType", uomTypeId, page, limit, search],
+    queryFn: () => getUOMsByTypeId(uomTypeId, page, limit, search),
     enabled: !!uomTypeId,
     staleTime: 1000 * 60 * 10,
     refetchOnWindowFocus: true,

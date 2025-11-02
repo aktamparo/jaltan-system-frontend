@@ -12,50 +12,47 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
 import PaginationControls from "@/components/ui/PaginationControls";
-import { useGetAllUOM } from "@/lib/queries/uomQueries";
-import { UoM } from "@/lib/types/uom";
+import { useGetAllUOMTypes, useGetUOMsByTypeId } from "@/lib/queries/uomQueries";
+import { UoM, UomType } from "@/lib/types/uom";
 import EditUOMModal from "@/components/ui/uomManagementSettings/EditUOMModal";
-import { useQueries } from "@tanstack/react-query";
-import { getUOMTypeById } from "@/lib/services/uomServices";
 import { queryClient } from "@/lib/react-query";
 
 export default function EditUOM() {
-  const [showSelectModal, setShowSelectModal] = useState(false);
+  const [showSelectTypeModal, setShowSelectTypeModal] = useState(false);
+  const [showSelectUOMModal, setShowSelectUOMModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedUOMTypeId, setSelectedUOMTypeId] = useState<string | null>(null);
   const [selectedUOMId, setSelectedUOMId] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const { data: AllUOMs } = useGetAllUOM(page, 10);
-
-  // Get all unique uomTypeIds from UOMs
-  const uomTypeIds: string[] = Array.from(
-    new Set(
-      (AllUOMs?.data ?? [])
-        .map((uom) => uom.uomTypeId)
-        .filter(Boolean)
-    )
+  const [typeSelectionPage, setTypeSelectionPage] = useState(1);
+  const [uomSelectionPage, setUomSelectionPage] = useState(1);
+  
+  const { data: AllUOMTypes } = useGetAllUOMTypes(typeSelectionPage, 10);
+  const { data: UOMsByType } = useGetUOMsByTypeId(
+    selectedUOMTypeId || "",
+    uomSelectionPage,
+    10
   );
 
-  // Use useQueries to fetch each UOM Type by its ID
-  const uomTypeQueries = useQueries({
-    queries: uomTypeIds.map((id) => ({
-      queryKey: ["uomType", id],
-      queryFn: () => getUOMTypeById(id),
-      enabled: !!id,
-      staleTime: 1000 * 60 * 10,
-      refetchOnWindowFocus: true,
-    })),
-  });
+  const typeColumns: ColumnDef<UomType>[] = [
+    {
+      id: "select",
+      header: "",
+      cell: ({ row }) => (
+        <input
+          type="radio"
+          name="uomTypeSelect"
+          checked={selectedUOMTypeId === row.original.id}
+          onChange={() => setSelectedUOMTypeId(row.original.id)}
+        />
+      ),
+    },
+    {
+      accessorKey: "type",
+      header: "UOM Type",
+    },
+  ];
 
-  // Build a mapping from uomTypeId to UOM type name
-  const uomTypeIdToName: Record<string, string> = {};
-  uomTypeQueries.forEach((q, idx) => {
-    if (q.data && uomTypeIds[idx]) {
-      uomTypeIdToName[uomTypeIds[idx]] = q.data.type;
-    }
-  });
-
-  // Table columns: name, symbol, isBase, conversionFactor, radio select
-  const columns: ColumnDef<UoM>[] = [
+  const uomColumns: ColumnDef<UoM>[] = [
     {
       id: "select",
       header: "",
@@ -73,20 +70,13 @@ export default function EditUOM() {
       header: "UOM Name",
     },
     {
-      accessorKey: "uomTypeId",
-      header: "UOM Type Name",
-      cell: ({ row }) => {
-        const uomTypeId = row.original.uomTypeId;
-        return uomTypeIdToName[uomTypeId] || uomTypeId;
-      },
-    },
-    {
       accessorKey: "symbol",
       header: "Symbol",
     },
     {
       accessorKey: "isBase",
       header: "Is Base?",
+      cell: ({ row }) => (row.original.isBase ? "Yes" : "No"),
     },
     {
       accessorKey: "conversionFactor",
@@ -94,12 +84,34 @@ export default function EditUOM() {
     },
   ];
 
+  const handleTypeSelected = () => {
+    if (selectedUOMTypeId) {
+      setShowSelectTypeModal(false);
+      setUomSelectionPage(1);
+      setShowSelectUOMModal(true);
+    }
+  };
+
+  const handleUOMSelected = () => {
+    if (selectedUOMId) {
+      setShowSelectUOMModal(false);
+      queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+      setShowEditModal(true);
+    }
+  };
+
+  const handleCloseEdit = () => {
+    setShowEditModal(false);
+    setSelectedUOMId(null);
+    setSelectedUOMTypeId(null);
+  };
+
   return (
     <>
       <Button
         onClick={() => {
-          queryClient.invalidateQueries({ queryKey: ["uom"] });
-          setShowSelectModal(true);
+          queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+          setShowSelectTypeModal(true);
         }}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
@@ -109,64 +121,100 @@ export default function EditUOM() {
         </span>
       </Button>
 
+      {/* Step 1: Select UOM Type */}
       <Modal
-        isVisible={showSelectModal}
-        onClose={() => setShowSelectModal(false)}
+        isVisible={showSelectTypeModal}
+        onClose={() => setShowSelectTypeModal(false)}
       >
         <ModalHeader>
-          <ModalTitle>Edit Unit of Measurement</ModalTitle>
+          <ModalTitle>Select UOM Type</ModalTitle>
           <ModalDescription>
-            All registered unit of measurements in the system. Only one can be selected
+            Choose the unit of measurement type
           </ModalDescription>
         </ModalHeader>
 
         <ModalContent>
           <div className="w-full">
-            <ViewTable columns={columns} data={AllUOMs?.data || []} />
+            <ViewTable columns={typeColumns} data={AllUOMTypes?.data || []} />
           </div>
         </ModalContent>
 
         <ModalFooter>
-
-            <div className="relative flex w-full items-center justify-center">
-                                <PaginationControls
-                                  currentPage={page}
-                                  totalPages={AllUOMs?.metadata?.totalPages || 1}
-                                  onPageChange={setPage}
-                                />
-                                <div className="absolute right-0">
-                                  <Button
-                                    onClick={() => {
-                        if (selectedUOMId) {
-                          setShowSelectModal(false);
-                          queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
-                setShowEditModal(true);
-                        }
-                      }}
-                      type="button"
-                      disabled={!selectedUOMId}
-                                  >
-                                    Edit Selected UoM
-                                  </Button>
-                                </div>
-                              </div>
+          <div className="relative flex w-full items-center justify-center">
+            <PaginationControls
+              currentPage={typeSelectionPage}
+              totalPages={AllUOMTypes?.metadata?.totalPages || 1}
+              onPageChange={setTypeSelectionPage}
+            />
+            <div className="absolute right-0">
+              <Button
+                onClick={handleTypeSelected}
+                type="button"
+                disabled={!selectedUOMTypeId}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
         </ModalFooter>
       </Modal>
+
+      {/* Step 2: Select UOM from Type */}
+      <Modal
+        isVisible={showSelectUOMModal}
+        onClose={() => setShowSelectUOMModal(false)}
+      >
+        <ModalHeader>
+          <ModalTitle>Select Unit of Measurement</ModalTitle>
+          <ModalDescription>
+            {UOMsByType?.uomTypeName 
+              ? `Choose a unit from ${UOMsByType.uomTypeName} to edit` 
+              : "Choose a unit of measurement to edit"}
+          </ModalDescription>
+        </ModalHeader>
+
+        <ModalContent>
+          <div className="w-full">
+            <ViewTable columns={uomColumns} data={UOMsByType?.data || []} />
+          </div>
+        </ModalContent>
+
+        <ModalFooter>
+          <div className="relative flex w-full items-center justify-center">
+            <PaginationControls
+              currentPage={uomSelectionPage}
+              totalPages={UOMsByType?.metadata?.totalPages || 1}
+              onPageChange={setUomSelectionPage}
+            />
+            <div className="absolute right-0">
+              <Button
+                onClick={handleUOMSelected}
+                type="button"
+                disabled={!selectedUOMId}
+              >
+                Edit Selected UoM
+              </Button>
+            </div>
+          </div>
+        </ModalFooter>
+      </Modal>
+
+      {/* Step 3: Edit UOM */}
       {showEditModal && selectedUOMId && (
         <Modal
           isVisible={showEditModal}
-          onClose={() => setShowEditModal(false)}
+          onClose={handleCloseEdit}
         >
           <ModalHeader>
             <ModalTitle>Edit Unit of Measurement</ModalTitle>
           </ModalHeader>
           <ModalContent>
             {(() => {
-              const selectedUOM = AllUOMs?.data.find(uom => uom.id === selectedUOMId);
+              const selectedUOM = UOMsByType?.data.find(uom => uom.id === selectedUOMId);
               if (!selectedUOM) return null;
               return (
                 <EditUOMModal
-                  onClose={() => setShowEditModal(false)}
+                  onClose={handleCloseEdit}
                   uom={selectedUOM}
                 />
               );
