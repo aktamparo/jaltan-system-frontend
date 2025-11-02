@@ -32,7 +32,7 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Only send fields that are non-empty
+    // Only send fields that have changed
     const payload: {
       id: string;
       name?: string;
@@ -40,11 +40,13 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
       conversionFactor?: number;
       uomTypeId?: string;
     } = { id: uom.id };
-    if (name && name.trim() !== "") payload.name = name;
-    if (symbol && symbol.trim() !== "") payload.symbol = symbol;
-    if (conversionFactor && conversionFactor.trim() !== "")
+    if (name && name.trim() !== "" && name !== uom.name) payload.name = name;
+    if (symbol && symbol.trim() !== "" && symbol !== uom.symbol) payload.symbol = symbol;
+    if (conversionFactor && conversionFactor.trim() !== "" && parseFloat(conversionFactor) !== uom.conversionFactor)
       payload.conversionFactor = parseFloat(conversionFactor);
-    if (uomTypeId && uomTypeId.trim() !== "") payload.uomTypeId = uomTypeId;
+    // Only include uomTypeId if it has actually changed
+    if (uomTypeId && uomTypeId.trim() !== "" && uomTypeId !== uom.uomTypeId) 
+      payload.uomTypeId = uomTypeId;
 
     updateUoMMutation.mutate(payload, {
       onSuccess: () => {
@@ -102,6 +104,7 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
           className="w-full border rounded px-2 py-1"
           value={uomTypeId}
           onChange={(e) => setUomTypeId(e.target.value)}
+          disabled={uom.isBase}
         >
           <option value="">Select UoM Type</option>
           {(allUOMTypes?.data ?? []).map(
@@ -112,6 +115,11 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
             )
           )}
         </select>
+        {uom.isBase && (
+          <p className="text-sm text-gray-500">
+            Cannot change type - this is a base unit
+          </p>
+        )}
       </div>
       <div className="flex flex-row w-full gap-4 mt-6 justify-end">
         <Button type="submit">

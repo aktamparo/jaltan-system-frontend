@@ -4,12 +4,13 @@ import {
   EditUoM,
   UomType,
   UoM,
-  CreateUomTypeRequest,
-  CreateUomTypeResponse,
+  CreateUomWithTypeRequest,
+  CreateUomWithTypeResponse,
   CreateUoMRequest,
   CreateUoMResponse,
   PaginatedUomTypesResponse,
   PaginatedUoMsResponse,
+  UoMsByTypeResponse,
 } from "../types/uom";
 
 export const updateUoMType = async (UoMType: EditUomType) => {
@@ -64,25 +65,22 @@ export const updateUoM = async (UoM: EditUoM) => {
 };
 
 
-export const createUOMType = async (
-  uomData: CreateUomTypeRequest
-): Promise<CreateUomTypeResponse> => {
-  const payload = {
-    type: uomData.type,
-    ...(uomData.standardUoMId && { standardUoMId: uomData.standardUoMId }),
-  };
-
-  const response = await fetch(`${BASE_URL}/uom/type`, {
+// Create UOM Type with its base UOM in a single transaction
+export const createUOMWithType = async (
+  data: CreateUomWithTypeRequest
+): Promise<CreateUomWithTypeResponse> => {
+  const response = await fetch(`${BASE_URL}/uom/with-type`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify(payload),
+    body: JSON.stringify(data),
   });
 
   if (!response.ok) {
-    throw new Error("Failed to create UOM type");
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to create UOM type with base UOM");
   }
 
   return response.json();
@@ -191,8 +189,40 @@ export const getUOMById = async (id: string): Promise<UoM> => {
   return data;
 };
 
-// Get UoMs by UoM Type ID - this will fetch a UoM type and return its associated UoMs
-export const getUOMsByTypeId = async (uomTypeId: string): Promise<UoM[]> => {
-  const uomType = await getUOMTypeById(uomTypeId);
-  return uomType.uoms || [];
+// Get UoMs by UoM Type ID with pagination
+export const getUOMsByTypeId = async (
+  uomTypeId: string,
+  page = 1,
+  limit = 15,
+  search?: string
+): Promise<UoMsByTypeResponse> => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    ...(search && { search }),
+  });
+
+  const response = await fetch(
+    `${BASE_URL}/uom/type/${uomTypeId}/uoms?${params}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch UOMs by type");
+  }
+
+  const data = await response.json();
+  
+  // Transform backend response to match frontend interface
+  return {
+    metadata: data.metadata,
+    data: data.uoms || [],
+    uomTypeName: data.uomType?.type || "",
+  };
 };

@@ -38,7 +38,7 @@ export const useMultipleUoMQueries = (
     validUomTypeIds.forEach((typeId, index) => {
       const queryResult = queries[index];
       if (queryResult?.data) {
-        map[typeId] = queryResult.data;
+        map[typeId] = queryResult.data.data;
       }
     });
 

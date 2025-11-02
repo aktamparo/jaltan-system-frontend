@@ -1,5 +1,4 @@
 "use client";
-import { useEffect } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,41 +16,76 @@ import {
 } from "@/components/ui/modal";
 import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
 import { UomType } from "@/lib/types/uom";
+import { ColumnDef } from "@tanstack/react-table";
+import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-view-table";
+import PaginationControls from "@/components/ui/PaginationControls";
+
 export default function AddUOM() {
-  const [showCreateUOM, setShowCreateUOM] = useState(false);
+  const [showSelectTypeModal, setShowSelectTypeModal] = useState(false);
+  const [showCreateUOMModal, setShowCreateUOMModal] = useState(false);
+  const [selectedUOMTypeId, setSelectedUOMTypeId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  
   const [name, setName] = useState("");
   const [symbol, setSymbol] = useState("");
   const [conversionFactor, setConversionFactor] = useState("");
-  const [uomTypeId, setUomTypeId] = useState("");
+  
   const queryClient = useQueryClient();
   const createUOM = useCreateUOM();
-  const { data: AllUOMType } = useGetAllUOMTypes(1, 100);
+  const { data: AllUOMTypes } = useGetAllUOMTypes(page, 10);
   const toast = useToast();
 
-  useEffect(() => {
-    if (showCreateUOM) {
-      queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+  const columns: ColumnDef<UomType>[] = [
+    {
+      id: "select",
+      header: "",
+      cell: ({ row }) => (
+        <input
+          type="radio"
+          name="uomTypeSelect"
+          checked={selectedUOMTypeId === row.original.id}
+          onChange={() => setSelectedUOMTypeId(row.original.id)}
+        />
+      ),
+    },
+    {
+      accessorKey: "type",
+      header: "UOM Type",
+    },
+  ];
+
+  const handleTypeSelected = () => {
+    if (selectedUOMTypeId) {
+      setShowSelectTypeModal(false);
+      setShowCreateUOMModal(true);
     }
-  }, [showCreateUOM, queryClient]);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!selectedUOMTypeId) {
+      toast.error("Error", "Please select a UOM type");
+      return;
+    }
+
     createUOM.mutate(
       {
         name,
         symbol,
-        conversionFactor:
-          conversionFactor === "" ? 0 : parseFloat(conversionFactor),
-        uomTypeId,
+        conversionFactor: conversionFactor === "" ? 0 : parseFloat(conversionFactor),
+        uomTypeId: selectedUOMTypeId,
       },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+          queryClient.invalidateQueries({ queryKey: ["uom"] });
+          queryClient.invalidateQueries({ queryKey: ["uomsByType", selectedUOMTypeId] });
           setName("");
           setSymbol("");
           setConversionFactor("");
-          setUomTypeId("");
-          setShowCreateUOM(false);
+          setSelectedUOMTypeId(null);
+          setShowCreateUOMModal(false);
           toast.success(
             "UOM Created",
             "New unit of measurement has been successfully created."
@@ -67,12 +101,20 @@ export default function AddUOM() {
     );
   };
 
+  const handleCloseCreateModal = () => {
+    setShowCreateUOMModal(false);
+    setName("");
+    setSymbol("");
+    setConversionFactor("");
+    setSelectedUOMTypeId(null);
+  };
+
   return (
     <>
       <Button
         onClick={() => {
           queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
-          setShowCreateUOM(true);
+          setShowSelectTypeModal(true);
         }}
         className="flex flex-col items-start gap-1 p-6 bg-transparent border-none shadow-none hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50"
       >
@@ -84,13 +126,56 @@ export default function AddUOM() {
         </span>
       </Button>
 
-      <Modal isVisible={showCreateUOM} onClose={() => setShowCreateUOM(false)}>
+      {/* UOM Type Selection Modal */}
+      <Modal 
+        isVisible={showSelectTypeModal} 
+        onClose={() => setShowSelectTypeModal(false)}
+      >
+        <ModalHeader>
+          <ModalTitle>Select UOM Type</ModalTitle>
+          <ModalDescription>
+            Choose the unit of measurement type for the new UOM
+          </ModalDescription>
+        </ModalHeader>
+
+        <ModalContent>
+          <div className="w-full">
+            <ViewTable columns={columns} data={AllUOMTypes?.data || []} />
+          </div>
+        </ModalContent>
+
+        <ModalFooter>
+          <div className="relative flex w-full items-center justify-center">
+            <PaginationControls
+              currentPage={page}
+              totalPages={AllUOMTypes?.metadata?.totalPages || 1}
+              onPageChange={setPage}
+            />
+            <div className="absolute right-0">
+              <Button
+                onClick={handleTypeSelected}
+                type="button"
+                disabled={!selectedUOMTypeId}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        </ModalFooter>
+      </Modal>
+
+      {/* Create UOM Modal */}
+      <Modal 
+        isVisible={showCreateUOMModal} 
+        onClose={handleCloseCreateModal}
+      >
         <ModalHeader>
           <ModalTitle>Add a New Unit of Measurement</ModalTitle>
           <ModalDescription>
             Fill in the details to create a new unit of measurement
           </ModalDescription>
         </ModalHeader>
+        
         <form onSubmit={handleSubmit}>
           <ModalContent>
             <div className="space-y-4">
@@ -100,6 +185,8 @@ export default function AddUOM() {
                   id="uomName"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Gram, Centimeter"
+                  required
                 />
               </div>
               <div className="space-y-2">
@@ -108,6 +195,8 @@ export default function AddUOM() {
                   id="uomSymbol"
                   value={symbol}
                   onChange={(e) => setSymbol(e.target.value)}
+                  placeholder="e.g., g, cm"
+                  required
                 />
               </div>
               <div className="space-y-2">
@@ -118,25 +207,9 @@ export default function AddUOM() {
                   onChange={(e) => setConversionFactor(e.target.value)}
                   type="number"
                   step="any"
+                  placeholder="Conversion factor to base unit"
+                  required
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="standardUoMId">Unit of Measurement Type</Label>
-                <select
-                  id="uomTypeId"
-                  className="w-full border rounded px-2 py-1"
-                  value={uomTypeId}
-                  onChange={(e) => setUomTypeId(e.target.value)}
-                >
-                  <option value="" disabled>
-                    Select a UoM Type
-                  </option>
-                  {(AllUOMType?.data ?? []).map((uom: UomType) => (
-                    <option key={uom.id} value={uom.id}>
-                      {uom.type}
-                    </option>
-                  ))}
-                </select>
               </div>
             </div>
           </ModalContent>
