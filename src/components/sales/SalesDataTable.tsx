@@ -185,20 +185,18 @@ export default function SalesDataTable() {
 
   if (error) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="text-center py-8">
-          <p className="text-red-600">Error loading sales data: {error.message}</p>
-          <Button onClick={() => window.location.reload()} className="mt-4">
-            Retry
-          </Button>
-        </div>
+      <div className="text-center py-8">
+        <p className="text-red-600">Error loading sales data: {error.message}</p>
+        <Button onClick={() => window.location.reload()} className="mt-4">
+          Retry
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-6">
+    <div className="h-full flex flex-col">;
+      <div className="flex justify-between items-center mb-6 flex-shrink-0">
         <h3 className="text-lg font-semibold">Sales Records</h3>
         <div className="text-sm text-gray-500">
           Total: {response?.metadata?.total ?? 0} records
@@ -206,7 +204,7 @@ export default function SalesDataTable() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-6 flex-shrink-0">
         <Input
           type="text"
           placeholder="Search items, transactions..."
@@ -246,7 +244,7 @@ export default function SalesDataTable() {
 
       {/* Delete CSV Section */}
       {availableUploads.length > 0 && (
-        <div className="border rounded-lg p-4 mb-6">
+        <div className="border rounded-lg p-4 mb-6 flex-shrink-0">
           <div className="flex items-center gap-4">
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -280,40 +278,47 @@ export default function SalesDataTable() {
       )}
 
       {/* Data Table */}
-      {isLoading ? (
-        <div className="text-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading sales data...</p>
-        </div>
-      ) : (
-        <>
-          <div className="overflow-x-auto">
-            <DataTable columns={columns} data={salesData} />
+      <div className="flex-1 overflow-y-auto min-h-0">
+        {isLoading ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading sales data...</p>
           </div>
-
-          {/* Pagination */}
-          {response && response.metadata && response.metadata.totalPages > 1 && (
-            <div className="mt-6">
-              <PaginationControls
-                currentPage={page}
-                totalPages={response.metadata.totalPages}
-                onPageChange={setPage}
-              />
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <DataTable columns={columns} data={salesData} />
             </div>
-          )}
 
-          {salesData.length === 0 && !isLoading && (
-            <div className="text-center py-8">
-              <p className="text-gray-500">No sales records found.</p>
-              {search && (
-                <Button onClick={clearFilters} className="mt-4">
-                  Clear filters to see all records
-                </Button>
-              )}
-            </div>
-          )}
-        </>
-      )}
+            {/* Pagination */}
+            {response && response.metadata && response.metadata.totalPages > 1 && (
+              <div className="mt-6">
+                <PaginationControls
+                  currentPage={page}
+                  totalPages={response.metadata.totalPages}
+                  onPageChange={setPage}
+                />
+              </div>
+            )}
+
+            {salesData.length === 0 && !isLoading && (
+              <div className="border border-gray-200 rounded-lg p-8 text-center mt-6">
+                <p className="text-gray-900 text-lg font-medium mb-2">No data found</p>
+                <p className="text-sm text-gray-600 mb-4">
+                  {search || startDate || endDate 
+                    ? "No sales records match your current filters." 
+                    : "No sales data available."}
+                </p>
+                {(search || startDate || endDate) && (
+                  <Button onClick={clearFilters} variant="outline">
+                    Clear filters
+                  </Button>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

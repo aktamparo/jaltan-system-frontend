@@ -166,48 +166,48 @@ export default function SalesPage() {
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden">
-      <ScrollableComponent>
-        <div className="flex flex-row items-center justify-between mb-4">
-          <h1 className="text-xl font-medium m-0">Sales</h1>
-        </div>
+      <div className="flex flex-row items-center justify-between mb-4 flex-shrink-0">
+        <h1 className="text-xl font-medium m-0">Sales</h1>
+      </div>
 
-        {/* Tab Navigation */}
-      <div className="mb-6">
+      {/* Tab Navigation */}
+      <div className="mb-6 flex-shrink-0">
         <div className="flex border-b">
-            <button
-              onClick={() => setActiveTab("analytics")}
-              className={`px-6 py-3 font-medium text-sm ${
-                activeTab === "analytics"
-                  ? "border-b-2 border-gray-900 text-gray-900"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Analytics Dashboard
-            </button>
-            <button
-              onClick={() => setActiveTab("data")}
-              className={`px-6 py-3 font-medium text-sm ${
-                activeTab === "data"
-                  ? "border-b-2 border-gray-900 text-gray-900"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Sales Data
-            </button>
-            <button
-              onClick={() => setActiveTab("upload")}
-              className={`px-6 py-3 font-medium text-sm ${
-                activeTab === "upload"
-                  ? "border-b-2 border-gray-900 text-gray-900"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Upload CSV
-            </button>
-          </div>
+          <button
+            onClick={() => setActiveTab("analytics")}
+            className={`px-6 py-3 font-medium text-sm ${
+              activeTab === "analytics"
+                ? "border-b-2 border-gray-900 text-gray-900"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Analytics Dashboard
+          </button>
+          <button
+            onClick={() => setActiveTab("data")}
+            className={`px-6 py-3 font-medium text-sm ${
+              activeTab === "data"
+                ? "border-b-2 border-gray-900 text-gray-900"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Sales Data
+          </button>
+          <button
+            onClick={() => setActiveTab("upload")}
+            className={`px-6 py-3 font-medium text-sm ${
+              activeTab === "upload"
+                ? "border-b-2 border-gray-900 text-gray-900"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Upload CSV
+          </button>
         </div>
+      </div>
 
-        {/* Tab Content */}
+      {/* Tab Content - with overflow handling */}
+      <div className="flex-1 overflow-y-auto min-h-0">
         {activeTab === "analytics" && (
           <div className="space-y-6">
             {/* Date Filter for Analytics */}
@@ -300,37 +300,53 @@ export default function SalesPage() {
                   </div>
                 )}
 
+                {/* No Data State */}
+                {!actualIsLoading && displayData && displayData.totalRevenue === 0 && displayData.transactionCount === 0 && (
+                  <div className="border border-gray-200 rounded-lg p-8 text-center">
+                    <p className="text-gray-900 text-lg font-medium mb-2">
+                      No data found
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      No sales data available for the selected date range.
+                    </p>
+                  </div>
+                )}
+
                 {/* Summary Cards */}
-                <SummaryCards summary={displayData} isLoading={actualIsLoading} />
+                {!actualIsLoading && displayData && (displayData.totalRevenue > 0 || displayData.transactionCount > 0) && (
+                  <>
+                    <SummaryCards summary={displayData} isLoading={actualIsLoading} />
 
-                {/* Charts Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Sales Trend Chart */}
-                  <div className="lg:col-span-2">
-                    <SalesTrendChart 
-                      data={displayData?.dailySalesTrends ?? []} 
-                      isLoading={isLoading}
-                      startDate={startDate}
-                      endDate={endDate}
-                    />
-                  </div>
+                    {/* Charts Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Sales Trend Chart */}
+                      <div className="lg:col-span-2">
+                        <SalesTrendChart 
+                          data={displayData?.dailySalesTrends ?? []} 
+                          isLoading={isLoading}
+                          startDate={startDate}
+                          endDate={endDate}
+                        />
+                      </div>
 
-                  {/* Top Items Chart */}
-                  <div>
-                    <TopItemsChart 
-                      data={displayData?.topSellingItems ?? []} 
-                      isLoading={isLoading} 
-                    />
-                  </div>
+                      {/* Top Items Chart */}
+                      <div>
+                        <TopItemsChart 
+                          data={displayData?.topSellingItems ?? []} 
+                          isLoading={isLoading} 
+                        />
+                      </div>
 
-                  {/* Payment Methods Chart */}
-                  <div>
-                    <PaymentMethodChart 
-                      data={displayData?.paymentMethodBreakdown ?? []} 
-                      isLoading={isLoading} 
-                    />
-                  </div>
-                </div>
+                      {/* Payment Methods Chart */}
+                      <div>
+                        <PaymentMethodChart 
+                          data={displayData?.paymentMethodBreakdown ?? []} 
+                          isLoading={isLoading} 
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
@@ -347,7 +363,7 @@ export default function SalesPage() {
             <CSVUpload />
           </div>
         )}
-      </ScrollableComponent>
+      </div>
     </div>
   );
 }
