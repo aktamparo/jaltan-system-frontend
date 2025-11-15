@@ -3,7 +3,10 @@ import {
   BackendSalesSummary,
   CSVUploadResponse,
   SalesQueryParams,
-  SalesAnalyticsFilters 
+  SalesAnalyticsFilters,
+  SalesUploadsResponse,
+  UploadsQueryParams,
+  DeleteSalesResponse
 } from "@/lib/types/sales";
 import { BASE_URL } from "@/lib/config";
 
@@ -78,6 +81,47 @@ export const salesServices = {
   deleteSalesByCSV: async (csvFileName: string): Promise<{ message: string; deletedCount: number }> => {
     const response = await fetch(
       `${BASE_URL}/sales?csvFileName=${encodeURIComponent(csvFileName)}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `Failed to delete sales: ${response.status}`);
+    }
+
+    return response.json();
+  },
+
+  // Get uploaded CSV files (NEW)
+  getUploads: async (params?: UploadsQueryParams): Promise<SalesUploadsResponse> => {
+    const searchParams = new URLSearchParams();
+    if (params?.page) searchParams.append("page", params.page.toString());
+    if (params?.limit) searchParams.append("limit", params.limit.toString());
+    if (params?.search) searchParams.append("search", params.search);
+
+    const response = await fetch(
+      `${BASE_URL}/sales/uploads?${searchParams.toString()}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `Failed to fetch uploads: ${response.status}`);
+    }
+
+    return response.json();
+  },
+
+  // Delete sales by upload ID (UPDATED)
+  deleteSalesByUploadId: async (uploadId: string): Promise<DeleteSalesResponse> => {
+    const response = await fetch(
+      `${BASE_URL}/sales?uploadId=${encodeURIComponent(uploadId)}`,
       {
         method: "DELETE",
         credentials: "include",

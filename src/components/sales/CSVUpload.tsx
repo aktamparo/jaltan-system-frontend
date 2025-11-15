@@ -39,7 +39,7 @@ export default function CSVUpload() {
     uploadMutation.mutate(file, {
       onSuccess: (response) => {
         toast.success("Upload Successful", 
-          `Successfully uploaded ${response.recordsProcessed} sales records from ${response.fileName}`
+          `Successfully uploaded ${response.recordCount} sales records. Upload ID: ${response.uploadId}`
         );
         // Reset file input
         if (fileInputRef.current) {
