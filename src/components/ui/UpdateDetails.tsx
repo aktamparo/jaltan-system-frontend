@@ -16,7 +16,6 @@ import { useUpdateUser } from "@/lib/mutations/accountMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetAccount } from "@/lib/queries/accountQueries";
 import { useToast } from "@/components/ui/toast";
-import { User } from "@/lib/types/account";
 import { Branch } from "@/lib/types/branch";
 import { useGetAllBranches } from "@/lib/queries/branchQueries";
 
@@ -71,7 +70,7 @@ export default function UpdateDetails() {
       }
 
       updateUserMutation.mutate(
-        { id: currentUser.id, ...updatePayload } as any,
+        { id: currentUser.id, ...updatePayload },
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["account"] });

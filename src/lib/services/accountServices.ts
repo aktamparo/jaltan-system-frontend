@@ -63,7 +63,13 @@ export const createUser = async (userData: UserCreatePayload) => {
   return response.json();
 };
 
-export const updateUser = async (userData: any) => {
+export const updateUser = async (userData: {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  contactNumber?: string;
+  branchId?: string;
+}) => {
   const payload: {
     firstName?: string;
     lastName?: string;

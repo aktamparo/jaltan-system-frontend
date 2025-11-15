@@ -14,7 +14,6 @@ import {
   IconPackageExport,   // Stock Out
   IconChartBar,        // Sales
 } from "@tabler/icons-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname, useRouter } from "next/navigation";
 import { useLogout } from "@/lib/mutations/authMutation";
 import { CurrentUser } from "@/lib/types/account";
@@ -22,13 +21,13 @@ import Link from "next/link";
 import { queryClient } from "@/lib/react-query";
 import LogoutConfirmationModal from "@/components/ui/LogoutConfirmationModal";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Sidebar({ account }: CurrentUser) {
   const [isOpen, setIsOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
-  const username = `${account.firstName} ${account.lastName}`;
   const logoutMutation = useLogout();
 
   const handleLogoutClick = () => {
