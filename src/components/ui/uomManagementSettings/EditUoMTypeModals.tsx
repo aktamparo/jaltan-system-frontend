@@ -44,6 +44,8 @@ export default function EditUOMTypeModal({
     updateUoMTypeMutation.mutate(payload, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["uom"] });
+        queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+        queryClient.invalidateQueries({ queryKey: ["uomsByType"] });
         onClose();
         toast.success(
           "UOM Type Updated",

@@ -49,6 +49,7 @@ export default function DatePickerInput({ value, onChange, placeholder }: Props)
     setOpen(false)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const applyTypedValue = () => {
     const trimmed = inputValue.trim()
     if (trimmed === "") {

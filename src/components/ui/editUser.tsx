@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User } from "@/lib/types/account";
 import { Branch } from "@/lib/types/branch";
-import { useUpdateUser } from "@/lib/mutations/accountMutations";
+import { useUpdateUserByAdmin } from "@/lib/mutations/accountMutations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetAllBranches } from "@/lib/queries/branchQueries";
 import { useToast } from "@/components/ui/toast";
@@ -17,7 +17,7 @@ interface EditUserProps {
 }
 
 export default function EditUser({ user, onClose }: EditUserProps) {
-  const updateUserMutation = useUpdateUser();
+  const updateUserMutation = useUpdateUserByAdmin();
   const toast = useToast();
 
   const [email, setEmail] = useState(user.email);

@@ -14,10 +14,11 @@ import { DataTable as ViewTable } from "@/components/ui/userViewComponents/user-
 import PaginationControls from "@/components/ui/PaginationControls";
 import { useGetAllUOMTypes } from "@/lib/queries/uomQueries";
 import { getUOMById } from "@/lib/services/uomServices";
-import { useQueries } from "@tanstack/react-query";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
 export default function ViewUOMType() {
   const [showViewTable, setShowViewTable] = useState(false);
   const [page, setPage] = useState(1);
+  const queryClient = useQueryClient();
 
   const { data: AllUOM } = useGetAllUOMTypes(page);
   // Get all unique standardUoMId values from UOM types
@@ -69,7 +70,11 @@ export default function ViewUOMType() {
         </span>
       </Button>
 
-      <Modal isVisible={showViewTable} onClose={() => setShowViewTable(false)}>
+      <Modal isVisible={showViewTable} onClose={() => {
+        setShowViewTable(false);
+        queryClient.invalidateQueries({ queryKey: ["uom"] });
+        queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+      }}>
         <ModalHeader>
           <ModalTitle>View All Unit of Measurement Types</ModalTitle>
           <ModalDescription>

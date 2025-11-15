@@ -18,10 +18,7 @@ import { z, ZodError } from "zod";
 
 const passwordSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
-  newPassword: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .max(8, "Password cannot exceed 8 characters"),
+  newPassword: z.string().min(1, "New password is required"),
 });
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
