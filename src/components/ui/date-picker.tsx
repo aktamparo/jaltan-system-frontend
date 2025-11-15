@@ -29,7 +29,7 @@ export default function DatePickerInput({ value, onChange, placeholder, minDate,
 
   // Create disabled matcher for dates outside range
   const disabledDays = React.useMemo(() => {
-    const matchers: any[] = []
+    const matchers: Array<{ before?: Date; after?: Date }> = []
     if (minDateObj) {
       matchers.push({ before: minDateObj })
     }

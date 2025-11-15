@@ -23,7 +23,7 @@ export default function SalesDataTable() {
   const toast = useToast();
   const deleteMutation = useDeleteSalesByUploadId();
 
-  const { data: response, isLoading, error, refetch } = useGetSalesList({
+  const { data: response, isLoading, error } = useGetSalesList({
     page,
     limit: 15,
     search: search || undefined,

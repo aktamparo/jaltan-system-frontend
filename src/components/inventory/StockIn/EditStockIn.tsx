@@ -88,7 +88,6 @@ export default function EditStockIn({
   const {
     uomsByType,
     isLoading: isLoadingUoms,
-    error: uomsError,
   } = useMultipleUoMQueries(uniqueUomTypeIds);
 
   // Map itemId to uomTypeId
