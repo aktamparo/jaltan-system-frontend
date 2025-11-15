@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DatePickerInput from "@/components/ui/date-picker";
 import { useToast } from "@/components/ui/toast";
-import { useGetSalesList } from "@/lib/queries/salesQueries";
-import { useDeleteSalesByCSV } from "@/lib/mutations/salesMutations";
+import { useGetSalesList, useGetUploads } from "@/lib/queries/salesQueries";
+import { useDeleteSalesByUploadId } from "@/lib/mutations/salesMutations";
 import { SalesRecord } from "@/lib/types/sales";
 import { DataTable } from "@/components/ui/userViewComponents/user-view-table";
 import PaginationControls from "@/components/ui/PaginationControls";
@@ -18,13 +18,12 @@ export default function SalesDataTable() {
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [csvFileToDelete, setCsvFileToDelete] = useState("");
-  const [availableCsvFiles, setAvailableCsvFiles] = useState<string[]>([]);
+  const [uploadIdToDelete, setUploadIdToDelete] = useState("");
   
   const toast = useToast();
-  const deleteMutation = useDeleteSalesByCSV();
+  const deleteMutation = useDeleteSalesByUploadId();
 
-  const { data: response, isLoading, error } = useGetSalesList({
+  const { data: response, isLoading, error, refetch } = useGetSalesList({
     page,
     limit: 15,
     search: search || undefined,
@@ -32,35 +31,36 @@ export default function SalesDataTable() {
     endDate: endDate || undefined,
   });
 
-  const salesData = useMemo(() => response?.data ?? [], [response?.data]);
+  // Fetch ALL uploaded CSV files (not limited to current sales page)
+  const { data: uploadsResponse } = useGetUploads({
+    limit: 1000, // Get all uploads
+  });
 
-  // Extract unique CSV filenames from sales data
+  const salesData = useMemo(() => response?.data ?? [], [response?.data]);
+  const availableUploads = useMemo(() => uploadsResponse?.data ?? [], [uploadsResponse?.data]);
+
+  // Debug logging
   useEffect(() => {
-    if (salesData.length > 0) {
-      const uniqueFiles = Array.from(
-        new Set(
-          salesData
-            .map(record => record.csvFileName)
-            .filter((fileName): fileName is string => fileName !== undefined && fileName.trim() !== "")
-        )
-      ).sort();
-      setAvailableCsvFiles(uniqueFiles);
-    }
-  }, [salesData]);
+    console.log("Current page:", page);
+    console.log("Response metadata:", response?.metadata);
+  }, [page, response]);
 
   const handleDeleteCSV = () => {
-    if (!csvFileToDelete) {
+    if (!uploadIdToDelete) {
       toast.error("Error", "Please select a CSV file to delete");
       return;
     }
 
-    if (confirm(`Are you sure you want to delete all sales records from "${csvFileToDelete}"?`)) {
-      deleteMutation.mutate(csvFileToDelete, {
+    const selectedUpload = availableUploads.find(upload => upload.id === uploadIdToDelete);
+    const fileName = selectedUpload?.fileName || "this file";
+
+    if (confirm(`Are you sure you want to delete all sales records from "${fileName}"?`)) {
+      deleteMutation.mutate(uploadIdToDelete, {
         onSuccess: (response) => {
           toast.success("Delete Successful", 
-            `Successfully deleted ${response.deletedCount} sales records from ${csvFileToDelete}`
+            `Successfully deleted ${response.deletedCount} sales records from ${response.fileName}`
           );
-          setCsvFileToDelete("");
+          setUploadIdToDelete("");
         },
         onError: (error) => {
           const errorMessage = error instanceof Error ? error.message : "Delete failed";
@@ -153,14 +153,19 @@ export default function SalesDataTable() {
     {
       accessorKey: "csvFileName",
       header: "Source File",
-      cell: ({ getValue }) => {
-        const fileName = getValue() as string;
-        if (!fileName) return <span className="text-gray-400">Manual</span>;
+      cell: ({ row }) => {
+        const upload = row.original.salesUpload;
+        if (!upload) return <span className="text-gray-400">Manual</span>;
         
         return (
-          <span className="text-xs font-mono truncate" title={fileName}>
-            {fileName}
-          </span>
+          <div className="flex flex-col">
+            <span className="text-xs font-mono truncate" title={upload.fileName}>
+              {upload.fileName}
+            </span>
+            <span className="text-xs text-gray-500">
+              by {upload.uploadedBy.employee.firstName} {upload.uploadedBy.employee.lastName}
+            </span>
+          </div>
         );
       },
     },
@@ -240,7 +245,7 @@ export default function SalesDataTable() {
       </div>
 
       {/* Delete CSV Section */}
-      {availableCsvFiles.length > 0 && (
+      {availableUploads.length > 0 && (
         <div className="border rounded-lg p-4 mb-6">
           <div className="flex items-center gap-4">
             <div className="flex-1">
@@ -248,21 +253,21 @@ export default function SalesDataTable() {
                 Delete Records by CSV File
               </label>
               <select
-                value={csvFileToDelete}
-                onChange={(e) => setCsvFileToDelete(e.target.value)}
+                value={uploadIdToDelete}
+                onChange={(e) => setUploadIdToDelete(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D22929]"
               >
                 <option value="">Select a CSV file...</option>
-                {availableCsvFiles.map((fileName) => (
-                  <option key={fileName} value={fileName}>
-                    {fileName}
+                {availableUploads.map((upload) => (
+                  <option key={upload.id} value={upload.id}>
+                    {upload.fileName} ({upload._count?.sales ?? 0} records) - {format(parseISO(upload.uploadedAt), "MMM dd, yyyy")}
                   </option>
                 ))}
               </select>
             </div>
             <Button
               onClick={handleDeleteCSV}
-              disabled={!csvFileToDelete || deleteMutation.isPending}
+              disabled={!uploadIdToDelete || deleteMutation.isPending}
               className="mt-6 bg-[#D22929] hover:bg-[#D22929] text-white disabled:opacity-50 disabled:bg-[#D22929]"
             >
               {deleteMutation.isPending ? "Deleting..." : "Delete CSV Records"}
@@ -287,7 +292,7 @@ export default function SalesDataTable() {
           </div>
 
           {/* Pagination */}
-          {response && response.metadata.totalPages > 1 && (
+          {response && response.metadata && response.metadata.totalPages > 1 && (
             <div className="mt-6">
               <PaginationControls
                 currentPage={page}

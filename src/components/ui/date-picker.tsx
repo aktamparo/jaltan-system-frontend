@@ -11,15 +11,33 @@ type Props = {
   value?: string
   onChange?: (isoDate: string) => void
   placeholder?: string
+  minDate?: string
+  maxDate?: string
 }
 
-export default function DatePickerInput({ value, onChange, placeholder }: Props) {
+export default function DatePickerInput({ value, onChange, placeholder, minDate, maxDate }: Props) {
   const [open, setOpen] = React.useState(false)
   const DISPLAY_FORMAT = "MMM/dd/yyyy"
   const [inputValue, setInputValue] = React.useState("")
   const inputRef = React.useRef<HTMLInputElement | null>(null)
   const popoverRef = React.useRef<HTMLDivElement | null>(null)
   const blurTimeout = React.useRef<number | null>(null)
+
+  // Parse min and max dates
+  const minDateObj = minDate ? parseISO(minDate) : undefined
+  const maxDateObj = maxDate ? parseISO(maxDate) : undefined
+
+  // Create disabled matcher for dates outside range
+  const disabledDays = React.useMemo(() => {
+    const matchers: any[] = []
+    if (minDateObj) {
+      matchers.push({ before: minDateObj })
+    }
+    if (maxDateObj) {
+      matchers.push({ after: maxDateObj })
+    }
+    return matchers.length > 0 ? matchers : undefined
+  }, [minDateObj, maxDateObj])
 
   React.useEffect(() => {
     if (!value) {
@@ -155,7 +173,12 @@ export default function DatePickerInput({ value, onChange, placeholder }: Props)
           }}
         >
           <div ref={popoverRef}>
-            <Calendar mode="single" selected={value ? new Date(value) : undefined} onSelect={handleSelect} />
+            <Calendar 
+              mode="single" 
+              selected={value ? new Date(value) : undefined} 
+              onSelect={handleSelect}
+              disabled={disabledDays}
+            />
           </div>
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>

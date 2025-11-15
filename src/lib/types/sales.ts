@@ -9,21 +9,58 @@ export interface SalesRecord {
   totalAmount: number;
   paymentMethod: string;
   customerType: string;
-  csvFileName?: string;
-  branchId: string;
-  accountId: string;
-  createdAt: string;
-  updatedAt: string;
+  uploadedAt: string;
+  salesUpload?: {
+    id: string;
+    fileName: string;
+    uploadedBy: {
+      email: string;
+      employee: {
+        firstName: string;
+        lastName: string;
+      };
+    };
+  };
 }
 
 export interface SalesListResponse {
+  data: SalesRecord[];
   metadata: {
     total: number;
-    totalPages: number;
     currentPage: number;
     limit: number;
+    totalPages: number;
   };
-  data: SalesRecord[];
+}
+
+export interface SalesUpload {
+  id: string;
+  fileName: string;
+  uploadedAt: string;
+  recordCount: number;
+  fileSize: number;
+  status: string;
+  errorMessage: string | null;
+  uploadedBy: {
+    email: string;
+    employee: {
+      firstName: string;
+      lastName: string;
+    };
+  };
+  _count: {
+    sales: number;
+  };
+}
+
+export interface SalesUploadsResponse {
+  data: SalesUpload[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 export interface TopSellingItem {
@@ -48,7 +85,7 @@ export interface DailySalesTrend {
 // Backend API response interfaces (matching actual API)
 export interface BackendSalesSummary {
   totalRevenue: number;
-  totalTransactions: number; // Note: backend uses totalTransactions, not transactionCount
+  totalTransactions: number;
   averageOrderValue: number;
   topSellingItems: {
     itemName: string;
@@ -78,9 +115,20 @@ export interface SalesSummary {
 }
 
 export interface CSVUploadResponse {
+  uploadId: string;
+  recordCount: number;
+}
+
+export interface DeleteSalesResponse {
   message: string;
-  recordsProcessed: number;
   fileName: string;
+  deletedCount: number;
+}
+
+export interface UploadsQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
 }
 
 export interface SalesQueryParams {

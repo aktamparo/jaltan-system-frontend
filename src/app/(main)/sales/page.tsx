@@ -19,25 +19,25 @@ import { useQueryClient } from "@tanstack/react-query";
 // Transform backend response to frontend format
 const transformBackendData = (backendData: BackendSalesSummary): SalesSummary => {
   return {
-    totalRevenue: backendData.totalRevenue,
-    transactionCount: backendData.totalTransactions, // Backend uses totalTransactions
-    averageOrderValue: backendData.averageOrderValue,
-    topSellingItems: backendData.topSellingItems.map(item => ({
+    totalRevenue: backendData.totalRevenue ?? 0,
+    transactionCount: backendData.totalTransactions ?? 0,
+    averageOrderValue: backendData.averageOrderValue ?? 0,
+    topSellingItems: backendData.topSellingItems?.map(item => ({
       itemName: item.itemName,
       category: "General", // Default category since backend doesn't provide it
       totalQuantity: item.totalQuantity,
       totalRevenue: item.totalRevenue
-    })),
-    paymentMethodBreakdown: backendData.salesByPaymentMethod.map(item => ({
+    })) ?? [],
+    paymentMethodBreakdown: backendData.salesByPaymentMethod?.map(item => ({
       paymentMethod: item.paymentMethod,
-      count: item.transactionCount, // Backend uses transactionCount
+      count: item.transactionCount ?? 0,
       totalAmount: item.totalAmount
-    })),
-    dailySalesTrends: backendData.salesByDate.map(item => ({
+    })) ?? [],
+    dailySalesTrends: backendData.salesByDate?.map(item => ({
       date: item.date,
-      totalRevenue: item.totalAmount, // Backend uses totalAmount
+      totalRevenue: item.totalAmount,
       transactionCount: item.transactionCount
-    }))
+    })) ?? []
   };
 };
 
@@ -73,7 +73,6 @@ export default function SalesPage() {
       endDate: endDate || undefined,
     }).then((result: BackendSalesSummary) => {
       console.log("Sales API response:", result);
-      console.log("Data points returned:", result.salesByDate?.length || 0);
       setDirectApiData(result);
       setDirectApiLoading(false);
     }).catch((err) => {
@@ -238,14 +237,27 @@ export default function SalesPage() {
                     <>
                       <DatePickerInput
                         value={startDate}
-                        onChange={(iso) => { setStartDate(iso); setPreset('Custom') }}
+                        onChange={(iso) => { 
+                          setStartDate(iso); 
+                          setPreset('Custom');
+                          // If end date is before new start date, clear it
+                          if (endDate && iso > endDate) {
+                            setEndDate('');
+                          }
+                        }}
                         placeholder="MMM/dd/yyyy"
+                        maxDate={endDate || format(today, 'yyyy-MM-dd')}
                       />
                       <span className="text-gray-500">to</span>
                       <DatePickerInput
                         value={endDate}
-                        onChange={(iso) => { setEndDate(iso); setPreset('Custom') }}
+                        onChange={(iso) => { 
+                          setEndDate(iso); 
+                          setPreset('Custom');
+                        }}
                         placeholder="MMM/dd/yyyy"
+                        minDate={startDate || undefined}
+                        maxDate={format(today, 'yyyy-MM-dd')}
                       />
                     </>
                   )}
