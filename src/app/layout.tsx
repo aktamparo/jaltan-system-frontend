@@ -27,9 +27,9 @@ export default function RootLayout({
   return (
     <ReactQueryClientProvider>
       <ToastProvider>
-        <html lang="en">
+        <html lang="en" className="h-full">
           <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={`${geistSans.variable} ${geistMono.variable} antialiased h-full overflow-hidden`}
           >
             {children}
           </body>
