@@ -6,6 +6,7 @@ import { Calendar } from "./calendar"
 import { Input } from "./input"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { format, parseISO, isValid, parse } from "date-fns"
+import type { Matcher } from "react-day-picker"
 
 type Props = {
   value?: string
@@ -29,7 +30,7 @@ export default function DatePickerInput({ value, onChange, placeholder, minDate,
 
   // Create disabled matcher for dates outside range
   const disabledDays = React.useMemo(() => {
-    const matchers: Array<{ before?: Date; after?: Date }> = []
+    const matchers: Matcher[] = []
     if (minDateObj) {
       matchers.push({ before: minDateObj })
     }
