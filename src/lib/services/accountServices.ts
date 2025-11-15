@@ -63,7 +63,38 @@ export const createUser = async (userData: UserCreatePayload) => {
   return response.json();
 };
 
-export const updateUser = async (userData: User) => {
+export const updateUser = async (userData: any) => {
+  const payload: {
+    firstName?: string;
+    lastName?: string;
+    contactNumber?: string;
+    branchId?: string;
+  } = {};
+
+  if (userData.firstName !== undefined) payload.firstName = userData.firstName;
+  if (userData.lastName !== undefined) payload.lastName = userData.lastName;
+  if (userData.contactNumber !== undefined) payload.contactNumber = userData.contactNumber;
+  if (userData.branchId !== undefined) payload.branchId = userData.branchId;
+
+  // Use /account/me endpoint for users updating their own profile
+  const response = await fetch(`${BASE_URL}/account/me`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to update user");
+  }
+
+  return response.json();
+};
+
+export const updateUserByAdmin = async (userData: User) => {
   const payload: {
     email?: string;
     role?: string;
@@ -71,24 +102,25 @@ export const updateUser = async (userData: User) => {
     firstName?: string;
     lastName?: string;
     contactNumber?: string;
-    branchId?:string;
+    branchId?: string;
   } = {};
 
-  if (userData.email) payload.email = userData.email;
-  if (userData.role) payload.role = userData.role;
-  if (userData.status) payload.status = userData.status;
+  if (userData.email !== undefined) payload.email = userData.email;
+  if (userData.role !== undefined) payload.role = userData.role;
+  if (userData.status !== undefined) payload.status = userData.status;
 
   if (userData.employee) {
-    if (userData.employee.firstName)
+    if (userData.employee.firstName !== undefined)
       payload.firstName = userData.employee.firstName;
-    if (userData.employee.lastName)
+    if (userData.employee.lastName !== undefined)
       payload.lastName = userData.employee.lastName;
-    if (userData.employee.contactNumber)
+    if (userData.employee.contactNumber !== undefined)
       payload.contactNumber = userData.employee.contactNumber;
-    if (userData.employee.branch && userData.employee.branch.id)
+    if (userData.employee.branch && userData.employee.branch.id !== undefined)
       payload.branchId = userData.employee.branch.id;
   }
 
+  // Use /account/:id endpoint for admins updating other users
   const response = await fetch(`${BASE_URL}/account/${userData.id}`, {
     method: "PATCH",
     headers: {
@@ -99,7 +131,8 @@ export const updateUser = async (userData: User) => {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to update user");
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to update user");
   }
 
   return response.json();

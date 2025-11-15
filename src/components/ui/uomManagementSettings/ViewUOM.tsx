@@ -80,6 +80,9 @@ export default function ViewUOM() {
   const handleCloseViewUOMs = () => {
     setShowViewUOMsModal(false);
     setSelectedUOMTypeId(null);
+    queryClient.invalidateQueries({ queryKey: ["uom"] });
+    queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+    queryClient.invalidateQueries({ queryKey: ["uomsByType"] });
   };
 
   return (

@@ -51,6 +51,8 @@ export default function EditUOMModal({ uom, onClose }: EditUOMModalProps) {
     updateUoMMutation.mutate(payload, {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["uom"] });
+        queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+        queryClient.invalidateQueries({ queryKey: ["uomsByType"] });
         onClose();
         toast.success(
           "UoM Updated",

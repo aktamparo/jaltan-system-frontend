@@ -40,7 +40,7 @@ export default function UpdateDetails() {
         setFirstName(currentUser.firstName || "");
         setLastName(currentUser.lastName || "");
         setContactNumber(currentUser.contactNumber || "");
-        setBranchId(currentUser.branch || "");
+        setBranchId(currentUser.branchId || "");
       }
       setShowPersonalDetails(true);
     };
@@ -53,24 +53,25 @@ export default function UpdateDetails() {
         return;
       }
 
-      // Create a User object that matches the expected type
-      const userData: User = {
-        id: currentUser.id,
-        email: currentUser.email,
-        role: currentUser.role,
-        status: currentUser.status,
-        employee: {
-          firstName,
-          lastName,
-          contactNumber,
-          branch: {
-            id: branchId,
-          },
-        },
+      // Create update payload that matches backend expectations
+      const updatePayload: {
+        firstName: string;
+        lastName: string;
+        contactNumber: string;
+        branchId?: string;
+      } = {
+        firstName,
+        lastName,
+        contactNumber,
       };
 
+      // Only include branchId if user is ADMIN
+      if (currentUser.role === "ADMIN" && branchId) {
+        updatePayload.branchId = branchId;
+      }
+
       updateUserMutation.mutate(
-        userData,
+        { id: currentUser.id, ...updatePayload } as any,
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["account"] });

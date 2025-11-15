@@ -140,7 +140,12 @@ export default function EditUOMType() {
       {showEditModal && selectedUOMId && (
         <Modal
           isVisible={showEditModal}
-          onClose={() => setShowEditModal(false)}
+          onClose={() => {
+            setShowEditModal(false);
+            queryClient.invalidateQueries({ queryKey: ["uom"] });
+            queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+            queryClient.invalidateQueries({ queryKey: ["uomsByType"] });
+          }}
         >
           <ModalHeader>
             <ModalTitle>Edit Unit of Measurement Type</ModalTitle>

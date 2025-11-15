@@ -104,6 +104,9 @@ export default function EditUOM() {
     setShowEditModal(false);
     setSelectedUOMId(null);
     setSelectedUOMTypeId(null);
+    queryClient.invalidateQueries({ queryKey: ["uom"] });
+    queryClient.invalidateQueries({ queryKey: ["uomTypes"] });
+    queryClient.invalidateQueries({ queryKey: ["uomsByType"] });
   };
 
   return (
