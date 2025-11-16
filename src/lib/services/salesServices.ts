@@ -1,12 +1,12 @@
-import { 
-  SalesListResponse, 
+import {
+  SalesListResponse,
   BackendSalesSummary,
   CSVUploadResponse,
   SalesQueryParams,
   SalesAnalyticsFilters,
   SalesUploadsResponse,
   UploadsQueryParams,
-  DeleteSalesResponse
+  DeleteSalesResponse,
 } from "@/lib/types/sales";
 import { BASE_URL } from "@/lib/config";
 
@@ -31,10 +31,13 @@ export const salesServices = {
   },
 
   // Get sales analytics summary
-  getSummary: async (filters?: SalesAnalyticsFilters): Promise<BackendSalesSummary> => {
+  getSummary: async (
+    filters?: SalesAnalyticsFilters
+  ): Promise<BackendSalesSummary> => {
     const params = new URLSearchParams();
     if (filters?.startDate) params.append("startDate", filters.startDate);
     if (filters?.endDate) params.append("endDate", filters.endDate);
+    if (filters?.branchId) params.append("branchId", filters.branchId);
 
     const response = await fetch(
       `${BASE_URL}/sales/summary?${params.toString()}`,
@@ -46,20 +49,25 @@ export const salesServices = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Failed to fetch summary: ${response.status}`);
+      throw new Error(
+        errorData.message || `Failed to fetch summary: ${response.status}`
+      );
     }
 
     return response.json();
   },
 
   // Get paginated sales list
-  getSalesList: async (params?: SalesQueryParams): Promise<SalesListResponse> => {
+  getSalesList: async (
+    params?: SalesQueryParams
+  ): Promise<SalesListResponse> => {
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.append("page", params.page.toString());
     if (params?.limit) searchParams.append("limit", params.limit.toString());
     if (params?.search) searchParams.append("search", params.search);
     if (params?.startDate) searchParams.append("startDate", params.startDate);
     if (params?.endDate) searchParams.append("endDate", params.endDate);
+    if (params?.branchId) searchParams.append("branchId", params.branchId);
 
     const response = await fetch(
       `${BASE_URL}/sales?${searchParams.toString()}`,
@@ -71,14 +79,18 @@ export const salesServices = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Failed to fetch sales: ${response.status}`);
+      throw new Error(
+        errorData.message || `Failed to fetch sales: ${response.status}`
+      );
     }
 
     return response.json();
   },
 
   // Delete sales by CSV filename
-  deleteSalesByCSV: async (csvFileName: string): Promise<{ message: string; deletedCount: number }> => {
+  deleteSalesByCSV: async (
+    csvFileName: string
+  ): Promise<{ message: string; deletedCount: number }> => {
     const response = await fetch(
       `${BASE_URL}/sales?csvFileName=${encodeURIComponent(csvFileName)}`,
       {
@@ -89,18 +101,23 @@ export const salesServices = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Failed to delete sales: ${response.status}`);
+      throw new Error(
+        errorData.message || `Failed to delete sales: ${response.status}`
+      );
     }
 
     return response.json();
   },
 
   // Get uploaded CSV files (NEW)
-  getUploads: async (params?: UploadsQueryParams): Promise<SalesUploadsResponse> => {
+  getUploads: async (
+    params?: UploadsQueryParams
+  ): Promise<SalesUploadsResponse> => {
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.append("page", params.page.toString());
     if (params?.limit) searchParams.append("limit", params.limit.toString());
     if (params?.search) searchParams.append("search", params.search);
+    if (params?.branchId) searchParams.append("branchId", params.branchId);
 
     const response = await fetch(
       `${BASE_URL}/sales/uploads?${searchParams.toString()}`,
@@ -112,14 +129,18 @@ export const salesServices = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Failed to fetch uploads: ${response.status}`);
+      throw new Error(
+        errorData.message || `Failed to fetch uploads: ${response.status}`
+      );
     }
 
     return response.json();
   },
 
   // Delete sales by upload ID (UPDATED)
-  deleteSalesByUploadId: async (uploadId: string): Promise<DeleteSalesResponse> => {
+  deleteSalesByUploadId: async (
+    uploadId: string
+  ): Promise<DeleteSalesResponse> => {
     const response = await fetch(
       `${BASE_URL}/sales?uploadId=${encodeURIComponent(uploadId)}`,
       {
@@ -130,7 +151,9 @@ export const salesServices = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Failed to delete sales: ${response.status}`);
+      throw new Error(
+        errorData.message || `Failed to delete sales: ${response.status}`
+      );
     }
 
     return response.json();

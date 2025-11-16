@@ -129,6 +129,7 @@ export interface UploadsQueryParams {
   page?: number;
   limit?: number;
   search?: string;
+  branchId?: string;
 }
 
 export interface SalesQueryParams {
@@ -138,9 +139,11 @@ export interface SalesQueryParams {
   startDate?: string;
   endDate?: string;
   sortBy?: string;
+  branchId?: string;
 }
 
 export interface SalesAnalyticsFilters {
   startDate?: string;
   endDate?: string;
+  branchId?: string;
 }

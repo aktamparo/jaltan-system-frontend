@@ -3,9 +3,19 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import DatePickerInput from "@/components/ui/date-picker";
-import { format, startOfToday, subDays, startOfMonth, endOfMonth, subMonths, startOfYear } from 'date-fns'
+import {
+  format,
+  startOfToday,
+  subDays,
+  startOfMonth,
+  endOfMonth,
+  subMonths,
+  startOfYear,
+} from "date-fns";
 import { useGetSalesSummary } from "@/lib/queries/salesQueries";
 import { salesServices } from "@/lib/services/salesServices";
+import { useGetAccount } from "@/lib/queries/accountQueries";
+import { useGetAllBranches } from "@/lib/queries/branchQueries";
 import SummaryCards from "@/components/sales/SummaryCards";
 import SalesTrendChart from "@/components/sales/SalesTrendChart";
 import TopItemsChart from "@/components/sales/TopItemsChart";
@@ -13,31 +23,35 @@ import PaymentMethodChart from "@/components/sales/PaymentMethodChart";
 import CSVUpload from "@/components/sales/CSVUpload";
 import SalesDataTable from "@/components/sales/SalesDataTable";
 import { BackendSalesSummary, SalesSummary } from "@/lib/types/sales";
-import ScrollableComponent from "@/components/ui/scrollableComponent";
 import { useQueryClient } from "@tanstack/react-query";
 
 // Transform backend response to frontend format
-const transformBackendData = (backendData: BackendSalesSummary): SalesSummary => {
+const transformBackendData = (
+  backendData: BackendSalesSummary
+): SalesSummary => {
   return {
     totalRevenue: backendData.totalRevenue ?? 0,
     transactionCount: backendData.totalTransactions ?? 0,
     averageOrderValue: backendData.averageOrderValue ?? 0,
-    topSellingItems: backendData.topSellingItems?.map(item => ({
-      itemName: item.itemName,
-      category: "General", // Default category since backend doesn't provide it
-      totalQuantity: item.totalQuantity,
-      totalRevenue: item.totalRevenue
-    })) ?? [],
-    paymentMethodBreakdown: backendData.salesByPaymentMethod?.map(item => ({
-      paymentMethod: item.paymentMethod,
-      count: item.transactionCount ?? 0,
-      totalAmount: item.totalAmount
-    })) ?? [],
-    dailySalesTrends: backendData.salesByDate?.map(item => ({
-      date: item.date,
-      totalRevenue: item.totalAmount,
-      transactionCount: item.transactionCount
-    })) ?? []
+    topSellingItems:
+      backendData.topSellingItems?.map((item) => ({
+        itemName: item.itemName,
+        category: "General", // Default category since backend doesn't provide it
+        totalQuantity: item.totalQuantity,
+        totalRevenue: item.totalRevenue,
+      })) ?? [],
+    paymentMethodBreakdown:
+      backendData.salesByPaymentMethod?.map((item) => ({
+        paymentMethod: item.paymentMethod,
+        count: item.transactionCount ?? 0,
+        totalAmount: item.totalAmount,
+      })) ?? [],
+    dailySalesTrends:
+      backendData.salesByDate?.map((item) => ({
+        date: item.date,
+        totalRevenue: item.totalAmount,
+        transactionCount: item.transactionCount,
+      })) ?? [],
   };
 };
 
@@ -46,45 +60,71 @@ type TabType = "analytics" | "data" | "upload";
 export default function SalesPage() {
   const [activeTab, setActiveTab] = useState<TabType>("analytics");
   const today = startOfToday();
-  const [startDate, setStartDate] = useState(format(startOfYear(today), 'yyyy-MM-dd')); // Default to start of this year
-  const [endDate, setEndDate] = useState(format(today, 'yyyy-MM-dd')); // Default to today
-  const [preset, setPreset] = useState<string>("This Year") // Default to "This Year"
-  const [directApiData, setDirectApiData] = useState<BackendSalesSummary | null>(null);
+  const [startDate, setStartDate] = useState(
+    format(startOfYear(today), "yyyy-MM-dd")
+  ); // Default to start of this year
+  const [endDate, setEndDate] = useState(format(today, "yyyy-MM-dd")); // Default to today
+  const [preset, setPreset] = useState<string>("This Year"); // Default to "This Year"
+  const [selectedBranchId, setSelectedBranchId] = useState<string>(""); // Empty string means "All Branches"
+  const [directApiData, setDirectApiData] =
+    useState<BackendSalesSummary | null>(null);
   const [directApiLoading, setDirectApiLoading] = useState(false);
 
   const queryClient = useQueryClient();
+
+  // Get current user to check if admin
+  const { data: currentUser } = useGetAccount();
+
+  // Get all branches for the dropdown (only if admin)
+  const { data: branchesData } = useGetAllBranches(1, 100);
+  const branches = branchesData?.data ?? [];
+  const isAdmin = currentUser?.role === "ADMIN";
 
   // Reload data when page mounts
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ["sales"] });
   }, [queryClient]);
 
-  const { data: summary, isLoading, error, refetch } = useGetSalesSummary({
+  const {
+    data: summary,
+    isLoading,
+    error,
+    refetch,
+  } = useGetSalesSummary({
     startDate: startDate || undefined,
     endDate: endDate || undefined,
+    branchId: selectedBranchId || undefined,
   });
 
   // Fetch data directly to ensure we get the latest backend response
   useEffect(() => {
-    console.log("Fetching sales data with date range:", { startDate, endDate });
-    setDirectApiLoading(true);
-    salesServices.getSummary({
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
-    }).then((result: BackendSalesSummary) => {
-      console.log("Sales API response:", result);
-      setDirectApiData(result);
-      setDirectApiLoading(false);
-    }).catch((err) => {
-      console.error("Sales API error:", err);
-      setDirectApiLoading(false);
+    console.log("Fetching sales data with filters:", {
+      startDate,
+      endDate,
+      branchId: selectedBranchId,
     });
-  }, [startDate, endDate]);
+    setDirectApiLoading(true);
+    salesServices
+      .getSummary({
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
+        branchId: selectedBranchId || undefined,
+      })
+      .then((result: BackendSalesSummary) => {
+        console.log("Sales API response:", result);
+        setDirectApiData(result);
+        setDirectApiLoading(false);
+      })
+      .catch((err) => {
+        console.error("Sales API error:", err);
+        setDirectApiLoading(false);
+      });
+  }, [startDate, endDate, selectedBranchId]);
 
   // Transform backend data to match frontend interface
   let displayData: SalesSummary | undefined;
   let actualIsLoading = isLoading || directApiLoading;
-  
+
   if (directApiData) {
     // Use direct API data (primary source)
     displayData = transformBackendData(directApiData);
@@ -102,7 +142,7 @@ export default function SalesPage() {
       totalRevenue: displayData.totalRevenue,
       topItemsCount: displayData.topSellingItems?.length,
       paymentMethodsCount: displayData.paymentMethodBreakdown?.length,
-      trendsCount: displayData.dailySalesTrends?.length
+      trendsCount: displayData.dailySalesTrends?.length,
     });
   }
 
@@ -111,58 +151,58 @@ export default function SalesPage() {
     if (startDate && endDate) {
       refetch();
     }
-  }, [startDate, endDate, refetch]);
+  }, [startDate, endDate, selectedBranchId, refetch]);
 
   const applyPreset = (p: string) => {
-    const today = startOfToday()
-    let s = startDate
-    let e = endDate
+    const today = startOfToday();
+    let s = startDate;
+    let e = endDate;
 
     switch (p) {
-      case 'Today':
-        s = format(today, 'yyyy-MM-dd')
-        e = format(today, 'yyyy-MM-dd')
-        break
-      case 'Yesterday': {
-        const y = subDays(today, 1)
-        s = format(y, 'yyyy-MM-dd')
-        e = format(y, 'yyyy-MM-dd')
-        break
+      case "Today":
+        s = format(today, "yyyy-MM-dd");
+        e = format(today, "yyyy-MM-dd");
+        break;
+      case "Yesterday": {
+        const y = subDays(today, 1);
+        s = format(y, "yyyy-MM-dd");
+        e = format(y, "yyyy-MM-dd");
+        break;
       }
-      case 'Last 7 Days':
-        s = format(subDays(today, 6), 'yyyy-MM-dd')
-        e = format(today, 'yyyy-MM-dd')
-        break
-      case 'Last 30 Days':
-        s = format(subDays(today, 29), 'yyyy-MM-dd')
-        e = format(today, 'yyyy-MM-dd')
-        break
-      case 'This Month':
-        s = format(startOfMonth(today), 'yyyy-MM-dd')
-        e = format(today, 'yyyy-MM-dd')
-        break
-      case 'Last Month': {
-        const lm = subMonths(today, 1)
-        s = format(startOfMonth(lm), 'yyyy-MM-dd')
-        e = format(endOfMonth(lm), 'yyyy-MM-dd')
-        break
+      case "Last 7 Days":
+        s = format(subDays(today, 6), "yyyy-MM-dd");
+        e = format(today, "yyyy-MM-dd");
+        break;
+      case "Last 30 Days":
+        s = format(subDays(today, 29), "yyyy-MM-dd");
+        e = format(today, "yyyy-MM-dd");
+        break;
+      case "This Month":
+        s = format(startOfMonth(today), "yyyy-MM-dd");
+        e = format(today, "yyyy-MM-dd");
+        break;
+      case "Last Month": {
+        const lm = subMonths(today, 1);
+        s = format(startOfMonth(lm), "yyyy-MM-dd");
+        e = format(endOfMonth(lm), "yyyy-MM-dd");
+        break;
       }
-      case 'This Year':
-        s = format(startOfYear(today), 'yyyy-MM-dd')
-        e = format(today, 'yyyy-MM-dd')
-        break
-      case 'Custom':
+      case "This Year":
+        s = format(startOfYear(today), "yyyy-MM-dd");
+        e = format(today, "yyyy-MM-dd");
+        break;
+      case "Custom":
       default:
         // Clear dates for custom - user will input their own
-        s = ''
-        e = ''
-        break
+        s = "";
+        e = "";
+        break;
     }
 
-    setStartDate(s)
-    setEndDate(e)
-    setPreset(p)
-  }
+    setStartDate(s);
+    setEndDate(e);
+    setPreset(p);
+  };
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden">
@@ -214,7 +254,9 @@ export default function SalesPage() {
             <div className="mb-4">
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-3">
-                  <label className="text-sm font-medium text-gray-700">Date Range:</label>
+                  <label className="text-sm font-medium text-gray-700">
+                    Date Range:
+                  </label>
 
                   <div className="relative inline-block">
                     <select
@@ -233,35 +275,61 @@ export default function SalesPage() {
                     </select>
                   </div>
 
-                  {preset === 'Custom' && (
+                  {preset === "Custom" && (
                     <>
                       <DatePickerInput
                         value={startDate}
-                        onChange={(iso) => { 
-                          setStartDate(iso); 
-                          setPreset('Custom');
+                        onChange={(iso) => {
+                          setStartDate(iso);
+                          setPreset("Custom");
                           // If end date is before new start date, clear it
                           if (endDate && iso > endDate) {
-                            setEndDate('');
+                            setEndDate("");
                           }
                         }}
                         placeholder="MMM/dd/yyyy"
-                        maxDate={endDate || format(today, 'yyyy-MM-dd')}
+                        maxDate={endDate || format(today, "yyyy-MM-dd")}
                       />
                       <span className="text-gray-500">to</span>
                       <DatePickerInput
                         value={endDate}
-                        onChange={(iso) => { 
-                          setEndDate(iso); 
-                          setPreset('Custom');
+                        onChange={(iso) => {
+                          setEndDate(iso);
+                          setPreset("Custom");
                         }}
                         placeholder="MMM/dd/yyyy"
                         minDate={startDate || undefined}
-                        maxDate={format(today, 'yyyy-MM-dd')}
+                        maxDate={format(today, "yyyy-MM-dd")}
                       />
                     </>
                   )}
                 </div>
+
+                {/* Branch Filter - Only visible for ADMIN users */}
+                {isAdmin && (
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm font-medium text-gray-700">
+                      Branch:
+                    </label>
+                    <div className="relative inline-block">
+                      <select
+                        value={selectedBranchId}
+                        onChange={(e) => setSelectedBranchId(e.target.value)}
+                        className="h-9 rounded-md border px-3 pr-8 bg-white"
+                      >
+                        <option value="">All Branches</option>
+                        {branches.map(
+                          (branch: { id: string; name: string }) => (
+                            <option key={branch.id} value={branch.id}>
+                              {branch.name}
+                            </option>
+                          )
+                        )}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
                 {/* Date range is custom and applies automatically when both dates are set */}
               </div>
             </div>
@@ -273,7 +341,8 @@ export default function SalesPage() {
                   Select a date range to view analytics
                 </p>
                 <p className="text-sm text-gray-600">
-                  Choose a preset or enter custom dates to see sales data and trends.
+                  Choose a preset or enter custom dates to see sales data and
+                  trends.
                 </p>
               </div>
             ) : (
@@ -286,67 +355,82 @@ export default function SalesPage() {
                     </p>
                     {error.message === "Unauthorized" && (
                       <p className="text-sm text-red-500">
-                        You may not have permission to access sales data, or you need to log in again.
+                        You may not have permission to access sales data, or you
+                        need to log in again.
                       </p>
                     )}
                     {error.message.includes("404") && (
                       <p className="text-sm text-red-500">
-                        Sales endpoints may not be implemented in the backend yet.
+                        Sales endpoints may not be implemented in the backend
+                        yet.
                       </p>
                     )}
-                    <Button onClick={() => refetch()} className="mt-2" size="sm">
+                    <Button
+                      onClick={() => refetch()}
+                      className="mt-2"
+                      size="sm"
+                    >
                       Retry
                     </Button>
                   </div>
                 )}
 
                 {/* No Data State */}
-                {!actualIsLoading && displayData && displayData.totalRevenue === 0 && displayData.transactionCount === 0 && (
-                  <div className="border border-gray-200 rounded-lg p-8 text-center">
-                    <p className="text-gray-900 text-lg font-medium mb-2">
-                      No data found
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      No sales data available for the selected date range.
-                    </p>
-                  </div>
-                )}
+                {!actualIsLoading &&
+                  displayData &&
+                  displayData.totalRevenue === 0 &&
+                  displayData.transactionCount === 0 && (
+                    <div className="border border-gray-200 rounded-lg p-8 text-center">
+                      <p className="text-gray-900 text-lg font-medium mb-2">
+                        No data found
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        No sales data available for the selected date range.
+                      </p>
+                    </div>
+                  )}
 
                 {/* Summary Cards */}
-                {!actualIsLoading && displayData && (displayData.totalRevenue > 0 || displayData.transactionCount > 0) && (
-                  <>
-                    <SummaryCards summary={displayData} isLoading={actualIsLoading} />
+                {!actualIsLoading &&
+                  displayData &&
+                  (displayData.totalRevenue > 0 ||
+                    displayData.transactionCount > 0) && (
+                    <>
+                      <SummaryCards
+                        summary={displayData}
+                        isLoading={actualIsLoading}
+                      />
 
-                    {/* Charts Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Sales Trend Chart */}
-                      <div className="lg:col-span-2">
-                        <SalesTrendChart 
-                          data={displayData?.dailySalesTrends ?? []} 
-                          isLoading={isLoading}
-                          startDate={startDate}
-                          endDate={endDate}
-                        />
-                      </div>
+                      {/* Charts Grid */}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Sales Trend Chart */}
+                        <div className="lg:col-span-2">
+                          <SalesTrendChart
+                            data={displayData?.dailySalesTrends ?? []}
+                            isLoading={isLoading}
+                            startDate={startDate}
+                            endDate={endDate}
+                          />
+                        </div>
 
-                      {/* Top Items Chart */}
-                      <div>
-                        <TopItemsChart 
-                          data={displayData?.topSellingItems ?? []} 
-                          isLoading={isLoading} 
-                        />
-                      </div>
+                        {/* Top Items Chart */}
+                        <div>
+                          <TopItemsChart
+                            data={displayData?.topSellingItems ?? []}
+                            isLoading={isLoading}
+                          />
+                        </div>
 
-                      {/* Payment Methods Chart */}
-                      <div>
-                        <PaymentMethodChart 
-                          data={displayData?.paymentMethodBreakdown ?? []} 
-                          isLoading={isLoading} 
-                        />
+                        {/* Payment Methods Chart */}
+                        <div>
+                          <PaymentMethodChart
+                            data={displayData?.paymentMethodBreakdown ?? []}
+                            isLoading={isLoading}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
               </>
             )}
           </div>
@@ -354,7 +438,7 @@ export default function SalesPage() {
 
         {activeTab === "data" && (
           <div>
-            <SalesDataTable />
+            <SalesDataTable branchId={selectedBranchId} />
           </div>
         )}
 

@@ -13,31 +13,44 @@ import { DataTable } from "@/components/ui/userViewComponents/user-view-table";
 import PaginationControls from "@/components/ui/PaginationControls";
 import { format, parseISO } from "date-fns";
 
-export default function SalesDataTable() {
+interface SalesDataTableProps {
+  branchId?: string;
+}
+
+export default function SalesDataTable({ branchId }: SalesDataTableProps) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [uploadIdToDelete, setUploadIdToDelete] = useState("");
-  
+
   const toast = useToast();
   const deleteMutation = useDeleteSalesByUploadId();
 
-  const { data: response, isLoading, error } = useGetSalesList({
+  const {
+    data: response,
+    isLoading,
+    error,
+  } = useGetSalesList({
     page,
     limit: 15,
     search: search || undefined,
     startDate: startDate || undefined,
     endDate: endDate || undefined,
+    branchId: branchId || undefined,
   });
 
   // Fetch ALL uploaded CSV files (not limited to current sales page)
   const { data: uploadsResponse } = useGetUploads({
     limit: 1000, // Get all uploads
+    branchId: branchId || undefined,
   });
 
   const salesData = useMemo(() => response?.data ?? [], [response?.data]);
-  const availableUploads = useMemo(() => uploadsResponse?.data ?? [], [uploadsResponse?.data]);
+  const availableUploads = useMemo(
+    () => uploadsResponse?.data ?? [],
+    [uploadsResponse?.data]
+  );
 
   // Debug logging
   useEffect(() => {
@@ -51,19 +64,27 @@ export default function SalesDataTable() {
       return;
     }
 
-    const selectedUpload = availableUploads.find(upload => upload.id === uploadIdToDelete);
+    const selectedUpload = availableUploads.find(
+      (upload) => upload.id === uploadIdToDelete
+    );
     const fileName = selectedUpload?.fileName || "this file";
 
-    if (confirm(`Are you sure you want to delete all sales records from "${fileName}"?`)) {
+    if (
+      confirm(
+        `Are you sure you want to delete all sales records from "${fileName}"?`
+      )
+    ) {
       deleteMutation.mutate(uploadIdToDelete, {
         onSuccess: (response) => {
-          toast.success("Delete Successful", 
+          toast.success(
+            "Delete Successful",
             `Successfully deleted ${response.deletedCount} sales records from ${response.fileName}`
           );
           setUploadIdToDelete("");
         },
         onError: (error) => {
-          const errorMessage = error instanceof Error ? error.message : "Delete failed";
+          const errorMessage =
+            error instanceof Error ? error.message : "Delete failed";
           toast.error("Delete Failed", errorMessage);
         },
       });
@@ -156,14 +177,18 @@ export default function SalesDataTable() {
       cell: ({ row }) => {
         const upload = row.original.salesUpload;
         if (!upload) return <span className="text-gray-400">Manual</span>;
-        
+
         return (
           <div className="flex flex-col">
-            <span className="text-xs font-mono truncate" title={upload.fileName}>
+            <span
+              className="text-xs font-mono truncate"
+              title={upload.fileName}
+            >
               {upload.fileName}
             </span>
             <span className="text-xs text-gray-500">
-              by {upload.uploadedBy.employee.firstName} {upload.uploadedBy.employee.lastName}
+              by {upload.uploadedBy.employee.firstName}{" "}
+              {upload.uploadedBy.employee.lastName}
             </span>
           </div>
         );
@@ -186,7 +211,9 @@ export default function SalesDataTable() {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600">Error loading sales data: {error.message}</p>
+        <p className="text-red-600">
+          Error loading sales data: {error.message}
+        </p>
         <Button onClick={() => window.location.reload()} className="mt-4">
           Retry
         </Button>
@@ -195,14 +222,14 @@ export default function SalesDataTable() {
   }
 
   return (
-    <div className="h-full flex flex-col">;
+    <div className="h-full flex flex-col">
+      ;
       <div className="flex justify-between items-center mb-6 flex-shrink-0">
         <h3 className="text-lg font-semibold">Sales Records</h3>
         <div className="text-sm text-gray-500">
           Total: {response?.metadata?.total ?? 0} records
         </div>
       </div>
-
       {/* Filters */}
       <div className="flex items-center gap-4 mb-6 flex-shrink-0">
         <Input
@@ -212,36 +239,39 @@ export default function SalesDataTable() {
           onChange={handleSearchChange}
           className="w-64 h-10"
         />
-        
+
         <div className="w-64">
           <DatePickerInput
             value={startDate}
-            onChange={(iso) => { 
-              setStartDate(iso); 
+            onChange={(iso) => {
+              setStartDate(iso);
               setPage(1);
             }}
             placeholder="MMM/dd/yyyy"
           />
         </div>
-        
+
         <span className="text-gray-500">to</span>
-        
+
         <div className="w-64">
           <DatePickerInput
             value={endDate}
-            onChange={(iso) => { 
-              setEndDate(iso); 
+            onChange={(iso) => {
+              setEndDate(iso);
               setPage(1);
             }}
             placeholder="MMM/dd/yyyy"
           />
         </div>
 
-        <Button onClick={clearFilters} variant="outline" className="h-10 px-6 whitespace-nowrap">
+        <Button
+          onClick={clearFilters}
+          variant="outline"
+          className="h-10 px-6 whitespace-nowrap"
+        >
           Clear Filters
         </Button>
       </div>
-
       {/* Delete CSV Section */}
       {availableUploads.length > 0 && (
         <div className="border rounded-lg p-4 mb-6 flex-shrink-0">
@@ -258,7 +288,8 @@ export default function SalesDataTable() {
                 <option value="">Select a CSV file...</option>
                 {availableUploads.map((upload) => (
                   <option key={upload.id} value={upload.id}>
-                    {upload.fileName} ({upload._count?.sales ?? 0} records) - {format(parseISO(upload.uploadedAt), "MMM dd, yyyy")}
+                    {upload.fileName} ({upload._count?.sales ?? 0} records) -{" "}
+                    {format(parseISO(upload.uploadedAt), "MMM dd, yyyy")}
                   </option>
                 ))}
               </select>
@@ -272,11 +303,11 @@ export default function SalesDataTable() {
             </Button>
           </div>
           <p className="text-xs text-[#D22929] mt-2">
-            Warning: This will permanently delete all sales records imported from the selected CSV file.
+            Warning: This will permanently delete all sales records imported
+            from the selected CSV file.
           </p>
         </div>
       )}
-
       {/* Data Table */}
       <div className="flex-1 overflow-y-auto min-h-0">
         {isLoading ? (
@@ -291,22 +322,26 @@ export default function SalesDataTable() {
             </div>
 
             {/* Pagination */}
-            {response && response.metadata && response.metadata.totalPages > 1 && (
-              <div className="mt-6">
-                <PaginationControls
-                  currentPage={page}
-                  totalPages={response.metadata.totalPages}
-                  onPageChange={setPage}
-                />
-              </div>
-            )}
+            {response &&
+              response.metadata &&
+              response.metadata.totalPages > 1 && (
+                <div className="mt-6">
+                  <PaginationControls
+                    currentPage={page}
+                    totalPages={response.metadata.totalPages}
+                    onPageChange={setPage}
+                  />
+                </div>
+              )}
 
             {salesData.length === 0 && !isLoading && (
               <div className="border border-gray-200 rounded-lg p-8 text-center mt-6">
-                <p className="text-gray-900 text-lg font-medium mb-2">No data found</p>
+                <p className="text-gray-900 text-lg font-medium mb-2">
+                  No data found
+                </p>
                 <p className="text-sm text-gray-600 mb-4">
-                  {search || startDate || endDate 
-                    ? "No sales records match your current filters." 
+                  {search || startDate || endDate
+                    ? "No sales records match your current filters."
                     : "No sales data available."}
                 </p>
                 {(search || startDate || endDate) && (
