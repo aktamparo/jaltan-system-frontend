@@ -239,8 +239,7 @@ function StaffLogisticsInterface({
   const editUniqueUomTypeIds = useMemo(() => {
     const typeIds: string[] = [];
     editSelectedItems.forEach((item) => {
-      // Skip items that are in edit mode (they have their UOM data already)
-      if (item?.masterItem?.uomTypeId && item.masterItem.uomTypeId !== 'edit-mode') {
+      if (item?.masterItem?.uomTypeId) {
         typeIds.push(item.masterItem.uomTypeId);
       }
     });
@@ -263,20 +262,7 @@ function StaffLogisticsInterface({
   const getUomsForItem = useCallback(
     (item: InventoryItem): UoM[] => {
       const uomTypeId = item?.masterItem?.uomTypeId;
-      if (!uomTypeId || uomTypeId === 'edit-mode') {
-        // For edit mode items, return the current UOM as the only option
-        if (item?.uom) {
-          return [{
-            id: item.uom.id,
-            name: item.uom.name,
-            symbol: item.uom.symbol,
-            isBase: true,
-            conversionFactor: 1,
-            createdAt: new Date().toISOString(),
-            modifiedAt: new Date().toISOString(),
-            uomTypeId: 'edit-mode',
-          }];
-        }
+      if (!uomTypeId) {
         return [];
       }
       return uomsByType[uomTypeId] || [];
@@ -500,6 +486,7 @@ function StaffLogisticsInterface({
       const itemId = requestItem.itemId || requestItem.item?.id || '';
       const uomSymbol = requestItem.uomSymbol || requestItem.uom?.symbol || '';
       const uomId = requestItem.uomId || requestItem.uom?.id || '';
+      const uomTypeId = requestItem.item?.masterItem?.uomTypeId || '';
       
       return {
         id: itemId,
@@ -512,7 +499,7 @@ function StaffLogisticsInterface({
           id: itemId,
           name: itemName,
           description: '',
-          uomTypeId: 'edit-mode', // Use a special identifier for edit mode
+          uomTypeId: uomTypeId, // Use the actual uomTypeId from the item
           category: [] as ("FRIDGE" | "PANTRY")[],
           createdAt: new Date().toISOString(),
           modifiedAt: new Date().toISOString(),
@@ -526,7 +513,7 @@ function StaffLogisticsInterface({
           conversionFactor: 1,
           createdAt: new Date().toISOString(),
           modifiedAt: new Date().toISOString(),
-          uomTypeId: 'edit-mode',
+          uomTypeId: uomTypeId,
         },
       };
     }) as unknown as InventoryItem[];
