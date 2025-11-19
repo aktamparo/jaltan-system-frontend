@@ -12,6 +12,13 @@ import { SalesRecord } from "@/lib/types/sales";
 import { DataTable } from "@/components/ui/userViewComponents/user-view-table";
 import PaginationControls from "@/components/ui/PaginationControls";
 import { format, parseISO } from "date-fns";
+import Modal, {
+  ModalHeader,
+  ModalTitle,
+  ModalDescription,
+  ModalContent,
+  ModalFooter,
+} from "@/components/ui/modal";
 
 interface SalesDataTableProps {
   branchId?: string;
@@ -23,6 +30,7 @@ export default function SalesDataTable({ branchId }: SalesDataTableProps) {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [uploadIdToDelete, setUploadIdToDelete] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const toast = useToast();
   const deleteMutation = useDeleteSalesByUploadId();
@@ -64,31 +72,30 @@ export default function SalesDataTable({ branchId }: SalesDataTableProps) {
       return;
     }
 
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
     const selectedUpload = availableUploads.find(
       (upload) => upload.id === uploadIdToDelete
     );
-    const fileName = selectedUpload?.fileName || "this file";
 
-    if (
-      confirm(
-        `Are you sure you want to delete all sales records from "${fileName}"?`
-      )
-    ) {
-      deleteMutation.mutate(uploadIdToDelete, {
-        onSuccess: (response) => {
-          toast.success(
-            "Delete Successful",
-            `Successfully deleted ${response.deletedCount} sales records from ${response.fileName}`
-          );
-          setUploadIdToDelete("");
-        },
-        onError: (error) => {
-          const errorMessage =
-            error instanceof Error ? error.message : "Delete failed";
-          toast.error("Delete Failed", errorMessage);
-        },
-      });
-    }
+    deleteMutation.mutate(uploadIdToDelete, {
+      onSuccess: (response) => {
+        toast.success(
+          "Delete Successful",
+          `Successfully deleted ${response.deletedCount} sales records from ${response.fileName}`
+        );
+        setUploadIdToDelete("");
+        setShowDeleteModal(false);
+      },
+      onError: (error) => {
+        const errorMessage =
+          error instanceof Error ? error.message : "Delete failed";
+        toast.error("Delete Failed", errorMessage);
+        setShowDeleteModal(false);
+      },
+    });
   };
 
   const formatCurrency = (amount: number) => {
@@ -223,7 +230,39 @@ export default function SalesDataTable({ branchId }: SalesDataTableProps) {
 
   return (
     <div className="h-full flex flex-col">
-      ;
+      <Modal isVisible={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+        <ModalHeader>
+          <ModalTitle>Delete CSV Records</ModalTitle>
+          <ModalDescription>
+            Are you sure you want to delete all sales records from "
+            {availableUploads.find((u) => u.id === uploadIdToDelete)?.fileName}
+            "?
+          </ModalDescription>
+        </ModalHeader>
+        <ModalContent>
+          <p className="text-sm text-gray-600">
+            This action cannot be undone. All sales records imported from this
+            CSV file will be permanently deleted.
+          </p>
+        </ModalContent>
+        <ModalFooter className="gap-3 justify-end">
+          <Button
+            variant="outline"
+            onClick={() => setShowDeleteModal(false)}
+            disabled={deleteMutation.isPending}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={confirmDelete}
+            disabled={deleteMutation.isPending}
+            className="bg-[#D22929] hover:bg-[#B01F1F] text-white"
+          >
+            {deleteMutation.isPending ? "Deleting..." : "Delete"}
+          </Button>
+        </ModalFooter>
+      </Modal>
+
       <div className="flex justify-between items-center mb-6 flex-shrink-0">
         <h3 className="text-lg font-semibold">Sales Records</h3>
         <div className="text-sm text-gray-500">

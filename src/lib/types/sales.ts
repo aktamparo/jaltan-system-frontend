@@ -115,8 +115,9 @@ export interface SalesSummary {
 }
 
 export interface CSVUploadResponse {
+  message: string;
+  recordsImported: number;
   uploadId: string;
-  recordCount: number;
 }
 
 export interface DeleteSalesResponse {
